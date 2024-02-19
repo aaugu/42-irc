@@ -1,0 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/19 14:04:56 by aaugu             #+#    #+#             */
+/*   Updated: 2024/02/19 14:09:51 by aaugu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <iostream>
+
+# define RED  "\e[31m"
+# define CYAN "\e[96m"
+# define END  "\e[0m"
+
+int	main(int ac, char ** av)
+{
+	if (ac != 3)
+	{
+		std::cout << CYAN "Usage: ./ircserv <port> <password>" END << std::endl;
+		return (1);
+	}
+
+	try {
+		/* code */
+	}
+	catch(const std::exception& e) {
+		std::cerr << RED << "Error: " << e.what() << std::endl;
+		return (1);
+	}
+
+	return (0);
+}
