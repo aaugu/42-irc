@@ -1,36 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
+/*   error_handling.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/20 11:45:05 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/22 13:26:15 by aaugu            ###   ########.fr       */
+/*   Created: 2024/02/22 11:49:46 by aaugu             #+#    #+#             */
+/*   Updated: 2024/02/22 12:44:50 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_HPP
-# define CLIENT_HPP
+#ifndef ERROR_HANDLING_HPP
+# define ERROR_HANDLING_HPP
 
-# include <sys/socket.h>
-# include <netinet/in.h>
+# include <string>
+# include <errno.h>
+# include <cstring>
+# include <sstream>
 
-class Client
-{
-	private:
-		int 				_sockfd;
-		struct sockaddr_in	_addr;
-		socklen_t			_addrlen;
-		
-		Client(void);
-
-	public:
-		Client(int sockfd, const struct sockaddr_in& addr, socklen_t addr_len);
-		~Client(void);
-
-		// Accessors
-		int	getSocket(void);
-};
+std::string errMessage(std::string className, char * message);
 
 #endif

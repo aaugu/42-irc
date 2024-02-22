@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:44:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/20 14:38:57 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/22 13:26:05 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,14 @@
 
 Client::Client(void) {}
 
-Client::Client(int servSocket)
+Client::Client(int sockfd, const struct sockaddr_in& addr, socklen_t addr_len)
 {
-	_size = sizeof(_addr);
-    _socket = accept(servSocket, (struct sockaddr *)&_addr, &_size);
+	_addrlen = addr_len;
+    _sockfd = sockfd;
+	_addr.sin_family = addr.sin_family;
+	_addr.sin_port = addr.sin_port;
+	_addr.sin_addr.s_addr = addr.sin_addr.s_addr;
 
-	if (_socket < 0)
-        std::cerr << "Error accepting connection" << std::endl;
-	else
-        send(_socket, "hello\n", 5, 0);
 }
 
 Client::~Client() {}
@@ -37,5 +36,5 @@ Client::~Client() {}
 /* ************************************************************************** */
 
 int	Client::getSocket(void) {
-	return (this->_socket);
+	return (_sockfd);
 }

@@ -6,29 +6,25 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/20 14:34:06 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/22 13:27:48 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include <stdlib.h>
-# include <sys/socket.h>
 # include <netinet/in.h>
-# include <arpa/inet.h>
-# include <unistd.h>
-
-# include <list>
+# include <vector>
 # include "Client.hpp"
 
 
 class Server
 {
 	private :
-		int					_socket;
+		int					_sockfd;
 		struct sockaddr_in	_addr;
-		std::list<Client*>	_clients;
+		// socklen_t			_addrlen;
+		std::vector<Client*> _clients;
 
 		int run;
 
@@ -37,7 +33,7 @@ class Server
 
 	public :
 		Server(int port);
-		~Server();
+		~Server(void);
 
 		void start(void);
 		void stop(void);
