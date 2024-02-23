@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/22 14:16:18 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/23 14:16:27 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 #include <err.h>
 #include <cstring>
 #include <unistd.h>
+#include <algorithm>
 #include "../includes/Server.hpp"
-#include "../includes/Client.hpp"
 #include "../includes/error_handling.hpp"
 
 /* ************************************************************************** */
@@ -29,7 +29,7 @@
 
 Server::Server(void) {}
 
-Server::Server(int port)
+Server::Server(int port) : nbConnections(0)
 {
 	std::cout << "Initializing server..." << std::endl;
 
@@ -56,14 +56,18 @@ Server::Server(int port)
 	if ( bind(_sockfd, (const struct sockaddr *)&_addr, sizeof(_addr)) == -1)
 		throw std::runtime_error(errMessage("Server : ", strerror(errno)));
 
+	// Allocate memory for server nb max of connections fds
+	_pollFds = new std::vector<pollfd>(SOMAXCONN + 1);
+
 	std::cout << "Server successfully initialized!" << std::endl;
 }
 
 Server::~Server(void)
 {
-	// std::for_each (_clients.begin(), _clients.end(), closeClient);
-	std::for_each (_clients.begin(), _clients.end(), deleteClient);
-	close(_sockfd);
+	std::vector<pollfd>	fds = *_pollFds;
+	std::vector<pollfd>::iterator	it;
+	for (it = fds.begin(); it != fds.end(); it++)
+		closePollFd(*it);
 	std::cout << "au revoir" << std::endl;
 }
 
@@ -73,20 +77,26 @@ Server::~Server(void)
 
 void Server::start(void) {
 
+	// Set the listen back log
+	int ls = listen(_sockfd, SOMAXCONN);
+	if (ls == -1)
+		throw std::runtime_error(errMessage("Server : ", strerror(errno)));
+
 	std::cout << _sockfd << std::endl;
 
-	int					ls;
+	std::vector<pollfd>	fds = *_pollFds;
+	fds.begin()->fd = _sockfd;
+	fds.begin()->events = POLLIN;
+
 	int					sockfdClient;
 	struct sockaddr_in	addrClient;
 	socklen_t			addrLenClient;
 
-	while (true)
+	while (true) // signal arret du serveur
 	{
-		ls = listen(_sockfd, 5);
-		if (ls == -1)
-			throw std::runtime_error(errMessage("Server : ", strerror(errno)));
 		// std::cout << "listen !" << std::endl;
 
+		waitForEvent();
 		addrLenClient = sizeof(addrClient);
 		sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, &addrLenClient);
 
@@ -94,9 +104,7 @@ void Server::start(void) {
 			throw std::runtime_error(errMessage("Client : ", strerror(errno)));
 		else
 		{
-			_clients.push_back(new Client(sockfdClient, addrClient, addrLenClient));
 			std::cout << "Client " << sockfdClient << " connected." << std::endl;
-			send((*_clients.back()).getSocket(), "hello\n", 5, 0);
 		}
 	}
 }
@@ -108,31 +116,29 @@ void Server::stop(void) {
 	
 }
 
+
 /* ************************************************************************** */
 /*                              PRIVATE FUNCTIONS                             */
 /* ************************************************************************** */
+
+void	Server::waitForEvent(void)
+{
+	int	timeout = 0;
+	std::vector<pollfd>	fds = *_pollFds;
+
+	if ( poll(fds.data(), nbConnections + 1, timeout) == -1 )
+		throw std::runtime_error(errMessage("Server : ", strerror(errno)));
+}
 
 
 /* ************************************************************************** */
 /*                            NON MEMBER FUNCTIONS                            */
 /* ************************************************************************** */
 
-// ------------------------------- Stop utils ------------------------------- //
-// void    closeClient(Client* client) {
-// 	int	sockfd = client->getSocket();
-
-// 	if (sockfd > 0)
-// 		close(sockfd);
-// }
-
 // ---------------------------- Destructor utils ---------------------------- //
-void    deleteClient(Client* client) {
-	int	sockfd = client->getSocket();
+void    closePollFd(pollfd& pollFd) {
 
-	if (client)
-	{
-		if (sockfd > 0)
-			close(sockfd);
-		delete client;
-	}
+	int	sockfd = pollFd.fd;
+	if (sockfd > 0)
+		close(sockfd);
 }

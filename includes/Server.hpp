@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/22 13:27:48 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/23 14:16:01 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,23 @@
 
 # include <netinet/in.h>
 # include <vector>
-# include "Client.hpp"
+# include <poll.h>
+# include <sys/socket.h>
 
 
 class Server
 {
 	private :
-		int					_sockfd;
-		struct sockaddr_in	_addr;
+		int						nbConnections;
+		int						_sockfd;
+		struct sockaddr_in		_addr;
+		std::vector<pollfd>*	_pollFds;
+
 		// socklen_t			_addrlen;
-		std::vector<Client*> _clients;
 
 		int run;
 
+		void	waitForEvent(void);
 
 		Server(void);
 
@@ -40,7 +44,8 @@ class Server
 
 };
 
-void	closeClient(Client* client);
-void    deleteClient(Client* client);
+void    closePollFd(pollfd& pollFd);
+// void	closeClient(Client* client);
+// void    deleteClient(Client* client);
 
 #endif
