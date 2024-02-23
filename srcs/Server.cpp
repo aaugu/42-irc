@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/23 14:16:27 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/23 14:39:06 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ Server::~Server(void)
 	std::vector<pollfd>::iterator	it;
 	for (it = fds.begin(); it != fds.end(); it++)
 		closePollFd(*it);
+
+	delete [] _pollFds;
 	std::cout << "au revoir" << std::endl;
 }
 
@@ -94,17 +96,26 @@ void Server::start(void) {
 
 	while (true) // signal arret du serveur
 	{
+		int i = 0;
 		// std::cout << "listen !" << std::endl;
 
 		waitForEvent();
+
 		addrLenClient = sizeof(addrClient);
 		sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, &addrLenClient);
 
-		if (sockfdClient < 0)
+
+		if (sockfdClient == -1)
 			throw std::runtime_error(errMessage("Client : ", strerror(errno)));
 		else
 		{
+			std::vector<pollfd>::iterator it;
+			for (it = fds.begin(); i < nbConnections + 1; it++) { continue; }
+			(*it).fd = sockfdClient;
+			(*it).events = POLLIN;
 			std::cout << "Client " << sockfdClient << " connected." << std::endl;
+			send((*it).fd, "Welcome\n", 8, 0);
+			
 		}
 	}
 }
