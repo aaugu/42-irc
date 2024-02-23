@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/23 14:16:01 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/23 14:44:09 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Server
 		int run;
 
 		void	waitForEvent(void);
+		void    closePollFds(void);
 
 		Server(void);
 
@@ -44,7 +45,6 @@ class Server
 
 };
 
-void    closePollFd(pollfd& pollFd);
 // void	closeClient(Client* client);
 // void    deleteClient(Client* client);
 

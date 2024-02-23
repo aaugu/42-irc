@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/23 14:39:06 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/23 14:44:01 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,7 @@ Server::Server(int port) : nbConnections(0)
 
 Server::~Server(void)
 {
-	std::vector<pollfd>	fds = *_pollFds;
-	std::vector<pollfd>::iterator	it;
-	for (it = fds.begin(); it != fds.end(); it++)
-		closePollFd(*it);
+	closePollFds();
 
 	delete [] _pollFds;
 	std::cout << "au revoir" << std::endl;
@@ -147,9 +144,17 @@ void	Server::waitForEvent(void)
 /* ************************************************************************** */
 
 // ---------------------------- Destructor utils ---------------------------- //
-void    closePollFd(pollfd& pollFd) {
+void    Server::closePollFds(void) {
 
-	int	sockfd = pollFd.fd;
-	if (sockfd > 0)
-		close(sockfd);
+	std::vector<pollfd>				fds = *_pollFds;
+	std::vector<pollfd>::iterator	it;
+	int	sockfd;
+	int i = 0;
+	
+	for (it = fds.begin(); i < nbConnections + 1; it++, i++)
+	{
+		sockfd = (*it).fd;
+		if (sockfd > 0)
+			close(sockfd);
+	}
 }
