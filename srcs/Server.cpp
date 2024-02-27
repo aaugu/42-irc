@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/27 15:05:53 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/27 15:12:04 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,17 +116,20 @@ void Server::start(void) {
 			int	i = 0;
 			for (i = 0; i < nbConnections + 1; i++) { continue; }
 			_pollFds[i].fd = sockfdClient;
-			_pollFds[i].events = POLLIN;
 			std::cout << "Client " << sockfdClient << " connected." << std::endl;
 			send(_pollFds[i].fd, "Welcome\n", 8, 0);
 
 		}
 
 		char buffer[1024] = {0};
-		if (recv(sockfdClient, buffer, 1024, 0) == -1)
-			throw std::runtime_error(errMessage("Server : ", strerror(errno)));
-
-
+		for (int i = 0; i < nbConnections + 1; i++)
+		{
+			if (_pollFds[i].events == POLLIN)
+			{
+				if (recv(sockfdClient, buffer, 1024, 0) == -1)
+					throw std::runtime_error(errMessage("Server : ", strerror(errno)));
+			}
+		}
 		std::cout << buffer << std::endl;
 	}
 }
