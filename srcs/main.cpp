@@ -6,12 +6,13 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:04:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/20 14:06:43 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/27 14:16:49 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-#include "Server.hpp"
+#include <stdlib.h>
+#include "../includes/Server.hpp"
 
 # define RED  "\e[31m"
 # define CYAN "\e[96m"

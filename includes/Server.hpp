@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/23 14:44:09 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/27 14:59:12 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class Server
 		int						nbConnections;
 		int						_sockfd;
 		struct sockaddr_in		_addr;
-		std::vector<pollfd>*	_pollFds;
+		struct pollfd			_pollFds[129];
 
 		// socklen_t			_addrlen;
 
