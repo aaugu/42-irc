@@ -50,9 +50,6 @@ Server::Server(int port) : nbConnections(0)
 
 Server::~Server(void)
 {
-    // closePollFds();
-    // delete [] _pollFds;
-    // std::cout << "au revoir" << std::endl;
 }
 
 /* ************************************************************************** */
@@ -106,8 +103,13 @@ void Server::start(void)
                 ssize_t bytesRead = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
                 if (bytesRead > 0)
                 {
-                    buffer[bytesRead] = '\0'; 
-                    std::cout << "Received from client " << _pollFds[i].fd << ": " << buffer << std::endl;
+                    buffer[bytesRead] = '\0';
+                    if (std::strncmp(buffer, "CAP LS", 5) == 0) {
+                        std::cout << "gestion de CAP LS" << std::endl;
+                        const char* response = "CAP * LS :";
+                        send(_pollFds[i].fd, response, sizeof(response), 0);
+                    }
+                    std::cout << "Received from client " << _pollFds[i].fd << ": '" << buffer << "'" << std::endl;
                 }
                 else if (bytesRead == 0)
                 {
@@ -127,11 +129,7 @@ void Server::start(void)
     }
 }
 
-void Server::stop(void)
-{
-    this->run = 0;
-    // std::for_each (_clients.begin(), _clients.end(), closeClient);
-}
+void Server::stop(void) {}
 
 /* ************************************************************************** */
 /*                              PRIVATE FUNCTIONS                             */
@@ -149,17 +147,4 @@ void Server::waitForEvent(void)
 /* ************************************************************************** */
 
 // ---------------------------- Destructor utils ---------------------------- //
-void Server::closePollFds(void)
-{
-    // std::vector<pollfd>                fds = *_pollFds;
-    // std::vector<pollfd>::iterator    it;
-    // int    sockfd;
-    // int i = 0;
-
-    // for (it = fds.begin(); i < nbConnections + 1; it++, i++)
-    // {
-    //    sockfd = (*it).fd;
-    //    if (sockfd > 0)
-    //        close(sockfd);
-    // }
-}
+void Server::closePollFds(void) {}
