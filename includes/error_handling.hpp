@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef ERROR_HANDLING_HPP
+# define ERROR_HANDLING_HPP
 
 # include <string>
 # include <errno.h>
@@ -18,3 +19,5 @@
 # include <sstream>
 
 std::string errMessage(std::string className, char * message);
+
+#endif
