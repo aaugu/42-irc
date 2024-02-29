@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/29 11:16:21 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/02/29 13:48:24 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <algorithm>
 #include "../includes/Server.hpp"
 #include "../includes/error_handling.hpp"
+#include "../includes/signal.hpp"
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -58,15 +59,13 @@ Server::Server(int port) : nbConnections(0)
 
 	// Allocate memory for server nb max of connections fds
 	_pollFds = new std::vector<pollfd>(SOMAXCONN + 1);
-
+	signal( SIGINT, sig::signalHandler );
 	std::cout << "Server successfully initialized!" << std::endl;
 }
 
 Server::~Server(void)
 {
 	closePollFds();
-
-	delete [] _pollFds;
 	std::cout << "au revoir" << std::endl;
 }
 
@@ -91,7 +90,7 @@ void Server::start(void) {
 	struct sockaddr_in	addrClient;
 	socklen_t			addrLenClient;
 
-	while (true) // signal arret du serveur
+	while (sig::stopServer == false) // signal arret du serveur
 	{
 		int i = 0;
 		// std::cout << "listen !" << std::endl;
@@ -129,8 +128,8 @@ void Server::start(void) {
                     buffer[bytesRead] = '\0';
                     if (std::strncmp(buffer, "CAP LS", 5) == 0) {
                         std::cout << "gestion de CAP LS" << std::endl;
-                        const char* response = "CAP * LS :";
-                        send(fds[i].fd, response, sizeof(response), 0);
+                        const char* response = "CAP * LS :\n";
+                        send(fds[i].fd, response, strlen(response), 0);
                     }
                     std::cout << "Received from client " << fds[i].fd << ": '" << buffer << "'" << std::endl;
                 }
@@ -155,7 +154,7 @@ void Server::start(void) {
 
 void Server::stop(void) {
 	this->run = 0;
-
+	std::cerr << "!!!! Serveur STOP !!!!" << std::endl;
 	// std::for_each (_clients.begin(), _clients.end(), closeClient);
 	
 }
