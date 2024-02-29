@@ -8,15 +8,13 @@
 #include <cstring>
 #include <unistd.h>
 #include <algorithm>
-#include <poll.h> // Ajout de cette inclusion
+#include <poll.h>
 #include "../includes/Server.hpp"
 #include "../includes/error_handling.hpp"
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
-
-Server::Server(void) {}
 
 Server::Server(int port) : nbConnections(0)
 {
@@ -48,9 +46,7 @@ Server::Server(int port) : nbConnections(0)
     std::cout << "Server successfully initialized!" << std::endl;
 }
 
-Server::~Server(void)
-{
-}
+Server::~Server(void){}
 
 /* ************************************************************************** */
 /*                              PUBLIC FUNCTIONS                              */
@@ -129,8 +125,6 @@ void Server::start(void)
     }
 }
 
-void Server::stop(void) {}
-
 /* ************************************************************************** */
 /*                              PRIVATE FUNCTIONS                             */
 /* ************************************************************************** */
@@ -141,10 +135,3 @@ void Server::waitForEvent(void)
     if (poll(_pollFds, nbConnections + 1, timeout) == -1)
         throw std::runtime_error(errMessage("Server : ", strerror(errno)));
 }
-
-/* ************************************************************************** */
-/*                            NON MEMBER FUNCTIONS                            */
-/* ************************************************************************** */
-
-// ---------------------------- Destructor utils ---------------------------- //
-void Server::closePollFds(void) {}

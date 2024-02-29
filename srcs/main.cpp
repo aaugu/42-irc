@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <stdlib.h>
 #include "../includes/Server.hpp"
 
 # define RED  "\e[31m"
@@ -30,7 +28,6 @@ int	main(int ac, char ** av)
 		Server	server(atoi(av[1]));
 
 		server.start();
-		// server.stop();
 	}
 	catch(const std::exception& e) {
 		std::cerr << RED << "Error: " << e.what() << std::endl;
