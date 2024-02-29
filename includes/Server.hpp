@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/29 11:24:11 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/29 20:57:57 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,15 @@ class Server
 		int						sockfd;
 		struct sockaddr_in		addr;
 		std::vector<pollfd>		pollFds;
-
-		// socklen_t			_addrlen;
-
 		int run;
+
+		// Start() sub functions
 		void	setListenBackLog(void);
 		void	waitForEvent(void);
 		void	acceptNewClient(void);
+		void	checkDisconnectClient(void);
+		void	getClientInput(std::string& clientInput, int* sockfdClient);
+		void	executeClientInput(std::string clientInput, int fd);
 		void    closePollFds(void);
 
 		Server(void);
@@ -47,8 +49,5 @@ class Server
 		void stop(void);
 
 };
-
-// void	closeClient(Client* client);
-// void    deleteClient(Client* client);
 
 #endif
