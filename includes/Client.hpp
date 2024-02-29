@@ -9,7 +9,7 @@ class Client {
     ~Client();
 
     // Class function
-    void readClient();
+    void setData(int fd, char *data);
 
     // Getters and setters
     int getFd();

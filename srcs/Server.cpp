@@ -10,18 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <list>
-#include <iostream>
-#include <sstream>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <err.h>
-#include <cstring>
-#include <unistd.h>
-#include <algorithm>
 #include "Server.hpp"
-#include "Error_handling.hpp"
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -29,8 +18,9 @@
 
 Server::Server(void) {}
 
-Server::Server(int port) : _nbConnections(0)
+Server::Server(int port) : _nbConnections(0), _nbClients(0)
 {
+	(void)_nbClients;
 	std::cout << "Initializing server..." << std::endl;
 
 	// Create an AF_INET6 stream socket to receive incoming connections on 
@@ -91,20 +81,17 @@ void Server::start(void) {
 	struct sockaddr_in	addrClient;
 	socklen_t			addrLenClient;
 
-	while (true)
-	{
+	while (true) {
 		int i = 0;
 
 		waitForEvent();
-		if (fds[i].revents & POLLIN)
-        {
+		if (fds[i].revents & POLLIN) {
 			addrLenClient = sizeof(addrClient);
 			sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, &addrLenClient);
 
 			if (sockfdClient == -1)
 				throw std::runtime_error(errMessage("Client : ", strerror(errno)));
-			else
-			{
+			else {
 				std::vector<pollfd>::iterator it;
 				for (it = fds.begin(); i < _nbConnections + 1; it++, i++) { continue; }
 				(*it).fd = sockfdClient;
@@ -118,32 +105,37 @@ void Server::start(void) {
 		char buffer[4096];
 		memset( buffer, 0, sizeof( buffer ) );
 
-		for (int i = 1; i < _nbConnections + 1; i++)
-        {
-            if (fds[i].revents & POLLIN)
-            {
+		for (int i = 1; i < _nbConnections + 1; i++) {
+            if (fds[i].revents & POLLIN) {
                 ssize_t bytesRead = recv(fds[i].fd, buffer, sizeof(buffer), 0);
-                if (bytesRead > 0)
-                {
-                    buffer[bytesRead] = '\0';
-                    if (std::strncmp(buffer, "CAP LS", 5) == 0) {
-                        std::cout << "gestion de CAP LS" << std::endl;
-                        const char* response = "CAP * LS :\n";
-                        send(fds[i].fd, response, strlen(response), 0);
-                    }
-                    std::cout << "Received from client " << fds[i].fd << ": '" << buffer << "'" << std::endl;
-                }
-                else if (bytesRead == 0)
-                {
-                    std::cout << "Client " << fds[i].fd << " disconnected." << std::endl;
+                if (bytesRead > 0) {
+					std::cout << "Received from client " << fds[i].fd << ": '" << buffer << "'" << std::endl;
+					buffer[bytesRead] = '\0';
+					if (std::strncmp(buffer, "CAP LS", 5) == 0) {
+						std::cout << "gestion de CAP LS" << std::endl;
+						const char* response = "CAP * LS :\n";
+						send(fds[i].fd, response, strlen(response), 0);
+					} else {
+						std::string test = buffer;
+						std::vector<std::string> res;
+						std::istringstream f(test);
+						std::string s;
+						while (getline(f, s, '\n')) {
+							if (s.rfind("NICK", 0) == 0)
+        						std::cout << "nickname " << s.substr(5) << std::endl;
+        					res.push_back(s);
+    					}
+					}
+				}
+                else if (bytesRead == 0) {
+                    std::cout << "Client " << _clients[i].getName() << " disconnected." << std::endl;
                     close(fds[i].fd);
                     for (int j = i; j < _nbConnections; ++j)
                         _pollFds[j] = _pollFds[j + 1];
                     --_nbConnections;
 					std::cout << "debug nb client : " << _nbConnections << std::endl;
                 }
-                else
-                {
+                else {
                     std::cerr << "Error receiving data from client " << fds[i].fd << std::endl;
                 }
 			}

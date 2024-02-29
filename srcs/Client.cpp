@@ -1,9 +1,7 @@
 #include "Client.hpp"
 
 // Constructor and destructor
-Client::Client(int fd, std::string name) {
-    _fd = fd;
-    _name = name;
+Client::Client(int fd, std::string name): _fd(fd), _name(name) {
 }
 
 Client::~Client() {
@@ -11,8 +9,18 @@ Client::~Client() {
 }
 
 // Class function
-void Client::readClient() {
-
+void Client::setData(int fd, char *buffer) {
+    (void)fd;
+    (void)buffer;
+    std::string test = buffer;
+    std::vector<std::string> res;
+    std::istringstream f(test);
+    std::string s;
+    while (getline(f, s, '\n')) {
+        if (s.rfind("NICK", 0) == 0)
+            std::cout << "nickname " << s.substr(5) << std::endl;
+        res.push_back(s);
+    }
 }
 
 // Getters and setters

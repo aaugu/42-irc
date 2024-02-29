@@ -18,7 +18,18 @@
 #include <poll.h>
 #include <sys/socket.h>
 #include <string>
+#include <list>
+#include <sstream>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <err.h>
+#include <cstring>
+#include <unistd.h>
+#include <algorithm>
+#include "Error_handling.hpp"
+#include "Client.hpp"
 
+class Client;
 
 class Server
 {
@@ -27,6 +38,8 @@ class Server
 		int						_sockfd;
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>*	_pollFds;
+		std::vector<Client> 	_clients;
+		int						_nbClients;
 
 		void	waitForEvent(void);
 		void    closePollFds(void);
