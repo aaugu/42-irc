@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/29 22:19:44 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/29 23:52:54 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,19 +81,15 @@ void Server::start(void) {
 		if (pollFds.front().revents & POLLIN)
 			acceptNewClient();
 
-		checkDisconnectClient();
-
-
-		int sockfdClient = -1;
-		std::string	clientInput;
+		int			sockfdClient = -1;
+		std::string	clientInput = "";
 		getClientInput(clientInput, &sockfdClient);
-
-		if (clientInput == "q\n")
-		{
-			std::cout << "Exiting program..." << std::endl;
-			return ;
-		}
-		if (sockfdClient != -1)
+		// if (clientInput == "q\n")
+		// {
+		// 	std::cout << "Exiting program..." << std::endl;
+		// 	return ;
+		// }
+		if (sockfdClient != -1 && clientInput.empty() == false)
 			executeClientInput(clientInput, sockfdClient);
 	}
 }
@@ -137,7 +133,6 @@ void	Server::acceptNewClient(void)
 	int					sockfdClient;
 	struct sockaddr_in	addrClient;
 	socklen_t			addrLenClient = sizeof(addrClient);
-	pollfd				newClient;
 
 	sockfdClient = accept(sockfd, (struct sockaddr *)&addrClient, &addrLenClient);
 
@@ -146,38 +141,31 @@ void	Server::acceptNewClient(void)
 	else
 	{
 		if (nbConnections <= SOMAXCONN)
-		{
-			newClient.fd = sockfdClient;
-			newClient.events = POLLIN;
-
-			pollFds.push_back(newClient);
-			nbConnections++;
-			std::cout	<< "New connection : "
-            			<< "[SOCKET_FD : "	<< sockfdClient
-            			<< " , IP : "		<< inet_ntoa(addr.sin_addr)
-            			<< " , PORT : "		<< ntohs(addr.sin_port) << "]"
-						<< std::endl;
-			send(sockfdClient, "Welcome\n", 8, 0);
-		}
+			addClientToListenPoll(sockfdClient);
 		else
 			std::runtime_error(errMessage("Server : ", -1, "cannot accept more client"));
 	}
 }
 
-void	Server::checkDisconnectClient(void)
+void	Server::addClientToListenPoll(int sockfdClient)
 {
-	std::vector<pollfd>::iterator it;
-	for (it = pollFds.begin() + 1; it != pollFds.end(); it++)
-	{
-		if ((*it).revents & POLLOUT)
-		{
-			std::cout << "Client " << (*it).fd << ": disconnected" << std::endl;
-			close((*it).fd);
-			std::cout << "ici\n";
-			pollFds.erase(it);
-		}
-	}
+	pollfd	newClient;
+
+	newClient.fd = sockfdClient;
+	newClient.events = POLLIN;
+
+	pollFds.push_back(newClient);
+	nbConnections++;
+
+	std::cout	<< "New connection : "
+				<< "[SOCKET_FD : "	<< sockfdClient
+				<< " , IP : "		<< inet_ntoa(addr.sin_addr)
+				<< " , PORT : "		<< ntohs(addr.sin_port) << "]"
+				<< std::endl;
+
+	send(sockfdClient, "Welcome\n", 8, 0);
 }
+
 
 void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 {
@@ -186,29 +174,36 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 	std::vector<pollfd>::iterator it;
 	for (it = pollFds.begin() + 1; it != pollFds.end(); it++)
 	{
-		if ((*it).fd > 0)
+		if ((*it).revents & POLLIN)
 		{
-			if ((*it).revents & POLLIN)
+			size_t readBytes = recv((*it).fd, buffer, 1024, 0);
+			buffer[readBytes] = '\0';
+
+			if ( (int)readBytes == -1 )
+				throw std::runtime_error(errMessage("Server4 : ", -1, strerror(errno)));
+			else if (readBytes == 0)
+				return (disconnectClient(it));
+			else
 			{
-				size_t readBytes = recv((*it).fd, buffer, 1024, 0);
-				if ( (int)readBytes == -1 )
-					throw std::runtime_error(errMessage("Server4 : ", -1, strerror(errno)));
-				else {
-					buffer[readBytes] = '\0';
-					clientInput = static_cast<std::string>(buffer);
-					// clientInput.erase(clientInput.end() - 1);
-					*sockfdClient = (*it).fd;
-					return ;
-				}
+				clientInput = static_cast<std::string>(buffer);
+				*sockfdClient = (*it).fd;
+				return ;
 			}
 		}
 	}
 }
 
+void	Server::disconnectClient(std::vector<pollfd>::iterator client)
+{
+	std::cout << "Client " << (*client).fd << ": disconnected" << std::endl;
+	close((*client).fd);
+	nbConnections--;
+	pollFds.erase(client);
+}
+
 void	Server::executeClientInput(std::string clientInput, int sockfdClient)
 {
 	std::cout << "Client " << sockfdClient << ": " << clientInput;
-
 }
 
 /* ************************************************************************** */
