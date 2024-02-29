@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 11:49:46 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/22 12:44:50 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/29 11:48:02 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,17 @@
 # define ERROR_HANDLING_HPP
 
 # include <string>
-# include <errno.h>
-# include <cstring>
 # include <sstream>
 
-std::string errMessage(std::string className, char * message);
+template < typename T >
+std::string errMessage(std::string className, int value, T message)
+{
+    std::stringstream   ss;
+    ss << className;
+	if (value != -1)
+		ss << value << " ";
+	ss << message;
+    return (ss.str());
+}
 
 #endif
