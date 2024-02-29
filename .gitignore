@@ -1,2 +1,2 @@
 ircserv
-*.o
+objs/*.o

@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:04:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/27 14:16:49 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/02/29 12:21:12 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 int	main(int ac, char ** av)
 {
-	if (ac != 2)
+	if (ac != 2) // change to 3 when password is implemented
 	{
 		std::cout << CYAN "Usage: ./ircserv <port> <password>" END << std::endl;
 		return (1);
