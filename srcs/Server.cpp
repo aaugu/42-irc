@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/27 15:24:49 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/02/29 11:16:21 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,30 +97,58 @@ void Server::start(void) {
 		// std::cout << "listen !" << std::endl;
 
 		waitForEvent();
+		if (fds[i].revents & POLLIN)
+        {
+			addrLenClient = sizeof(addrClient);
+			sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, &addrLenClient);
 
-		addrLenClient = sizeof(addrClient);
-		sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, &addrLenClient);
-
-		if (sockfdClient == -1)
-			throw std::runtime_error(errMessage("Client : ", strerror(errno)));
-		else
-		{
-			std::vector<pollfd>::iterator it;
-			for (it = fds.begin(); i < nbConnections + 1; it++, i++) { continue; }
-			(*it).fd = sockfdClient;
-			(*it).events = POLLIN;
-			std::cout << "Client " << sockfdClient << " connected." << std::endl;
-			send((*it).fd, "Welcome\n", 8, 0);
+			if (sockfdClient == -1)
+				throw std::runtime_error(errMessage("Client : ", strerror(errno)));
+			else
+			{
+				std::vector<pollfd>::iterator it;
+				for (it = fds.begin(); i < nbConnections + 1; it++, i++) { continue; }
+				(*it).fd = sockfdClient;
+				(*it).events = POLLIN;
+				nbConnections++;
+				std::cout << "Client " << sockfdClient << " connected." << std::endl;
+				send((*it).fd, "Welcome\n", 8, 0);
+			}
 		}
-		// char buf[4096];
-		// memset( buf, 0, sizeof( buf ) );
-		// for ( int i = 1; i <= nbConnections; i++ ){
-		// 	if ( fds[i].fd != -1 && fds[i].revents & POLLIN ){
-		// 		if (recv(fds[i].fd, buf, sizeof( buf ), 0 ) == -1){
-		// 			throw std::runtime_error(errMessage("Server : ", strerror(errno)));
-		// 		}
-		// 	}
-		// }
+
+		char buffer[4096];
+		memset( buffer, 0, sizeof( buffer ) );
+
+		for (int i = 1; i < nbConnections + 1; i++)
+        {
+            if (fds[i].revents & POLLIN)
+            {
+                ssize_t bytesRead = recv(fds[i].fd, buffer, sizeof(buffer), 0);
+                if (bytesRead > 0)
+                {
+                    buffer[bytesRead] = '\0';
+                    if (std::strncmp(buffer, "CAP LS", 5) == 0) {
+                        std::cout << "gestion de CAP LS" << std::endl;
+                        const char* response = "CAP * LS :";
+                        send(fds[i].fd, response, sizeof(response), 0);
+                    }
+                    std::cout << "Received from client " << fds[i].fd << ": '" << buffer << "'" << std::endl;
+                }
+                else if (bytesRead == 0)
+                {
+                    std::cout << "Client " << fds[i].fd << " disconnected." << std::endl;
+                    close(fds[i].fd);
+                    for (int j = i; j < nbConnections; ++j)
+                        _pollFds[j] = _pollFds[j + 1];
+                    --nbConnections;
+					std::cout << "debug nb client : " << nbConnections << std::endl;
+                }
+                else
+                {
+                    std::cerr << "Error receiving data from client " << fds[i].fd << std::endl;
+                }
+			}
+		}
 
 	}
 }
