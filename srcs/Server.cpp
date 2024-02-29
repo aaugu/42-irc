@@ -81,6 +81,8 @@ void Server::start(void) {
 	struct sockaddr_in	addrClient;
 	socklen_t			addrLenClient;
 
+	Client a;
+
 	while (true) {
 		int i = 0;
 
@@ -97,7 +99,9 @@ void Server::start(void) {
 				(*it).fd = sockfdClient;
 				(*it).events = POLLIN;
 				_nbConnections++;
-				std::cout << "Client " << sockfdClient << " connected." << std::endl;
+				//std::cout << "Client " << sockfdClient << " connected." << std::endl;
+				_clients.push_back(a);
+				_clients[i].setFd(fds[i].fd);
 				send((*it).fd, "Welcome\n", 8, 0);
 			}
 		}
@@ -109,38 +113,27 @@ void Server::start(void) {
             if (fds[i].revents & POLLIN) {
                 ssize_t bytesRead = recv(fds[i].fd, buffer, sizeof(buffer), 0);
                 if (bytesRead > 0) {
-					std::cout << "Received from client " << fds[i].fd << ": '" << buffer << "'" << std::endl;
 					buffer[bytesRead] = '\0';
 					if (std::strncmp(buffer, "CAP LS", 5) == 0) {
-						std::cout << "gestion de CAP LS" << std::endl;
-						const char* response = "CAP * LS :\n";
-						send(fds[i].fd, response, strlen(response), 0);
+						send(fds[i].fd, "CAP * LS :\n", 12, 0);
 					} else {
-						std::string test = buffer;
-						std::vector<std::string> res;
-						std::istringstream f(test);
-						std::string s;
-						while (getline(f, s, '\n')) {
-							if (s.rfind("NICK", 0) == 0)
-        						std::cout << "nickname " << s.substr(5) << std::endl;
-        					res.push_back(s);
-    					}
+						_clients[i].setData(buffer);
 					}
 				}
                 else if (bytesRead == 0) {
-                    std::cout << "Client " << _clients[i].getName() << " disconnected." << std::endl;
+                   // std::cout << "Client " << _clients[i].getNickname() << " disconnected." << std::endl;
                     close(fds[i].fd);
                     for (int j = i; j < _nbConnections; ++j)
                         _pollFds[j] = _pollFds[j + 1];
                     --_nbConnections;
-					std::cout << "debug nb client : " << _nbConnections << std::endl;
+					_clients.erase(_clients.begin() + i - 1);
+					//std::cout << "debug nb client : " << _nbConnections << ", size _clients : " << _clients.size() << std::endl;
                 }
                 else {
                     std::cerr << "Error receiving data from client " << fds[i].fd << std::endl;
                 }
 			}
 		}
-
 	}
 }
 

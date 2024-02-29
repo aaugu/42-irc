@@ -5,18 +5,20 @@
 class Client {
     public:
     // Constructor and destructor
-    Client(int fd, std::string name);
+    Client();
     ~Client();
 
     // Class function
-    void setData(int fd, char *data);
+    void setData(char *data);
 
     // Getters and setters
     int getFd();
-    std::string getName();
-    void setName(std::string value);
+    std::string getNickname();
+
+    void setFd(int value);
+    void setNickname(std::string value);
 
     private:
     int _fd;
-    std::string _name;
+    std::string _nickname;
 };

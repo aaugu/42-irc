@@ -44,6 +44,7 @@ class Server
 		void	waitForEvent(void);
 		void    closePollFds(void);
 
+
 		Server(void);
 
 	public :
