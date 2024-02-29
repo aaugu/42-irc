@@ -20,8 +20,8 @@
 #include <cstring>
 #include <unistd.h>
 #include <algorithm>
-#include "../includes/Server.hpp"
-#include "../includes/error_handling.hpp"
+#include "Server.hpp"
+#include "Error_handling.hpp"
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -29,7 +29,7 @@
 
 Server::Server(void) {}
 
-Server::Server(int port) : nbConnections(0)
+Server::Server(int port) : _nbConnections(0)
 {
 	std::cout << "Initializing server..." << std::endl;
 
@@ -91,10 +91,9 @@ void Server::start(void) {
 	struct sockaddr_in	addrClient;
 	socklen_t			addrLenClient;
 
-	while (true) // signal arret du serveur
+	while (true)
 	{
 		int i = 0;
-		// std::cout << "listen !" << std::endl;
 
 		waitForEvent();
 		if (fds[i].revents & POLLIN)
@@ -107,10 +106,10 @@ void Server::start(void) {
 			else
 			{
 				std::vector<pollfd>::iterator it;
-				for (it = fds.begin(); i < nbConnections + 1; it++, i++) { continue; }
+				for (it = fds.begin(); i < _nbConnections + 1; it++, i++) { continue; }
 				(*it).fd = sockfdClient;
 				(*it).events = POLLIN;
-				nbConnections++;
+				_nbConnections++;
 				std::cout << "Client " << sockfdClient << " connected." << std::endl;
 				send((*it).fd, "Welcome\n", 8, 0);
 			}
@@ -119,7 +118,7 @@ void Server::start(void) {
 		char buffer[4096];
 		memset( buffer, 0, sizeof( buffer ) );
 
-		for (int i = 1; i < nbConnections + 1; i++)
+		for (int i = 1; i < _nbConnections + 1; i++)
         {
             if (fds[i].revents & POLLIN)
             {
@@ -129,8 +128,8 @@ void Server::start(void) {
                     buffer[bytesRead] = '\0';
                     if (std::strncmp(buffer, "CAP LS", 5) == 0) {
                         std::cout << "gestion de CAP LS" << std::endl;
-                        const char* response = "CAP * LS :";
-                        send(fds[i].fd, response, sizeof(response), 0);
+                        const char* response = "CAP * LS :\n";
+                        send(fds[i].fd, response, strlen(response), 0);
                     }
                     std::cout << "Received from client " << fds[i].fd << ": '" << buffer << "'" << std::endl;
                 }
@@ -138,10 +137,10 @@ void Server::start(void) {
                 {
                     std::cout << "Client " << fds[i].fd << " disconnected." << std::endl;
                     close(fds[i].fd);
-                    for (int j = i; j < nbConnections; ++j)
+                    for (int j = i; j < _nbConnections; ++j)
                         _pollFds[j] = _pollFds[j + 1];
-                    --nbConnections;
-					std::cout << "debug nb client : " << nbConnections << std::endl;
+                    --_nbConnections;
+					std::cout << "debug nb client : " << _nbConnections << std::endl;
                 }
                 else
                 {
@@ -153,14 +152,6 @@ void Server::start(void) {
 	}
 }
 
-void Server::stop(void) {
-	this->run = 0;
-
-	// std::for_each (_clients.begin(), _clients.end(), closeClient);
-	
-}
-
-
 /* ************************************************************************** */
 /*                              PRIVATE FUNCTIONS                             */
 /* ************************************************************************** */
@@ -170,7 +161,7 @@ void	Server::waitForEvent(void)
 	int	timeout = 0;
 	std::vector<pollfd>	&fds = *_pollFds;
 
-	if ( poll(fds.data(), nbConnections + 1, timeout) == -1 )
+	if ( poll(fds.data(), _nbConnections + 1, timeout) == -1 )
 		throw std::runtime_error(errMessage("Server : ", strerror(errno)));
 }
 
@@ -187,7 +178,7 @@ void    Server::closePollFds(void) {
 	int	sockfd;
 	int i = 0;
 	
-	for (it = fds.begin(); i < nbConnections + 1; it++, i++)
+	for (it = fds.begin(); i < ___WCTYPE_H_ + 1; it++, i++)
 	{
 		sockfd = (*it).fd;
 		if (sockfd > 0)

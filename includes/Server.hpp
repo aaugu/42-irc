@@ -10,26 +10,23 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#pragma once
 
-# include <netinet/in.h>
-# include <vector>
-# include <poll.h>
-# include <sys/socket.h>
+#include <iostream>
+#include <netinet/in.h>
+#include <vector>
+#include <poll.h>
+#include <sys/socket.h>
+#include <string>
 
 
 class Server
 {
 	private :
-		int						nbConnections;
+		int						_nbConnections;
 		int						_sockfd;
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>*	_pollFds;
-
-		// socklen_t			_addrlen;
-
-		int run;
 
 		void	waitForEvent(void);
 		void    closePollFds(void);
@@ -41,11 +38,4 @@ class Server
 		~Server(void);
 
 		void start(void);
-		void stop(void);
-
 };
-
-// void	closeClient(Client* client);
-// void    deleteClient(Client* client);
-
-#endif

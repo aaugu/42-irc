@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/error_handling.hpp"
+#include "Error_handling.hpp"
 
 std::string errMessage(std::string className, char * message)
 {
