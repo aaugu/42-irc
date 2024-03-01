@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/29 23:52:54 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 10:22:48 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@ Server::Server(int port) : nbConnections(0)
 	// Create an AF_INET6 stream socket to receive incoming connections on
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1)
-		throw std::runtime_error(errMessage("Server1 : ", -1, strerror(errno)));
+		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
 
 	// Allow socket descriptor to be reuseable
 	int on = 1;
 	if ( setsockopt(sockfd, SOL_SOCKET,  SO_REUSEADDR, (char *)&on, sizeof(on)) == -1)
-		throw std::runtime_error(errMessage("Server2 : ", -1, strerror(errno)));
+		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
 
 	// Set socket to be nonblocking. All of the sockets for the incoming connections
 	// will also be nonblocking since they will inherit that state from the listening socket
@@ -55,7 +55,7 @@ Server::Server(int port) : nbConnections(0)
 	addr.sin_port = htons(port);
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	if ( bind(sockfd, (const struct sockaddr *)&addr, sizeof(addr)) == -1)
-		throw std::runtime_error(errMessage("Server3 : ", -1, strerror(errno)));
+		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
 
 	std::cout << "Server successfully initialized!" << std::endl;
 }
@@ -96,9 +96,6 @@ void Server::start(void) {
 
 void Server::stop(void) {
 	this->run = 0;
-
-	// std::for_each (_clients.begin(), _clients.end(), closeClient);
-
 }
 
 
@@ -106,12 +103,13 @@ void Server::stop(void) {
 /*                              PRIVATE FUNCTIONS                             */
 /* ************************************************************************** */
 
+// ---------------------- Main function sub functions ----------------------- //
 void	Server::setListenBackLog(void)
 {
 	// Set the listen back log
 	int ls = listen(sockfd, SOMAXCONN);
 	if (ls == -1)
-		throw std::runtime_error(errMessage("Server5 : ", -1, strerror(errno)));
+		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
 
 	pollfd	listenFd;
 	listenFd.fd = sockfd;
@@ -125,7 +123,7 @@ void	Server::waitForEvent(void)
 	int	timeout = 0;
 
 	if ( poll(&pollFds[0], (nfds_t) nbConnections + 1, timeout) == -1 )
-		throw std::runtime_error(errMessage("Server6 : ", -1, strerror(errno)));
+		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
 }
 
 void	Server::acceptNewClient(void)
@@ -147,6 +145,41 @@ void	Server::acceptNewClient(void)
 	}
 }
 
+
+
+void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
+{
+	char buffer[1024] = {0};
+
+	std::vector<pollfd>::iterator it;
+	for (it = pollFds.begin() + 1; it != pollFds.end(); it++)
+	{
+		if ((*it).revents & POLLIN)
+		{
+			size_t readBytes = recv((*it).fd, buffer, 1024, 0);
+			buffer[readBytes] = '\0';
+
+			if ( (int)readBytes == -1 )
+				throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
+			else if (readBytes == 0)
+				return (disconnectClient(it));
+			else
+			{
+				clientInput = static_cast<std::string>(buffer);
+				*sockfdClient = (*it).fd;
+				return ;
+			}
+		}
+	}
+}
+
+void	Server::executeClientInput(std::string clientInput, int sockfdClient)
+{
+	std::cout << "Client " << sockfdClient << ": " << clientInput;
+}
+
+// ---------------------- Utils ----------------------- //
+
 void	Server::addClientToListenPoll(int sockfdClient)
 {
 	pollfd	newClient;
@@ -166,33 +199,6 @@ void	Server::addClientToListenPoll(int sockfdClient)
 	send(sockfdClient, "Welcome\n", 8, 0);
 }
 
-
-void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
-{
-	char buffer[1024] = {0};
-
-	std::vector<pollfd>::iterator it;
-	for (it = pollFds.begin() + 1; it != pollFds.end(); it++)
-	{
-		if ((*it).revents & POLLIN)
-		{
-			size_t readBytes = recv((*it).fd, buffer, 1024, 0);
-			buffer[readBytes] = '\0';
-
-			if ( (int)readBytes == -1 )
-				throw std::runtime_error(errMessage("Server4 : ", -1, strerror(errno)));
-			else if (readBytes == 0)
-				return (disconnectClient(it));
-			else
-			{
-				clientInput = static_cast<std::string>(buffer);
-				*sockfdClient = (*it).fd;
-				return ;
-			}
-		}
-	}
-}
-
 void	Server::disconnectClient(std::vector<pollfd>::iterator client)
 {
 	std::cout << "Client " << (*client).fd << ": disconnected" << std::endl;
@@ -200,15 +206,6 @@ void	Server::disconnectClient(std::vector<pollfd>::iterator client)
 	nbConnections--;
 	pollFds.erase(client);
 }
-
-void	Server::executeClientInput(std::string clientInput, int sockfdClient)
-{
-	std::cout << "Client " << sockfdClient << ": " << clientInput;
-}
-
-/* ************************************************************************** */
-/*                            NON MEMBER FUNCTIONS                            */
-/* ************************************************************************** */
 
 // ---------------------------- Destructor utils ---------------------------- //
 void    Server::closePollFds(void)
