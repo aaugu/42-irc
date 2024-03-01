@@ -99,7 +99,6 @@ void Server::start(void) {
 				(*it).fd = sockfdClient;
 				(*it).events = POLLIN;
 				_nbConnections++;
-				//std::cout << "Client " << sockfdClient << " connected." << std::endl;
 				_clients.push_back(a);
 				_clients[i].setFd(fds[i].fd);
 				send((*it).fd, "Welcome\n", 8, 0);
@@ -117,17 +116,15 @@ void Server::start(void) {
 					if (std::strncmp(buffer, "CAP LS", 5) == 0) {
 						send(fds[i].fd, "CAP * LS :\n", 12, 0);
 					} else {
-						_clients[i].setData(buffer);
+						_clients[i - 1].setData(buffer);
 					}
 				}
                 else if (bytesRead == 0) {
-                   // std::cout << "Client " << _clients[i].getNickname() << " disconnected." << std::endl;
                     close(fds[i].fd);
                     for (int j = i; j < _nbConnections; ++j)
                         _pollFds[j] = _pollFds[j + 1];
                     --_nbConnections;
 					_clients.erase(_clients.begin() + i - 1);
-					//std::cout << "debug nb client : " << _nbConnections << ", size _clients : " << _clients.size() << std::endl;
                 }
                 else {
                     std::cerr << "Error receiving data from client " << fds[i].fd << std::endl;
