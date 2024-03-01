@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:04:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/29 12:21:12 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 13:10:31 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	main(int ac, char ** av)
 		Server	server(atoi(av[1]));
 
 		server.start();
-		// server.stop();
+		server.stop();
 	}
 	catch(const std::exception& e) {
 		std::cerr << RED << "Error: " << e.what() << std::endl;

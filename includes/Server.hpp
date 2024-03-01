@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 10:22:04 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 12:55:11 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,27 +18,30 @@
 # include <poll.h>
 # include <sys/socket.h>
 
-# define MAXCONN (SOMAXCONN + 1)
-
+class Client;
 
 class Server
 {
 	private :
-		int						nbConnections;
-		int						sockfd;
-		struct sockaddr_in		addr;
-		std::vector<pollfd>		pollFds;
+		int						_nbConnections;
+		int						_sockfd;
+		struct sockaddr_in		_addr;
+		std::vector<pollfd>		_pollFds;
+		std::vector<Client> 	_clients;
 		int run;
 
 		// Start() sub functions
 		void	setListenBackLog(void);
 		void	waitForEvent(void);
-		void	acceptNewClient(void);
+		void	addNewClient(void);
 		void	getClientInput(std::string& clientInput, int* sockfdClient);
 		void	executeClientInput(std::string clientInput, int fd);
-		// Utils
-		void	disconnectClient(std::vector<pollfd>::iterator client);
+
+		// Client Utils
+		int		acceptNewClient(void);
 		void	addClientToListenPoll(int sockfdClient);
+		void	disconnectClient(std::vector<pollfd>::iterator pollfd, std::vector<Client>::iterator client);
+
 		// Destructor utils
 		void    closePollFds(void);
 
