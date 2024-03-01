@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 13:19:34 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 13:56:51 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,11 +148,10 @@ void	Server::addNewClient(void)
 
 void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 {
-	char buffer[1024] = {0};
+	char buffer[4096] = {0};
 
 	std::vector<pollfd>::iterator itP = _pollFds.begin() + 1;
 	std::vector<Client>::iterator itC = _clients.begin();
-	
 	for ( ; itP != _pollFds.end() || itC != _clients.end(); itP++, itC++ )
 	{
 		if ((*itP).revents & POLLIN)
@@ -162,13 +161,13 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 			// infos irssi à récup
 
 			if ( (int)readBytes == -1 )
-				throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
+				throw std::runtime_error(errMessage("Server : ", (*itP).fd , strerror(errno)));
 			else if (readBytes == 0)
 				return (disconnectClient(itP, itC));
 			else
 			{
 				buffer[readBytes] = '\0';
-				clientInput = static_cast<std::string>(buffer);
+				clientInput = checkCapFlags(buffer, (*itP).fd);
 				*sockfdClient = (*itP).fd;
 				return ;
 			}
@@ -222,6 +221,21 @@ void	Server::disconnectClient(std::vector<pollfd>::iterator pollfd, std::vector<
 	_clients.erase(client);
 }
 
+// ------------------------------ Input Utils ------------------------------- //
+
+std::string	Server::checkCapFlags(char* buffer, int sockfdClient)
+{
+
+	if ( std::strncmp(buffer, "CAP LS", 5) == 0 ) {
+		const char* response = "CAP * LS :\n";
+		send(sockfdClient, response, strlen(response), 0);
+	}
+	// else
+	// 	return (t(static_cast<std::string>(buffer)));
+		
+	return ( static_cast<std::string>(buffer) );
+}
+
 // ---------------------------- Destructor utils ---------------------------- //
 void    Server::closePollFds(void)
 {
@@ -234,4 +248,31 @@ void    Server::closePollFds(void)
 		if (sockfd > 0)
 			close(sockfd);
 	}
+}
+
+/* ************************************************************************** */
+/*                            NON MEMBER FUNCTIONS                            */
+/* ************************************************************************** */
+
+std::string t(const std::string& input) {
+    std::string result;
+    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+        char c = *it;
+        switch (c) {
+            case '\n':
+                result += "\\n";
+                break;
+            case '\r':
+                result += "\\r";
+                break;
+            case '\t':
+                result += "\\t";
+                break;
+            // Ajoutez d'autres caractères spéciaux si nécessaire
+            default:
+                result += c;
+                break;
+        }
+    }
+    return result;
 }

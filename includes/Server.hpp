@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 12:55:11 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 13:48:26 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ class Server
 		void	addClientToListenPoll(int sockfdClient);
 		void	disconnectClient(std::vector<pollfd>::iterator pollfd, std::vector<Client>::iterator client);
 
+		// Input utils
+		std::string	checkCapFlags(char* buffer, int sockfdClient);
+
 		// Destructor utils
 		void    closePollFds(void);
 
@@ -53,7 +56,8 @@ class Server
 
 		void start(void);
 		void stop(void);
-
 };
+
+std::string t(const std::string& input);
 
 #endif

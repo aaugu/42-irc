@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 12:51:05 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 13:35:37 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,5 @@ class Client
 		void		setFd(int value);
 		void		setNickname(std::string value);
 };
-
-std::string t(const std::string& input);
 
 #endif
