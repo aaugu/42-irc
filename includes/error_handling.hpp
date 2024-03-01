@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 11:49:46 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/29 11:48:02 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 09:57:12 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <sstream>
 
 template < typename T >
-std::string errMessage(std::string className, int value, T message)
+std::string errMessage(T className, int value, T message)
 {
     std::stringstream   ss;
     ss << className;
