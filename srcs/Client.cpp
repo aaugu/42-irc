@@ -6,26 +6,27 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 13:54:03 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 14:14:32 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-#include <string>
 #include <algorithm>
 #include "../includes/Client.hpp"
 
 /* ************************************************************************** */
-/*                           ORTHODOX CANONICAL FORM                          */
+/*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-Client::Client(void) {}
+// Client::Client(void) {}
 
-Client::Client(int sockfd) : _sockfd(sockfd) {}
+Client::Client(int sockfd) : _sockfd(sockfd) {
+    std::cout << "coucou" << std::endl;
+}
 
-// TO DO : Constructeur par copie + operateur de surcharge =
-
-Client::~Client(void) {}
+Client::~Client(void) {
+    std::cout << "bye bye" << std::endl;
+}
 
 /* ************************************************************************** */
 /*                           PUBLIC MEMBER FUNCTION                           */

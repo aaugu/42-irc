@@ -6,31 +6,27 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 13:56:51 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 14:16:34 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <sstream>
-#include <sys/socket.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <cstring>
 #include <unistd.h>
 #include <algorithm>
-#include <poll.h>
-#include <string>
+
 #include "../includes/Server.hpp"
 #include "../includes/errorHandling.hpp"
-#include "../includes/Client.hpp"
 #include "../includes/signal.hpp"
 
 /* ************************************************************************** */
-/*                           ORTHODOX CANONICAL FORM                          */
+/*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-Server::Server(void) {}
+// Server::Server(void) {}
 
 Server::Server(int port) : _nbConnections(0)
 {
@@ -64,10 +60,7 @@ Server::Server(int port) : _nbConnections(0)
 	std::cout << "Server successfully initialized!" << std::endl;
 }
 
-// TO DO : Constructeur par copie + operateur de surcharge =
-
-Server::~Server(void)
-{
+Server::~Server(void) {
 	std::cout << "au revoir" << std::endl;
 }
 
@@ -89,6 +82,8 @@ void Server::start(void) {
 		std::string	clientInput = "";
 
 		getClientInput(clientInput, &sockfdClient);
+		if (_clients.empty() == false)
+			std::cout << _clients.front().getFd() << " coucou\n";
 
 		if (sockfdClient != -1 && clientInput.empty() == false)
 			executeClientInput(clientInput, sockfdClient);
@@ -126,7 +121,7 @@ void	Server::waitForEvent(void)
 	int	timeout = 0;
 
 	if ( poll(&_pollFds[0], (nfds_t) _nbConnections + 1, timeout) == -1 && sig::stopServer == false)
-		throw std::runtime_error(errMessage("Serverbouh : ", -1, strerror(errno)));	
+		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));	
 }
 
 void	Server::addNewClient(void)
@@ -236,7 +231,7 @@ std::string	Server::checkCapFlags(char* buffer, int sockfdClient)
 	return ( static_cast<std::string>(buffer) );
 }
 
-// ---------------------------- Destructor utils ---------------------------- //
+// ---------------------------- Stop signal utils --------------------------- //
 void    Server::closePollFds(void)
 {
 	std::vector<pollfd>::iterator	it;
@@ -250,29 +245,29 @@ void    Server::closePollFds(void)
 	}
 }
 
-/* ************************************************************************** */
-/*                            NON MEMBER FUNCTIONS                            */
-/* ************************************************************************** */
+// /* ************************************************************************** */
+// /*                            NON MEMBER FUNCTIONS                            */
+// /* ************************************************************************** */
 
-std::string t(const std::string& input) {
-    std::string result;
-    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-        char c = *it;
-        switch (c) {
-            case '\n':
-                result += "\\n";
-                break;
-            case '\r':
-                result += "\\r";
-                break;
-            case '\t':
-                result += "\\t";
-                break;
-            // Ajoutez d'autres caractères spéciaux si nécessaire
-            default:
-                result += c;
-                break;
-        }
-    }
-    return result;
-}
+// std::string t(const std::string& input) {
+//     std::string result;
+//     for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+//         char c = *it;
+//         switch (c) {
+//             case '\n':
+//                 result += "\\n";
+//                 break;
+//             case '\r':
+//                 result += "\\r";
+//                 break;
+//             case '\t':
+//                 result += "\\t";
+//                 break;
+//             // Ajoutez d'autres caractères spéciaux si nécessaire
+//             default:
+//                 result += c;
+//                 break;
+//         }
+//     }
+//     return result;
+// }

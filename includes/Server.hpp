@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 13:48:26 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 14:08:11 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 # include <vector>
 # include <poll.h>
 # include <sys/socket.h>
+# include <string>
+# include <poll.h>
+# include "../includes/Client.hpp"
 
 class Client;
 
@@ -58,6 +61,6 @@ class Server
 		void stop(void);
 };
 
-std::string t(const std::string& input);
+// std::string t(const std::string& input);
 
 #endif
