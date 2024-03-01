@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 14:16:34 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/01 15:18:20 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ Server::~Server(void) {
 /*                              PUBLIC FUNCTIONS                              */
 /* ************************************************************************** */
 
-void Server::start(void) {
-
+void Server::start(void)
+{
 	setListenBackLog();
 
 	while (sig::stopServer == false)
@@ -82,8 +82,6 @@ void Server::start(void) {
 		std::string	clientInput = "";
 
 		getClientInput(clientInput, &sockfdClient);
-		if (_clients.empty() == false)
-			std::cout << _clients.front().getFd() << " coucou\n";
 
 		if (sockfdClient != -1 && clientInput.empty() == false)
 			executeClientInput(clientInput, sockfdClient);
@@ -130,6 +128,7 @@ void	Server::addNewClient(void)
 
 	sockfdClient = acceptNewClient();
 	addClientToListenPoll(sockfdClient);
+	// probablement une fonction qui recup les infos
 	_clients.push_back(Client(sockfdClient));
 
 	std::cout	<< "New connection : "
@@ -162,7 +161,7 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 			else
 			{
 				buffer[readBytes] = '\0';
-				clientInput = checkCapFlags(buffer, (*itP).fd);
+				clientInput = static_cast<std::string>(buffer); // checkCapFlags(buffer, (*itP).fd);
 				*sockfdClient = (*itP).fd;
 				return ;
 			}
@@ -194,7 +193,10 @@ int		Server::acceptNewClient(void)
 void	Server::addClientToListenPoll(int sockfdClient)
 {
 	if (_nbConnections >= SOMAXCONN)
-			std::runtime_error(errMessage("Server : ", -1, "cannot accept more client"));
+	{
+		std::cerr << errMessage("Server : ", -1, "cannot accept more client") << std::endl;
+		return ;
+	}
 
 	pollfd	client;
 
@@ -218,18 +220,18 @@ void	Server::disconnectClient(std::vector<pollfd>::iterator pollfd, std::vector<
 
 // ------------------------------ Input Utils ------------------------------- //
 
-std::string	Server::checkCapFlags(char* buffer, int sockfdClient)
-{
+// std::string	Server::checkCapFlags(char* buffer, int sockfdClient)
+// {
 
-	if ( std::strncmp(buffer, "CAP LS", 5) == 0 ) {
-		const char* response = "CAP * LS :\n";
-		send(sockfdClient, response, strlen(response), 0);
-	}
-	// else
-	// 	return (t(static_cast<std::string>(buffer)));
+// 	if ( std::strncmp(buffer, "CAP LS", 5) == 0 ) {
+// 		const char* response = "CAP * LS :\n";
+// 		send(sockfdClient, response, strlen(response), 0);
+// 	}
+// 	// else
+// 	// 	return (t(static_cast<std::string>(buffer)));
 		
-	return ( static_cast<std::string>(buffer) );
-}
+// 	return ( static_cast<std::string>(buffer) );
+// }
 
 // ---------------------------- Stop signal utils --------------------------- //
 void    Server::closePollFds(void)
@@ -241,7 +243,10 @@ void    Server::closePollFds(void)
 	{
 		sockfd = (*it).fd;
 		if (sockfd > 0)
-			close(sockfd);
+		{
+			if (close(sockfd) == -1)
+				throw std::runtime_error(errMessage("Client : ", sockfd, strerror(errno)));
+		}
 	}
 }
 
