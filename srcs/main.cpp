@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:04:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/29 13:38:15 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/01 13:10:31 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-#include "Server.hpp"
+#include <stdlib.h>
+#include "../includes/Server.hpp"
 
 # define RED  "\e[31m"
 # define CYAN "\e[96m"
@@ -19,7 +20,7 @@
 
 int	main(int ac, char ** av)
 {
-	if (ac != 2)
+	if (ac != 2) // change to 3 when password is implemented
 	{
 		std::cout << CYAN "Usage: ./ircserv <port> <password>" END << std::endl;
 		return (1);
@@ -27,7 +28,7 @@ int	main(int ac, char ** av)
 
 	try {
 		Server	server(atoi(av[1]));
-		
+
 		server.start();
 		server.stop();
 	}
