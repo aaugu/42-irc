@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 15:18:20 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/04 11:40:20 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,14 @@ void Server::start(void)
 		getClientInput(clientInput, &sockfdClient);
 
 		if (sockfdClient != -1 && clientInput.empty() == false)
-			executeClientInput(clientInput, sockfdClient);
+		{
+			manageClientInput(clientInput, sockfdClient);
+		}
 	}
 }
 
-void Server::stop(void) {
+void Server::stop(void)
+{
 	this->run = 0;
 	closePollFds();
 	std::cerr << "!!!! Serveur STOP !!!!" << std::endl;
@@ -169,9 +172,15 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 	}
 }
 
-void	Server::executeClientInput(std::string clientInput, int sockfdClient)
-{
-	std::cout << "Client " << sockfdClient << ": " << clientInput;
+void	Server::manageClientInput(std::string input, int sockfdClient)
+{	
+	// get sender details
+	// parse command and parameters
+	// check validity of command
+	// check context
+	// check if client is authorized to perform
+	// perform command
+	std::cout << "Client " << sockfdClient << ": " << input;
 }
 
 // ------------------------------ Client Utils ------------------------------ //

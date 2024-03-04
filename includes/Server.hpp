@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 14:08:11 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/04 11:37:41 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class Server
 		void	waitForEvent(void);
 		void	addNewClient(void);
 		void	getClientInput(std::string& clientInput, int* sockfdClient);
-		void	executeClientInput(std::string clientInput, int fd);
+		void	manageClientInput(std::string input, int sockfdClient);
 
 		// Client Utils
 		int		acceptNewClient(void);
