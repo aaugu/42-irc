@@ -1,36 +1,86 @@
-#include "Client.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
+/*   Updated: 2024/03/01 14:14:32 by aaugu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/Client.hpp"
+
+// /* ************************************************************************** */
+// /*                            NON MEMBER FUNCTIONS                            */
+// /* ************************************************************************** */
+
+// std::string t(const std::string& input) {
+//     std::string result;
+//     for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+//         char c = *it;
+//         switch (c) {
+//             case '\n':
+//                 result += "\\n";
+//                 break;
+//             case '\r':
+//                 result += "\\r";
+//                 break;
+//             case '\t':
+//                 result += "\\t";
+//                 break;
+//             // Ajoutez d'autres caractères spéciaux si nécessaire
+//             default:
+//                 result += c;
+//                 break;
+//         }
+//     }
+//     return result;
+// }
 
 std::vector<std::string> split(std::string value) {
     std::istringstream iss(value);
     std::vector<std::string> mots;
     std::string mot;
 
-    while (iss >> mot) {
+    while (iss >> mot)
         mots.push_back(mot);
-    }
     return mots;
 }
 
-// Constructor and destructor
-Client::Client() {
-    _nickname = "G'raha Tia";
-    std::cout << "Construction client par defaut" << std::endl;
+/* ************************************************************************** */
+/*                          CONSTRUCTORS & DESTRUCTOR                         */
+/* ************************************************************************** */
+
+// Client::Client(void) {}
+
+Client::Client(int sockfd) : _sockfd(sockfd) {
+    std::cout << "coucou" << std::endl;
 }
 
-Client::~Client() {}
+Client::~Client(void) {
+    std::cout << "bye bye" << std::endl;
+}
+
+/* ************************************************************************** */
+/*                           PUBLIC MEMBER FUNCTION                           */
+/* ************************************************************************** */
 
 // Class function
-void Client::setData(char *buffer) {
-    std::string value = buffer;
-    std::vector<std::string> info = split(value);
-    std::cout << _nickname << std::endl;
-    if (_nickname == "G'raha Tia")
-        _nickname = info[1];
+void Client::setData(std::string buffer) {
+    std::vector<std::string> info = split(buffer);
+    if (info[0] == "NICK") {
+            _nickname = info[1];
+    }
 }
 
-// Getters and setters
+/* ************************************************************************** */
+/*                                 ACCESSORS                                  */
+/* ************************************************************************** */
+
 int Client::getFd() {
-    return _fd;
+    return _sockfd;
 }
 
 std::string Client::getNickname() {
@@ -38,7 +88,7 @@ std::string Client::getNickname() {
 }
 
 void Client::setFd(int value) {
-    _fd = value;
+    _sockfd = value;
 }
 
 void Client::setNickname(std::string value) {

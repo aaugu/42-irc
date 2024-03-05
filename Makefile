@@ -10,7 +10,7 @@ INCLUDE	=	-I includes
 RM		=	rm -rf
 
 SRC_D 	=	srcs/
-SRC		=	Main Server Client Error_handling
+SRC		=	main Server Client signal
 SRCS	=	$(addprefix  $(SRC_D), $(addsuffix .cpp, $(SRC)))
 
 OBJ_D 	=	objs/

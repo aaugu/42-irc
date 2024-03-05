@@ -1,24 +1,47 @@
-#pragma once
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Client.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
+/*   Updated: 2024/03/01 14:08:31 by aaugu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include "Server.hpp"
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
 
-class Client {
-    public:
-    // Constructor and destructor
-    Client();
-    ~Client();
+#include "../includes/Server.hpp"
 
-    // Class function
-    void setData(char *data);
+# include <iostream>
+# include <string>
+# include <sstream>
 
-    // Getters and setters
-    int getFd();
-    std::string getNickname();
+# define DEFAULTNICK "G'raha Tia"
 
-    void setFd(int value);
-    void setNickname(std::string value);
-
+class Client
+{
     private:
-    int _fd;
-    std::string _nickname;
+		int			_sockfd;
+		std::string	_nickname;
+
+		// Client(void);
+
+    public:
+   		// Constructor and destructor
+		Client(int sockfd);
+		~Client(void);
+
+		// Class function
+		void setData(std::string data);
+
+		// Accessors
+		int			getFd(void);
+		std::string getNickname(void);
+		void		setFd(int value);
+		void		setNickname(std::string value);
 };
+
+#endif

@@ -1,20 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_handling.cpp                                 :+:      :+:    :+:   */
+/*   signal.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/22 11:50:29 by aaugu             #+#    #+#             */
-/*   Updated: 2024/02/22 12:45:00 by aaugu            ###   ########.fr       */
+/*   Created: 2024/03/01 12:59:30 by aaugu             #+#    #+#             */
+/*   Updated: 2024/03/01 13:03:39 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Error_handling.hpp"
+#include <iostream>
+#include "../includes/signal.hpp"
 
-std::string errMessage(std::string className, char * message)
+bool sig::stopServer = false;
+
+void sig::signalHandler( int signum )
 {
-    std::stringstream   ss;
-    ss << className << message;
-    return (ss.str());
+	std::cout << "[Sig Handler] Caught signal " << signum << std::endl;
+	if ( signum == SIGINT )
+	{
+		sig::stopServer = true;
+	}
 }
