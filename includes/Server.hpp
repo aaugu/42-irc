@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/04 11:37:41 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/07 13:53:33 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,33 +31,35 @@ class Server
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>		_pollFds;
 		std::vector<Client> 	_clients;
-		int run;
+		// int run;
 
-		// Start() sub functions
+		// run() sub functions
 		void	setListenBackLog(void);
 		void	waitForEvent(void);
-		void	addNewClient(void);
-		void	getClientInput(std::string& clientInput, int* sockfdClient);
-		void	manageClientInput(std::string input, int sockfdClient);
+		void	createClientConnection(void);
+		void	handleClientInput(std::vector<pollfd>::iterator clientPollFd);
 
 		// Client Utils
 		int		acceptNewClient(void);
 		void	addClientToListenPoll(int sockfdClient);
-		void	disconnectClient(std::vector<pollfd>::iterator pollfd, std::vector<Client>::iterator client);
+		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
 
 		// Input utils
-		std::string	checkCapFlags(char* buffer, int sockfdClient);
+		// std::string	checkCapFlags(char* buffer, int sockfdClient);
 
 		// Destructor utils
 		void    closePollFds(void);
 
-		Server(void);
+		// Accessors
+		std::vector<Client>::iterator	getClientByFd(int sockfdClient);
+
+		// Server(void);
 
 	public :
 		Server(int port);
 		~Server(void);
 
-		void start(void);
+		void run(void);
 		void stop(void);
 };
 

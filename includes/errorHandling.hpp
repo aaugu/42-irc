@@ -16,15 +16,26 @@
 # include <string>
 # include <sstream>
 
+# define RED  "\e[31m"
+# define END  "\e[0m"
+
 template < typename T >
 std::string errMessage(std::string className, int value, T message)
 {
     std::stringstream   ss;
-    ss << className;
+    ss << className << " ";
 	if (value != -1)
-		ss << value << " ";
+		ss << value << " : ";
+	else
+		ss << ": ";
 	ss << message;
     return (ss.str());
+}
+
+template < typename T >
+void	printErrMessage(T errMessage)
+{
+	std::cerr << RED << errMessage << END << std::endl;
 }
 
 #endif
