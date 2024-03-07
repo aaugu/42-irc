@@ -16,28 +16,28 @@
 // /*                            NON MEMBER FUNCTIONS                            */
 // /* ************************************************************************** */
 
-// std::string t(const std::string& input) {
-//     std::string result;
-//     for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-//         char c = *it;
-//         switch (c) {
-//             case '\n':
-//                 result += "\\n";
-//                 break;
-//             case '\r':
-//                 result += "\\r";
-//                 break;
-//             case '\t':
-//                 result += "\\t";
-//                 break;
-//             // Ajoutez d'autres caractères spéciaux si nécessaire
-//             default:
-//                 result += c;
-//                 break;
-//         }
-//     }
-//     return result;
-// }
+std::string t(const std::string& input) {
+    std::string result;
+    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+        char c = *it;
+        switch (c) {
+            case '\n':
+                result += "\\n";
+                break;
+            case '\r':
+                result += "\\r";
+                break;
+            case '\t':
+                result += "\\t";
+                break;
+            // Ajoutez d'autres caractères spéciaux si nécessaire
+            default:
+                result += c;
+                break;
+        }
+    }
+    return result;
+}
 
 std::vector<std::string> split(std::string value) {
     std::istringstream iss(value);
@@ -55,7 +55,9 @@ std::vector<std::string> split(std::string value) {
 
 // Client::Client(void) {}
 
-Client::Client(int sockfd) : _sockfd(sockfd) {
+Client::Client(int sockfd) {
+    _sockfd = sockfd;
+    _nickname = "G'raha Tia";
     std::cout << "coucou" << std::endl;
 }
 
@@ -68,10 +70,14 @@ Client::~Client(void) {
 /* ************************************************************************** */
 
 // Class function
-void Client::setData(std::string buffer) {
+void Client::setData(Server *s, std::string buffer) {
+    (void)s;
+
     std::vector<std::string> info = split(buffer);
     if (info[0] == "NICK") {
-            _nickname = info[1];
+            std::cout << "DEBUG 1 =========> " << info[1] << std::endl;
+            this->_nickname = info[1];
+            std::cout << "DEBUG 2 =========> " << _nickname << std::endl;
     }
 }
 

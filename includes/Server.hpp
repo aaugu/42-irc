@@ -18,7 +18,18 @@
 # include <poll.h>
 # include <sys/socket.h>
 # include <string>
-# include <poll.h>
+# include <iostream>
+# include <list>
+# include <sstream>
+# include <arpa/inet.h>
+# include <fcntl.h>
+# include <err.h>
+# include <cstring>
+# include <unistd.h>
+# include <algorithm>
+# include <fcntl.h>
+# include <errno.h>
+
 # include "../includes/Client.hpp"
 
 class Client;
@@ -59,6 +70,8 @@ class Server
 
 		void start(void);
 		void stop(void);
+
+		void printNickname();
 };
 
 // std::string t(const std::string& input);

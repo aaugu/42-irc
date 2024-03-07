@@ -21,6 +21,8 @@
 
 # define DEFAULTNICK "G'raha Tia"
 
+class Server;
+
 class Client
 {
     private:
@@ -35,7 +37,7 @@ class Client
 		~Client(void);
 
 		// Class function
-		void setData(std::string data);
+		void setData(Server *s, std::string data);
 
 		// Accessors
 		int			getFd(void);

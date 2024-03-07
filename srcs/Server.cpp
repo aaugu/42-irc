@@ -14,48 +14,38 @@
 #include "../includes/errorHandling.hpp"
 #include "../includes/signal.hpp"
 
-#include <iostream>
-#include <netinet/in.h>
-#include <vector>
-#include <poll.h>
-#include <sys/socket.h>
-#include <string>
-#include <list>
-#include <sstream>
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <err.h>
-#include <cstring>
-#include <unistd.h>
-#include <algorithm>
-#include <fcntl.h>
-#include <errno.h>
-
 // /* ************************************************************************** */
 // /*                            NON MEMBER FUNCTIONS                            */
 // /* ************************************************************************** */
 
-std::string t(const std::string& input) {
-    std::string result;
-    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-        char c = *it;
-        switch (c) {
-            case '\n':
-                result += "\\n";
-                break;
-            case '\r':
-                result += "\\r";
-                break;
-            case '\t':
-                result += "\\t";
-                break;
-            // Ajoutez d'autres caractères spéciaux si nécessaire
-            default:
-                result += c;
-                break;
-        }
-    }
-    return result;
+// std::string t(const std::string& input) {
+//     std::string result;
+//     for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+//         char c = *it;
+//         switch (c) {
+//             case '\n':
+//                 result += "\\n";
+//                 break;
+//             case '\r':
+//                 result += "\\r";
+//                 break;
+//             case '\t':
+//                 result += "\\t";
+//                 break;
+//             // Ajoutez d'autres caractères spéciaux si nécessaire
+//             default:
+//                 result += c;
+//                 break;
+//         }
+//     }
+//     return result;
+// }
+
+void Server::printNickname() {
+	std::vector<Client>::iterator it;
+	for (it = _clients.begin(); it != _clients.end(); ++it) {
+		std::cout << "--->" << it->getNickname() << "<---" << it->getFd() << " <---- "<< std::endl;
+	}
 }
 
 /* ************************************************************************** */
@@ -166,6 +156,8 @@ void	Server::addNewClient(void)
 	addClientToListenPoll(sockfdClient);
 	// probablement une fonction qui recup les infos
 	_clients.push_back(Client(sockfdClient));
+	std::cout << "test ======> " << _clients.back().getNickname() << std::endl;
+	std::cout << "nb client :" << _clients.size() << std::endl;
 
 	std::cout	<< "New connection : "
 				<< "[SOCKET_FD : "	<< sockfdClient
@@ -206,9 +198,8 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 void	Server::executeClientInput(std::string clientInput, int sockfdClient)
 {
 	std::cout << "Client " << sockfdClient << ": " << clientInput;
-	_clients[sockfdClient].setData(clientInput);
-	_clients[sockfdClient].setFd(sockfdClient);
-	std::cout << _clients[sockfdClient].getNickname() << ", " << _clients[sockfdClient].getFd() << " <=================" << std::endl;
+	_clients[sockfdClient - 4].setData(this, clientInput);
+	printNickname();
 }
 
 // ------------------------------ Client Utils ------------------------------ //
