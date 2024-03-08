@@ -6,21 +6,30 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/08 11:10:40 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/08 14:50:51 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <sstream>
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <unistd.h>
-#include <algorithm>
+# include <iostream>
+# include <sys/socket.h>
+# include <fcntl.h>
+# include <unistd.h>
 
-#include "../includes/Server.hpp"
-#include "../includes/errorHandling.hpp"
-#include "../includes/signal.hpp"
+# include "../includes/Server.hpp"
+# include "../includes/errorHandling.hpp"
+# include "../includes/signal.hpp"
+# include "../includes/Client.hpp"
+
+/* ************************************************************************** */
+/*                                     DEBUG                                  */
+/* ************************************************************************** */
+
+void Server::printNickname() {
+	std::vector<Client>::iterator it;
+	for (it = _clients.begin(); it != _clients.end(); ++it) {
+		std::cout << "--->" << it->getNickname() << "<---" << it->getFd() << " <---- "<< std::endl;
+	}
+}
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -155,9 +164,17 @@ void	Server::createClientConnection(void)
 	if (sockfdClient == -1)
 		return (printErrMessage(errMessage("Client", sockfdClient, strerror(errno))));
 
+	if (_nbConnections + 1 > MAXCLIENT) {
+		std::cerr << errMessage("Server : ", -1, "cannot accept more client") << std::endl;
+		send(sockfdClient, "ERROR : le nombre maximum de client a ete atteint sur ce serveur\n", 65, 0);
+		close(sockfdClient);
+		sockfdClient = -1;
+		return;
+	}
+
 	addClientToListenPoll(sockfdClient);
-	// probablement une fonction qui recup les infos
 	_clients.push_back(Client(sockfdClient));
+	std::cout << "nb client :" << _clients.size() << std::endl;
 
 	std::cout	<< "New connection : "
 				<< "[SOCKET_FD : "	<< sockfdClient
@@ -200,6 +217,12 @@ void	Server::handleClientInput(std::vector<pollfd>::iterator clientPollFd)
 // 	std::cout << "Client " << sockfdClient << ": " << input;
 // }
 
+void	Server::executeClientInput(std::string clientInput, int sockfdClient)
+{
+	_clients[sockfdClient - 4].setData(clientInput);
+	std::cout << "Client " << sockfdClient << ": " << clientInput;
+}
+
 // ------------------------------ Client Utils ------------------------------ //
 
 int		Server::acceptNewClient(void)
@@ -216,9 +239,6 @@ int		Server::acceptNewClient(void)
 
 void	Server::addClientToListenPoll(int sockfdClient)
 {
-	if (_nbConnections >= SOMAXCONN)
-		return (printErrMessage(errMessage("Server8", -1, "cannot accept more client")));
-
 	pollfd	client;
 
 	client.fd = sockfdClient;
@@ -247,21 +267,6 @@ void	Server::disconnectClient(std::vector<pollfd>::iterator pollfd)
 	_clients.erase(itC);
 	std::cout << "ici\n";
 }
-
-// ------------------------------ Input Utils ------------------------------- //
-
-// std::string	Server::checkCapFlags(char* buffer, int sockfdClient)
-// {
-
-// 	if ( std::strncmp(buffer, "CAP LS", 5) == 0 ) {
-// 		const char* response = "CAP * LS :\n";
-// 		send(sockfdClient, response, strlen(response), 0);
-// 	}
-// 	// else
-// 	// 	return (t(static_cast<std::string>(buffer)));
-		
-// 	return ( static_cast<std::string>(buffer) );
-// }
 
 // ---------------------------- Stop signal utils --------------------------- //
 void    Server::closePollFds(void)
@@ -320,4 +325,4 @@ std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 //         }
 //     }
 //     return result;
-// }
+// 
