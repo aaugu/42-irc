@@ -10,12 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <vector>
 # include <iostream>
 # include <sys/socket.h>
 # include <fcntl.h>
-# include <poll.h>
-# include <arpa/inet.h>
 # include <unistd.h>
 
 # include "../includes/Server.hpp"
@@ -250,3 +247,30 @@ void    Server::closePollFds(void)
 		}
 	}
 }
+
+// /* ************************************************************************** */
+// /*                            NON MEMBER FUNCTIONS                            */
+// /* ************************************************************************** */
+
+// std::string t(const std::string& input) {
+//     std::string result;
+//     for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+//         char c = *it;
+//         switch (c) {
+//             case '\n':
+//                 result += "\\n";
+//                 break;
+//             case '\r':
+//                 result += "\\r";
+//                 break;
+//             case '\t':
+//                 result += "\\t";
+//                 break;
+//             // Ajoutez d'autres caractères spéciaux si nécessaire
+//             default:
+//                 result += c;
+//                 break;
+//         }
+//     }
+//     return result;
+// 

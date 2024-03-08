@@ -16,6 +16,7 @@
 # include <vector>
 # include <poll.h>
 # include <arpa/inet.h>
+# include <string>
 
 # define MAXCLIENT 5
 

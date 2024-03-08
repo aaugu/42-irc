@@ -10,15 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include <iostream>
-// #include <algorithm>
-
 # include <iostream>
-# include <vector>
 # include <sstream>
-
 # include "../includes/Client.hpp"
-
 
 std::vector<std::string> split(std::string value) {
     std::istringstream iss(value);
