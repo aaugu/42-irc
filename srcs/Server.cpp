@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/08 11:30:55 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/08 12:19:40 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,7 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 		{
 			std::string	line;
 			size_t readBytes = get_line((*itP).fd, line);
+			clientInput = line;
 			
 			if ( (int)readBytes == -1 )
 				throw std::runtime_error(errMessage("Server : ", (*itP).fd , strerror(errno)));
@@ -197,18 +198,19 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 				return (disconnectClient(itP, itC));
 			else
 			{
-				// if (clientInput == "JOIN :\r\n")
-				// {
-				// const char* response = ":c2r9s3.42lausanne.ch 451 test\n";
-				// send((*itP).fd, response, strlen(response), 0);
-				// std::cerr << "SEND: " << t(response) << std::endl;
-				// }
-				// if (clientInput == "NICK lvogt\r\n")
-				// {
-				// const char* response = ":c2r9s3.42lausanne.ch 001 lvogt :Welcome to the Internet Relay Network lvogt!lvogt@127.0.0.1\n";
-				// send((*itP).fd, response, strlen(response), 0);
-				// std::cerr << "SEND: " << t(response) << std::endl;
-				// }
+				if (clientInput == "JOIN :\r\n")
+				{
+					const char* response = ":c2r9s3.42lausanne.ch 451 test\n";
+					send((*itP).fd, response, strlen(response), 0);
+					std::cerr << "SEND: " << t(response) << std::endl;
+				}
+				if (clientInput == "NICK lvogt\r\n")
+				{
+					const char* response = ":c2r9s3.42lausanne.ch 001 lvogt :Welcome to the Internet Relay Network lvogt!lvogt@127.0.0.1\n";
+					send((*itP).fd, response, strlen(response), 0);
+					std::cerr << "SEND: " << t(response) << std::endl;
+				}
+				*sockfdClient = (*itP).fd;
 				return ;
 			}
 		}
