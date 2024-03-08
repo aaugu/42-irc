@@ -13,10 +13,6 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-# include <string>
-
-# include "./Server.hpp"
-
 class Client
 {
     private:

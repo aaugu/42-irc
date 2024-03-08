@@ -10,9 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <algorithm>
-#include "../includes/Client.hpp"
+// #include <iostream>
+// #include <algorithm>
+
+# include <iostream>
+# include <vector>
+# include <sstream>
+
+# include "../includes/Client.hpp"
 
 
 std::vector<std::string> split(std::string value) {
@@ -47,7 +52,6 @@ Client::~Client(void) {
 void Client::setData(std::string buffer) {
     std::vector<std::string> info = split(buffer);
     if (info[0] == "NICK") {
-        std::cout << "test ----> " << info[1] << std::endl;
         _nickname = info[1];
     }
 }

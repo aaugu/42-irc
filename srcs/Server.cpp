@@ -10,17 +10,18 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <sstream>
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <unistd.h>
-#include <algorithm>
+# include <vector>
+# include <iostream>
+# include <sys/socket.h>
+# include <fcntl.h>
+# include <poll.h>
+# include <arpa/inet.h>
+# include <unistd.h>
 
-#include "../includes/Server.hpp"
-#include "../includes/errorHandling.hpp"
-#include "../includes/signal.hpp"
+# include "../includes/Server.hpp"
+# include "../includes/errorHandling.hpp"
+# include "../includes/signal.hpp"
+# include "../includes/Client.hpp"
 
 /* ************************************************************************** */
 /*                                     DEBUG                                  */
@@ -232,21 +233,6 @@ void	Server::disconnectClient(std::vector<pollfd>::iterator pollfd, std::vector<
 	_pollFds.erase(pollfd);
 	_clients.erase(client);
 }
-
-// ------------------------------ Input Utils ------------------------------- //
-
-// std::string	Server::checkCapFlags(char* buffer, int sockfdClient)
-// {
-
-// 	if ( std::strncmp(buffer, "CAP LS", 5) == 0 ) {
-// 		const char* response = "CAP * LS :\n";
-// 		send(sockfdClient, response, strlen(response), 0);
-// 	}
-// 	// else
-// 	// 	return (t(static_cast<std::string>(buffer)));
-		
-// 	return ( static_cast<std::string>(buffer) );
-// }
 
 // ---------------------------- Stop signal utils --------------------------- //
 void    Server::closePollFds(void)
