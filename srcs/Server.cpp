@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/07 14:32:43 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/08 11:10:40 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,10 @@ Server::Server(int port) : _nbConnections(0)
 
 	// Set socket to be nonblocking. All of the sockets for the incoming connections
 	// will also be nonblocking since they will inherit that state from the listening socket
-	if ( fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1 ) {
-		close(_sockfd);
-		throw std::runtime_error(errMessage("Server3", -1, strerror(errno)));
-	}
+	// if ( fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1 ) {
+	// 	close(_sockfd);
+	// 	throw std::runtime_error(errMessage("Server3", -1, strerror(errno)));
+	// }
 
 	// Bind the socket
 	_addr.sin_family = AF_INET;
@@ -83,31 +83,28 @@ void Server::run(void)
 	{
 		waitForEvent();
 
-		// if ( _pollFds.front().revents & POLLIN )
-		// 	createClientConnection();
+		if ( _pollFds.front().revents & POLLIN ) // if the data is available to read on server side
+			createClientConnection();
 
-		std::vector<pollfd>::iterator itP = _pollFds.begin();
-		for ( ; itP != _pollFds.end(); itP++ )
+		std::vector<pollfd>::iterator itP = _pollFds.begin() + 1;
+		for ( ; itP != _pollFds.end(); itP++ ) // client side
 		{
 			if ( itP->revents & POLLIN ) // if the data is available to read on the fd/socket
 			{
-				if ( itP->fd == _sockfd )	// server side
-				{
-					createClientConnection();
-				}
-				else						// client side
 					handleClientInput(itP);
 			}
-			else if ( itP->revents & POLLOUT ) // if the data is available to write on the fd/socket
-			{
-				// TO DO
+			// else if ( itP->revents & POLLOUT ) // if the data is available to write on the fd/socket
+			// {
+			// 	// TO DO
+			// 	disconnectClient(itP);
 
-			}
-			else if ( itP->revents & POLLERR ) // if an error occurred on the fd/socket
-			{
-				// TO DO
+			// }
+			// else if ( itP->revents & POLLERR ) // if an error occurred on the fd/socket
+			// {
+			// 	// TO DO
+			// 	disconnectClient(itP);
 
-			}
+			// }
 		}
 		
 
@@ -173,7 +170,7 @@ void	Server::createClientConnection(void)
 
 void	Server::handleClientInput(std::vector<pollfd>::iterator clientPollFd)
 {
-	char	buffer[4096];
+	char	buffer[4096] = {0};
 	size_t readBytes = recv(clientPollFd->fd, buffer, 1024, 0);
 
 	// infos irssi à récup
@@ -181,10 +178,7 @@ void	Server::handleClientInput(std::vector<pollfd>::iterator clientPollFd)
 	if ( (int)readBytes == -1 )
 		throw std::runtime_error(errMessage("Server7", clientPollFd->fd, strerror(errno)));
 	else if (readBytes == 0)
-	{
-		
 		return (disconnectClient(clientPollFd));
-	}
 	else
 	{
 		buffer[readBytes] = '\0';
