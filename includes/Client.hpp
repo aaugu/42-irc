@@ -13,15 +13,9 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "../includes/Server.hpp"
-
-# include <iostream>
 # include <string>
-# include <sstream>
 
-# define DEFAULTNICK "G'raha Tia"
-
-class Server;
+# include "./Server.hpp"
 
 class Client
 {
@@ -37,7 +31,7 @@ class Client
 		~Client(void);
 
 		// Class function
-		void setData(Server *s, std::string data);
+		void setData(std::string data);
 
 		// Accessors
 		int			getFd(void);

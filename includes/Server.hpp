@@ -31,6 +31,7 @@
 # include <errno.h>
 
 # include "../includes/Client.hpp"
+
 # define MAXCLIENT 5
 
 class Client;
@@ -69,9 +70,10 @@ class Server
 		Server(int port);
 		~Server(void);
 
-		void	start(void);
-		void	stop(void);
+		void start(void);
+		void stop(void);
 
+		// DEBUG
 		void printNickname();
 };
 

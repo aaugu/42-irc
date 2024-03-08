@@ -10,43 +10,28 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
+#include <sstream>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <algorithm>
+
 #include "../includes/Server.hpp"
 #include "../includes/errorHandling.hpp"
 #include "../includes/signal.hpp"
 
-// /* ************************************************************************** */
-// /*                            NON MEMBER FUNCTIONS                            */
-// /* ************************************************************************** */
+/* ************************************************************************** */
+/*                                     DEBUG                                  */
+/* ************************************************************************** */
 
-// std::string t(const std::string& input) {
-//     std::string result;
-//     for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-//         char c = *it;
-//         switch (c) {
-//             case '\n':
-//                 result += "\\n";
-//                 break;
-//             case '\r':
-//                 result += "\\r";
-//                 break;
-//             case '\t':
-//                 result += "\\t";
-//                 break;
-//             // Ajoutez d'autres caractères spéciaux si nécessaire
-//             default:
-//                 result += c;
-//                 break;
-//         }
-//     }
-//     return result;
-// }
-
-// void Server::printNickname() {
-// 	std::vector<Client>::iterator it;
-// 	for (it = _clients.begin(); it != _clients.end(); ++it) {
-// 		std::cout << "--->" << it->getNickname() << "<---" << it->getFd() << " <---- "<< std::endl;
-// 	}
-// }
+void Server::printNickname() {
+	std::vector<Client>::iterator it;
+	for (it = _clients.begin(); it != _clients.end(); ++it) {
+		std::cout << "--->" << it->getNickname() << "<---" << it->getFd() << " <---- "<< std::endl;
+	}
+}
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -101,17 +86,16 @@ void Server::start(void)
 	while (sig::stopServer == false)
 	{
 		waitForEvent();
-		if (_pollFds.front().revents & POLLIN) {
+		if (_pollFds.front().revents & POLLIN)
 			addNewClient();
-			int sockfdClient = -1;
-			std::string	clientInput = "";
+		
+		int			sockfdClient = -1;
+		std::string	clientInput = "";
 
-			getClientInput(clientInput, &sockfdClient);
+		getClientInput(clientInput, &sockfdClient);
 
-			if (sockfdClient != -1 && clientInput.empty() == false) {
-				executeClientInput(clientInput, sockfdClient);
-			}
-		}
+		if (sockfdClient != -1 && clientInput.empty() == false)
+			executeClientInput(clientInput, sockfdClient);
 	}
 }
 
@@ -121,6 +105,7 @@ void Server::stop(void) {
 	std::cerr << "!!!! Serveur STOP !!!!" << std::endl;
 }
 
+
 /* ************************************************************************** */
 /*                              PRIVATE FUNCTIONS                             */
 /* ************************************************************************** */
@@ -129,7 +114,7 @@ void Server::stop(void) {
 
 void	Server::setListenBackLog(void)
 {
-	int ls = listen(_sockfd, MAXCLIENT + 1);
+	int ls = listen(_sockfd, SOMAXCONN);
 	if (ls == -1)
 		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
 
@@ -153,27 +138,27 @@ void	Server::addNewClient(void)
 	int	sockfdClient;
 
 	sockfdClient = acceptNewClient();
-	addClientToListenPoll(sockfdClient);
 
 	if (_nbConnections + 1 > MAXCLIENT) {
 		std::cerr << errMessage("Server : ", -1, "cannot accept more client") << std::endl;
 		send(sockfdClient, "ERROR : le nombre maximum de client a ete atteint sur ce serveur\n", 65, 0);
 		close(sockfdClient);
+		sockfdClient = -1;
+		return;
 	}
 
-	if (sockfdClient != -1) {
-		// probablement une fonction qui recup les infos
-		_clients.push_back(Client(sockfdClient));
-		std::cout << "nb client :" << _clients.size() << std::endl;
+	addClientToListenPoll(sockfdClient);
+	_clients.push_back(Client(sockfdClient));
+	std::cout << "nb client :" << _clients.size() << std::endl;
+	printNickname();
 
-		std::cout	<< "New connection : "
-					<< "[SOCKET_FD : "	<< sockfdClient
-					<< " , IP : "		<< inet_ntoa(_addr.sin_addr)
-					<< " , PORT : "		<< ntohs(_addr.sin_port) << "]"
-					<< std::endl;
-		
-		send(sockfdClient, "Welcome\n", 8, 0);
-	}
+	std::cout	<< "New connection : "
+				<< "[SOCKET_FD : "	<< sockfdClient
+				<< " , IP : "		<< inet_ntoa(_addr.sin_addr)
+				<< " , PORT : "		<< ntohs(_addr.sin_port) << "]"
+				<< std::endl;
+	
+	send(sockfdClient, "Welcome\n", 8, 0);
 }
 
 void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
@@ -188,12 +173,12 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 		{
 			size_t readBytes = recv((*itP).fd, buffer, 1024, 0);
 
+			// infos irssi à récup
+
 			if ( (int)readBytes == -1 )
 				throw std::runtime_error(errMessage("Server : ", (*itP).fd , strerror(errno)));
-			else if (readBytes == 0) {
-				std::cout << "DEBUG" << std::endl;
+			else if (readBytes == 0)
 				return (disconnectClient(itP, itC));
-			}
 			else
 			{
 				buffer[readBytes] = '\0';
@@ -208,7 +193,6 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 void	Server::executeClientInput(std::string clientInput, int sockfdClient)
 {
 	std::cout << "Client " << sockfdClient << ": " << clientInput;
-	_clients[sockfdClient - 4].setData(this, clientInput);
 }
 
 // ------------------------------ Client Utils ------------------------------ //
@@ -229,13 +213,6 @@ int		Server::acceptNewClient(void)
 
 void	Server::addClientToListenPoll(int sockfdClient)
 {
-	// if (_nbConnections >= MAXCLIENT) {
-	// 	std::cerr << errMessage("Server : ", -1, "cannot accept more client") << std::endl;
-	// 	send(sockfdClient, "ERROR : le nombre maximum de client a ete atteint sur ce serveur\n", 65, 0);
-	// 	close(sockfdClient);
-	// 	return;
-	// }
-
 	pollfd	client;
 
 	client.fd = sockfdClient;

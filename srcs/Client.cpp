@@ -10,7 +10,65 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
+#include <algorithm>
 #include "../includes/Client.hpp"
+
+
+std::vector<std::string> split(std::string value) {
+    std::istringstream iss(value);
+    std::vector<std::string> mots;
+    std::string mot;
+
+    while (iss >> mot)
+        mots.push_back(mot);
+    return mots;
+}
+
+/* ************************************************************************** */
+/*                          CONSTRUCTORS & DESTRUCTOR                         */
+/* ************************************************************************** */
+
+// Client::Client(void) {}
+
+Client::Client(int sockfd) : _sockfd(sockfd) {
+    std::cout << "coucou" << std::endl;
+}
+
+Client::~Client(void) {
+    std::cout << "bye bye" << std::endl;
+}
+
+/* ************************************************************************** */
+/*                           PUBLIC MEMBER FUNCTION                           */
+/* ************************************************************************** */
+
+// Class function
+void Client::setData(std::string buffer) {
+    std::vector<std::string> info = split(buffer);
+    if (info[0] == "NICK")
+            this->_nickname = info[1];
+}
+
+/* ************************************************************************** */
+/*                                 ACCESSORS                                  */
+/* ************************************************************************** */
+
+int Client::getFd() {
+    return _sockfd;
+}
+
+std::string Client::getNickname() {
+    return _nickname;
+}
+
+void Client::setFd(int value) {
+    _sockfd = value;
+}
+
+void Client::setNickname(std::string value) {
+    _nickname = value;
+}
 
 // /* ************************************************************************** */
 // /*                            NON MEMBER FUNCTIONS                            */
@@ -38,59 +96,3 @@
 //     }
 //     return result;
 // }
-
-std::vector<std::string> split(std::string value) {
-    std::istringstream iss(value);
-    std::vector<std::string> mots;
-    std::string mot;
-
-    while (iss >> mot)
-        mots.push_back(mot);
-    return mots;
-}
-
-/* ************************************************************************** */
-/*                          CONSTRUCTORS & DESTRUCTOR                         */
-/* ************************************************************************** */
-
-// Client::Client(void) {}
-
-Client::Client(int sockfd) : _sockfd(sockfd) {
-    _nickname = "G'raha Tia";
-}
-
-Client::~Client(void) {
-}
-
-/* ************************************************************************** */
-/*                           PUBLIC MEMBER FUNCTION                           */
-/* ************************************************************************** */
-
-// Class function
-void Client::setData(Server *s, std::string buffer) {
-    (void)s;
-
-    std::vector<std::string> info = split(buffer);
-    if (info[0] == "NICK")
-            this->_nickname = info[1];
-}
-
-/* ************************************************************************** */
-/*                                 ACCESSORS                                  */
-/* ************************************************************************** */
-
-int Client::getFd() {
-    return _sockfd;
-}
-
-std::string Client::getNickname() {
-    return _nickname;
-}
-
-void Client::setFd(int value) {
-    _sockfd = value;
-}
-
-void Client::setNickname(std::string value) {
-    _nickname = value;
-}
