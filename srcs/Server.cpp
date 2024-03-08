@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 15:18:20 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/08 11:30:55 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,29 @@
 /* ************************************************************************** */
 
 // Server::Server(void) {}
+
+std::string t(const std::string& input) {
+    std::string result;
+    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+        char c = *it;
+        switch (c) {
+            case '\n':
+                result += "\\n";
+                break;
+            case '\r':
+                result += "\\r";
+                break;
+            case '\t':
+                result += "\\t";
+                break;
+            // Ajoutez d'autres caractères spéciaux si nécessaire
+            default:
+                result += c;
+                break;
+        }
+    }
+    return result;
+}
 
 Server::Server(int port) : _nbConnections(0)
 {
@@ -125,6 +148,10 @@ void	Server::waitForEvent(void)
 void	Server::addNewClient(void)
 {
 	int	sockfdClient;
+	char	hostname_c[1024];
+	int		return_number = gethostname(hostname_c, 1024);
+
+	std::cout << "hostname_c = " << hostname_c << " return_number = " << return_number << std::endl;
 
 	sockfdClient = acceptNewClient();
 	addClientToListenPoll(sockfdClient);
@@ -136,33 +163,52 @@ void	Server::addNewClient(void)
 				<< " , IP : "		<< inet_ntoa(_addr.sin_addr)
 				<< " , PORT : "		<< ntohs(_addr.sin_port) << "]"
 				<< std::endl;
-	
-	send(sockfdClient, "Welcome\n", 8, 0);
+}
+
+static int get_line(int fd, std::string &line){
+	char chr[2] = {0};
+	int readed = 0;
+	int total_read = 0;;
+	while ((readed = recv(fd,chr, 1, 0)) > 0){
+		total_read += readed;
+		std::string append(chr);
+		line += append;
+		if (chr[0] == '\n')
+			break;
+		memset(chr, 0, 2);
+	}
+	return total_read;
 }
 
 void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 {
-	char buffer[4096] = {0};
-
 	std::vector<pollfd>::iterator itP = _pollFds.begin() + 1;
 	std::vector<Client>::iterator itC = _clients.begin();
 	for ( ; itP != _pollFds.end() || itC != _clients.end(); itP++, itC++ )
 	{
-		if ((*itP).revents & POLLIN)
+		if ((*itP).revents!= -1 && (*itP).revents & POLLIN)
 		{
-			size_t readBytes = recv((*itP).fd, buffer, 1024, 0);
-
-			// infos irssi à récup
-
+			std::string	line;
+			size_t readBytes = get_line((*itP).fd, line);
+			
 			if ( (int)readBytes == -1 )
 				throw std::runtime_error(errMessage("Server : ", (*itP).fd , strerror(errno)));
 			else if (readBytes == 0)
 				return (disconnectClient(itP, itC));
 			else
 			{
-				buffer[readBytes] = '\0';
-				clientInput = static_cast<std::string>(buffer); // checkCapFlags(buffer, (*itP).fd);
-				*sockfdClient = (*itP).fd;
+				// if (clientInput == "JOIN :\r\n")
+				// {
+				// const char* response = ":c2r9s3.42lausanne.ch 451 test\n";
+				// send((*itP).fd, response, strlen(response), 0);
+				// std::cerr << "SEND: " << t(response) << std::endl;
+				// }
+				// if (clientInput == "NICK lvogt\r\n")
+				// {
+				// const char* response = ":c2r9s3.42lausanne.ch 001 lvogt :Welcome to the Internet Relay Network lvogt!lvogt@127.0.0.1\n";
+				// send((*itP).fd, response, strlen(response), 0);
+				// std::cerr << "SEND: " << t(response) << std::endl;
+				// }
 				return ;
 			}
 		}
@@ -182,11 +228,10 @@ int		Server::acceptNewClient(void)
 	struct sockaddr_in	addrClient;
 	socklen_t			addrLenClient = sizeof(addrClient);
 
-	sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, &addrLenClient);
+	sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, (socklen_t *)&addrLenClient);
 
 	if (sockfdClient == -1)
 		throw std::runtime_error(errMessage("Client : ", sockfdClient, strerror(errno)));
-
 	return (sockfdClient);
 }
 
@@ -254,25 +299,3 @@ void    Server::closePollFds(void)
 // /*                            NON MEMBER FUNCTIONS                            */
 // /* ************************************************************************** */
 
-// std::string t(const std::string& input) {
-//     std::string result;
-//     for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-//         char c = *it;
-//         switch (c) {
-//             case '\n':
-//                 result += "\\n";
-//                 break;
-//             case '\r':
-//                 result += "\\r";
-//                 break;
-//             case '\t':
-//                 result += "\\t";
-//                 break;
-//             // Ajoutez d'autres caractères spéciaux si nécessaire
-//             default:
-//                 result += c;
-//                 break;
-//         }
-//     }
-//     return result;
-// }

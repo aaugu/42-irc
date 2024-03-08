@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 14:08:11 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/07 14:16:37 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ class Server
 
 		void start(void);
 		void stop(void);
+		void handleInput(int fd, const std::string &input);
 };
 
 // std::string t(const std::string& input);
