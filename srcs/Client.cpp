@@ -6,13 +6,14 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 14:14:32 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/08 15:29:22 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <iostream>
-# include <sstream>
-# include "../includes/Client.hpp"
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include "../includes/Client.hpp"
 
 std::vector<std::string> split(std::string value) {
     std::istringstream iss(value);
@@ -30,13 +31,9 @@ std::vector<std::string> split(std::string value) {
 
 // Client::Client(void) {}
 
-Client::Client(int sockfd) : _sockfd(sockfd) {
-    std::cout << "coucou" << std::endl;
-}
+Client::Client(int sockfd) : _sockfd(sockfd) {}
 
-Client::~Client(void) {
-    std::cout << "bye bye" << std::endl;
-}
+Client::~Client(void) {}
 
 /* ************************************************************************** */
 /*                           PUBLIC MEMBER FUNCTION                           */

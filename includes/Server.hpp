@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/07 13:53:33 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/08 15:11:58 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,12 @@ class Server
 		void	setListenBackLog(void);
 		void	waitForEvent(void);
 		void	createClientConnection(void);
-		void	handleClientInput(std::vector<pollfd>::iterator clientPollFd);
+		void	getClientInput(std::vector<pollfd>::iterator clientPollFd, std::string& clientInput);
+		void	executeClientInput(std::string clientInput, int sockfdClient);
 
 		// Client Utils
 		int		acceptNewClient(void);
+		void	refuseClient(int sockfdClient);
 		void	addClientToListenPoll(int sockfdClient);
 		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
 

@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/08 14:50:51 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/08 16:06:36 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,6 @@
 # include "../includes/errorHandling.hpp"
 # include "../includes/signal.hpp"
 # include "../includes/Client.hpp"
-
-/* ************************************************************************** */
-/*                                     DEBUG                                  */
-/* ************************************************************************** */
-
-void Server::printNickname() {
-	std::vector<Client>::iterator it;
-	for (it = _clients.begin(); it != _clients.end(); ++it) {
-		std::cout << "--->" << it->getNickname() << "<---" << it->getFd() << " <---- "<< std::endl;
-	}
-}
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -55,10 +44,10 @@ Server::Server(int port) : _nbConnections(0)
 
 	// Set socket to be nonblocking. All of the sockets for the incoming connections
 	// will also be nonblocking since they will inherit that state from the listening socket
-	// if ( fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1 ) {
-	// 	close(_sockfd);
-	// 	throw std::runtime_error(errMessage("Server3", -1, strerror(errno)));
-	// }
+	if ( fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1 ) {
+		close(_sockfd);
+		throw std::runtime_error(errMessage("Server3", -1, strerror(errno)));
+	}
 
 	// Bind the socket
 	_addr.sin_family = AF_INET;
@@ -76,7 +65,7 @@ Server::Server(int port) : _nbConnections(0)
 }
 
 Server::~Server(void) {
-	closePollFds();
+	// closePollFds();
 	std::cout << "au revoir" << std::endl;
 }
 
@@ -92,28 +81,31 @@ void Server::run(void)
 	{
 		waitForEvent();
 
-		if ( _pollFds.front().revents & POLLIN ) // if the data is available to read on server side
+		if ( _pollFds.front().revents & POLLIN ) // server side
 			createClientConnection();
 
 		std::vector<pollfd>::iterator itP = _pollFds.begin() + 1;
+		std::string clientInput = "";
 		for ( ; itP != _pollFds.end(); itP++ ) // client side
 		{
 			if ( itP->revents & POLLIN ) // if the data is available to read on the fd/socket
 			{
-					handleClientInput(itP);
+				getClientInput(itP, clientInput);
+				if (clientInput.empty())
+					continue;
 			}
 			// else if ( itP->revents & POLLOUT ) // if the data is available to write on the fd/socket
 			// {
 			// 	// TO DO
 			// 	disconnectClient(itP);
-
 			// }
 			// else if ( itP->revents & POLLERR ) // if an error occurred on the fd/socket
 			// {
 			// 	// TO DO
 			// 	disconnectClient(itP);
-
 			// }
+			// whatever whatever = parseClientInput(clientInput);
+				executeClientInput(clientInput, itP->fd); // whatever à ajouter dans les paramètres
 		}
 		
 
@@ -149,9 +141,9 @@ void	Server::setListenBackLog(void)
 
 void	Server::waitForEvent(void)
 {
-	int	timeout = -1;
+	int	timeout = 0;
 
-	if ( poll(&_pollFds[0], (nfds_t) _nbConnections + 1, timeout) == -1 && sig::stopServer == false)
+	if ( poll(&_pollFds[0], (nfds_t) _nbConnections + 1, timeout) == 0 && sig::stopServer == false)
 		throw std::runtime_error(errMessage("Server6", -1, strerror(errno)));	
 }
 
@@ -160,17 +152,9 @@ void	Server::createClientConnection(void)
 	int	sockfdClient;
 
 	sockfdClient = acceptNewClient();
-	std::cout << sockfdClient << std::endl;
-	if (sockfdClient == -1)
-		return (printErrMessage(errMessage("Client", sockfdClient, strerror(errno))));
 
-	if (_nbConnections + 1 > MAXCLIENT) {
-		std::cerr << errMessage("Server : ", -1, "cannot accept more client") << std::endl;
-		send(sockfdClient, "ERROR : le nombre maximum de client a ete atteint sur ce serveur\n", 65, 0);
-		close(sockfdClient);
-		sockfdClient = -1;
-		return;
-	}
+	if (_nbConnections + 1 > MAXCLIENT)
+		return (refuseClient(sockfdClient));
 
 	addClientToListenPoll(sockfdClient);
 	_clients.push_back(Client(sockfdClient));
@@ -185,12 +169,12 @@ void	Server::createClientConnection(void)
 	send(sockfdClient, "Welcome\n", 8, 0);
 }
 
-void	Server::handleClientInput(std::vector<pollfd>::iterator clientPollFd)
+void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::string& clientInput)
 {
 	char	buffer[4096] = {0};
-	size_t readBytes = recv(clientPollFd->fd, buffer, 1024, 0);
+	size_t	readBytes = recv(clientPollFd->fd, buffer, 1024, 0);
 
-	// infos irssi à récup
+	// infos irssi à récup ?
 
 	if ( (int)readBytes == -1 )
 		throw std::runtime_error(errMessage("Server7", clientPollFd->fd, strerror(errno)));
@@ -199,23 +183,10 @@ void	Server::handleClientInput(std::vector<pollfd>::iterator clientPollFd)
 	else
 	{
 		buffer[readBytes] = '\0';
-		 // checkCapFlags(buffer, (*itP).fd);
-		// *sockfdClient = itP->fd;
-		std::cout << "Client " << clientPollFd->fd << ": " << buffer;
+		clientInput = static_cast<std::string>(buffer);
 		return ;
 	}
 }
-
-// void	Server::manageClientInput(std::string input, int sockfdClient)
-// {	
-// 	// get sender details
-// 	// parse command and parameters
-// 	// check validity of command
-// 	// check context
-// 	// check if client is authorized to perform
-// 	// perform command
-// 	std::cout << "Client " << sockfdClient << ": " << input;
-// }
 
 void	Server::executeClientInput(std::string clientInput, int sockfdClient)
 {
@@ -232,9 +203,21 @@ int		Server::acceptNewClient(void)
 	socklen_t			addrLenClient = sizeof(addrClient);
 
 	sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, &addrLenClient);
-	std::cout << sockfdClient << std::endl; 
+
+	if (sockfdClient == -1)
+		throw std::runtime_error(errMessage("Client : ", sockfdClient, strerror(errno)));
 
 	return (sockfdClient);
+}
+
+void	Server::refuseClient(int sockfdClient)
+{
+	send(sockfdClient, "ERROR : le nombre maximum de client a ete atteint sur ce serveur\n", 65, 0);
+
+	if (close(sockfdClient) == -1)
+		throw std::runtime_error(errMessage("Client", sockfdClient, strerror(errno)));
+
+	return (printErrMessage(errMessage("Server", -1, "cannot accept more client")));
 }
 
 void	Server::addClientToListenPoll(int sockfdClient)
@@ -257,15 +240,13 @@ void	Server::disconnectClient(std::vector<pollfd>::iterator pollfd)
 	_nbConnections--;
 
 	std::vector<Client>::iterator itC;
-	if ( pollfd->fd != _sockfd )
-	{
-		itC = getClientByFd(pollfd->fd);
-		if ( itC == _clients.end() )
-			printErrMessage(errMessage("Client", pollfd->fd, "could not find client with this fd"));
-	}
+	itC = getClientByFd(pollfd->fd);
+	std::cout << pollfd->fd << " " << itC->getFd() << std::endl;
 	_pollFds.erase(pollfd);
+	
+	if ( itC == _clients.end() )
+		return (printErrMessage(errMessage("Client", pollfd->fd, "could not find client with this fd")));
 	_clients.erase(itC);
-	std::cout << "ici\n";
 }
 
 // ---------------------------- Stop signal utils --------------------------- //
@@ -300,9 +281,16 @@ std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 	return (it);
 }
 
-// /* ************************************************************************** */
-// /*                            NON MEMBER FUNCTIONS                            */
-// /* ************************************************************************** */
+/* ************************************************************************** */
+/*                                     DEBUG                                  */
+/* ************************************************************************** */
+
+void Server::printNickname() {
+	std::vector<Client>::iterator it;
+	for (it = _clients.begin(); it != _clients.end(); ++it) {
+		std::cout << "--->" << it->getNickname() << "<---" << it->getFd() << " <---- "<< std::endl;
+	}
+}
 
 // std::string t(const std::string& input) {
 //     std::string result;
@@ -325,4 +313,4 @@ std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 //         }
 //     }
 //     return result;
-// 
+// }
