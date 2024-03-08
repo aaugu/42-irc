@@ -46,8 +46,10 @@ Client::~Client(void) {
 // Class function
 void Client::setData(std::string buffer) {
     std::vector<std::string> info = split(buffer);
-    if (info[0] == "NICK")
-            this->_nickname = info[1];
+    if (info[0] == "NICK") {
+        std::cout << "test ----> " << info[1] << std::endl;
+        _nickname = info[1];
+    }
 }
 
 /* ************************************************************************** */

@@ -150,7 +150,6 @@ void	Server::addNewClient(void)
 	addClientToListenPoll(sockfdClient);
 	_clients.push_back(Client(sockfdClient));
 	std::cout << "nb client :" << _clients.size() << std::endl;
-	printNickname();
 
 	std::cout	<< "New connection : "
 				<< "[SOCKET_FD : "	<< sockfdClient
@@ -192,6 +191,7 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 
 void	Server::executeClientInput(std::string clientInput, int sockfdClient)
 {
+	_clients[sockfdClient - 4].setData(clientInput);
 	std::cout << "Client " << sockfdClient << ": " << clientInput;
 }
 
