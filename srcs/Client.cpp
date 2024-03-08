@@ -10,9 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <algorithm>
-#include "../includes/Client.hpp"
+# include <iostream>
+# include <sstream>
+# include "../includes/Client.hpp"
+
+std::vector<std::string> split(std::string value) {
+    std::istringstream iss(value);
+    std::vector<std::string> mots;
+    std::string mot;
+
+    while (iss >> mot)
+        mots.push_back(mot);
+    return mots;
+}
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -33,24 +43,11 @@ Client::~Client(void) {
 /* ************************************************************************** */
 
 // Class function
-void Client::setData(char *buffer) {
-    (void) buffer;
-    // std::string test = buffer;
-    // // std::vector<std::string> res;
-    // // std::istringstream f(test);
-    // // std::string s;
-    // // while (getline(f, s, "\r\n")) {
-    // //     if (s.rfind("NICK", 0) == 0) {
-    // //         std::cout << "'"<< buffer << "'" << std::endl;
-    // //         _nickname = s.substr(5, 6);
-    // //     }
-    // // }
-    // std::cout << "va chier '" << t(test) << std::endl;
-    // if (test.find("NICK", 0) == 0) {
-    //     std::cout << "'" << t(test) << "'" << std::endl;
-    //     std::cout << "conard " << test.substr(5) << std::endl;
-    // }
-    //std::cout << "debug client nickname : " << _nickname << ", fd : " << _fd << " ." << std::endl;
+void Client::setData(std::string buffer) {
+    std::vector<std::string> info = split(buffer);
+    if (info[0] == "NICK") {
+        _nickname = info[1];
+    }
 }
 
 /* ************************************************************************** */

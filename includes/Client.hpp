@@ -29,7 +29,7 @@ class Client
 		~Client(void);
 
 		// Class function
-		void setData(char *data);
+		void setData(std::string data);
 
 		// Accessors
 		int			getFd(void);

@@ -13,13 +13,12 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-# include <netinet/in.h>
 # include <vector>
 # include <poll.h>
-# include <sys/socket.h>
+# include <arpa/inet.h>
 # include <string>
-# include <poll.h>
-# include "../includes/Client.hpp"
+
+# define MAXCLIENT 5
 
 class Client;
 
@@ -59,8 +58,9 @@ class Server
 
 		void start(void);
 		void stop(void);
-};
 
-// std::string t(const std::string& input);
+		// DEBUG
+		void printNickname();
+};
 
 #endif
