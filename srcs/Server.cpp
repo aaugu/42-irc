@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/11 15:16:34 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/11 20:49:43 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # include <sys/socket.h>
 # include <fcntl.h>
 # include <unistd.h>
+# include <errno.h>
+# include <string.h>
 
 # include "../includes/Server.hpp"
 # include "../includes/errorHandling.hpp"
@@ -78,26 +80,26 @@ void Server::run(void)
 	{
 		waitForEvent();
 
-		// if ( _pollFds.front().revents & POLLIN ) // server side
-		// 	createClientConnection();
+		if ( _pollFds.front().revents & POLLIN ) // server side
+			createClientConnection();
 
-		std::vector<pollfd>::iterator itP;
-		for ( itP = _pollFds.begin(); itP != _pollFds.end(); itP++ )
+		std::vector<pollfd>::iterator it;
+		for ( it = _pollFds.begin() + 1; it < _pollFds.end(); it++ )
 		{
-			std::cout << itP->fd << " bouh\n";
-			if ( itP->revents & POLLIN )
+			std::cout << it->fd << " bouh\n";
+			if ( it->revents & POLLIN )
 			{
-				if ( itP->fd == _sockfd ) // server side
-					createClientConnection();
-				else  // client side
-				{
+			// 	if ( it->fd == _sockfd ) // server side
+			// 		createClientConnection();
+			// 	else  // client side
+			// 	{
 					std::string clientInput = "";
-					getClientInput(itP, clientInput);
-					if (clientInput.empty())
-						continue;
+					getClientInput(it, clientInput);
+					if (!clientInput.empty())
+						//continue;
 					// whatever whatever = parseClientInput(clientInput);
-					executeClientInput(clientInput, itP->fd); // whatever à ajouter dans les paramètres
-				}
+						executeClientInput(clientInput, it->fd); // whatever à ajouter dans les paramètres
+				// }
 			}
 		}
 	}
@@ -134,7 +136,7 @@ void	Server::waitForEvent(void)
 	int	timeout = -1;
 
 	if ( poll(&_pollFds[0], (nfds_t) _nbConnections + 1, timeout) == -1 && sig::stopServer == false)
-		throw std::runtime_error(errMessage("Server6", -1, strerror(errno)));	
+		throw std::runtime_error(errMessage("Server6", -1, strerror(errno)));
 }
 
 void	Server::createClientConnection(void)
@@ -159,7 +161,7 @@ void	Server::createClientConnection(void)
 				<< " , IP : "		<< inet_ntoa(_addr.sin_addr)
 				<< " , PORT : "		<< ntohs(_addr.sin_port) << "]"
 				<< std::endl;
-	
+
 	send(sockfdClient, "Welcome\n", 8, 0);
 }
 
@@ -190,14 +192,17 @@ static int get_line(int fd, std::string &line){
 	char chr[2] = {0};
 	int readed = 0;
 	int total_read = 0;;
-	while ((readed = recv(fd,chr, 1, 0)) > 0){
+	while ((readed = recv(fd,chr, 1, 0)) > 0)
+	{
 		total_read += readed;
-		std::string append(chr);
+		std::string	append(chr);
 		line += append;
 		if (chr[0] == '\n')
 			break;
 		memset(chr, 0, 2);
 	}
+	if (readed < 0)
+		return (readed);
 	return total_read;
 }
 
@@ -206,29 +211,29 @@ void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::str
 	// char	buffer[4096] = {0};
 	// size_t	readBytes = recv(clientPollFd->fd, buffer, 4096, 0);
 	// infos irssi à récup ?
-	
+
 	std::string	line;
 	size_t readBytes = get_line(clientPollFd->fd, line);
 	clientInput = line;
-	
+
 	if ( (int)readBytes == -1 )
 		throw std::runtime_error(errMessage("Server7", clientPollFd->fd, strerror(errno)));
 	else if (readBytes == 0)
 		return (disconnectClient(clientPollFd));
 	else
 	{
-		if (clientInput == "JOIN :\r\n")
-		{
-			const char* response = ":c2r9s3.42lausanne.ch 451 test\n";
-			send(clientPollFd->fd, response, strlen(response), 0);
-			std::cerr << "SEND: " << t(response) << std::endl;
-		}
-		if (clientInput == "NICK lvogt\r\n")
-		{
-			const char* response = ":c2r9s3.42lausanne.ch 001 lvogt :Welcome to the Internet Relay Network lvogt!lvogt@127.0.0.1\n";
-			send(clientPollFd->fd, response, strlen(response), 0);
-			std::cerr << "SEND: " << t(response) << std::endl;
-		}
+		// if (clientInput == "JOIN :\r\n")
+		// {
+		// 	const char* response = ":c2r9s3.42lausanne.ch 451 test\n";
+		// 	send(clientPollFd->fd, response, strlen(response), 0);
+		// 	std::cerr << "SEND: " << t(response) << std::endl;
+		// }
+		// if (clientInput == "NICK lvogt\r\n")
+		// {
+		// 	const char* response = ":c2r9s3.42lausanne.ch 001 lvogt :Welcome to the Internet Relay Network lvogt!lvogt@127.0.0.1\n";
+		// 	send(clientPollFd->fd, response, strlen(response), 0);
+		// 	std::cerr << "SEND: " << t(response) << std::endl;
+		// }
 		// buffer[readBytes] = '\0';
 		// clientInput = static_cast<std::string>(buffer);
 		return ;
@@ -345,4 +350,3 @@ void Server::printNickname() {
 		std::cout << "--->" << it->getNickname() << "<---" << it->getFd() << " <---- "<< std::endl;
 	}
 }
-
