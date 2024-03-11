@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/08 16:06:36 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/11 15:16:34 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-// Server::Server(void) {}
-
 Server::Server(int port) : _nbConnections(0)
 {
 	std::cout << "Initializing server..." << std::endl;
@@ -37,17 +35,17 @@ Server::Server(int port) : _nbConnections(0)
 
 	// Allow socket descriptor to be reuseable
 	int optionValue = 1;
-	if ( setsockopt(_sockfd, SOL_SOCKET,  SO_REUSEPORT, &optionValue, sizeof(optionValue)) == -1) {
+	if ( setsockopt(_sockfd, SOL_SOCKET,  SO_REUSEADDR, &optionValue, sizeof(optionValue)) == -1) {
 		close(_sockfd);
 		throw std::runtime_error(errMessage("Server2", -1, strerror(errno)));
 	}
 
 	// Set socket to be nonblocking. All of the sockets for the incoming connections
 	// will also be nonblocking since they will inherit that state from the listening socket
-	if ( fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1 ) {
-		close(_sockfd);
-		throw std::runtime_error(errMessage("Server3", -1, strerror(errno)));
-	}
+	// if ( fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1 ) {
+	// 	close(_sockfd);
+	// 	throw std::runtime_error(errMessage("Server3", -1, strerror(errno)));
+	// }
 
 	// Bind the socket
 	_addr.sin_family = AF_INET;
@@ -65,7 +63,6 @@ Server::Server(int port) : _nbConnections(0)
 }
 
 Server::~Server(void) {
-	// closePollFds();
 	std::cout << "au revoir" << std::endl;
 }
 
@@ -81,35 +78,28 @@ void Server::run(void)
 	{
 		waitForEvent();
 
-		if ( _pollFds.front().revents & POLLIN ) // server side
-			createClientConnection();
+		// if ( _pollFds.front().revents & POLLIN ) // server side
+		// 	createClientConnection();
 
-		std::vector<pollfd>::iterator itP = _pollFds.begin() + 1;
-		std::string clientInput = "";
-		for ( ; itP != _pollFds.end(); itP++ ) // client side
+		std::vector<pollfd>::iterator itP;
+		for ( itP = _pollFds.begin(); itP != _pollFds.end(); itP++ )
 		{
-			if ( itP->revents & POLLIN ) // if the data is available to read on the fd/socket
+			std::cout << itP->fd << " bouh\n";
+			if ( itP->revents & POLLIN )
 			{
-				getClientInput(itP, clientInput);
-				if (clientInput.empty())
-					continue;
+				if ( itP->fd == _sockfd ) // server side
+					createClientConnection();
+				else  // client side
+				{
+					std::string clientInput = "";
+					getClientInput(itP, clientInput);
+					if (clientInput.empty())
+						continue;
+					// whatever whatever = parseClientInput(clientInput);
+					executeClientInput(clientInput, itP->fd); // whatever à ajouter dans les paramètres
+				}
 			}
-			// else if ( itP->revents & POLLOUT ) // if the data is available to write on the fd/socket
-			// {
-			// 	// TO DO
-			// 	disconnectClient(itP);
-			// }
-			// else if ( itP->revents & POLLERR ) // if an error occurred on the fd/socket
-			// {
-			// 	// TO DO
-			// 	disconnectClient(itP);
-			// }
-			// whatever whatever = parseClientInput(clientInput);
-				executeClientInput(clientInput, itP->fd); // whatever à ajouter dans les paramètres
 		}
-		
-
-
 	}
 }
 
@@ -129,7 +119,7 @@ void Server::stop(void)
 
 void	Server::setListenBackLog(void)
 {
-	if ( listen(_sockfd, SOMAXCONN) == -1 )
+	if ( listen(_sockfd, MAXCLIENT + 1) == -1 )
 		throw std::runtime_error(errMessage("Server5", -1, strerror(errno)));
 
 	pollfd	listenFd;
@@ -141,15 +131,19 @@ void	Server::setListenBackLog(void)
 
 void	Server::waitForEvent(void)
 {
-	int	timeout = 0;
+	int	timeout = -1;
 
-	if ( poll(&_pollFds[0], (nfds_t) _nbConnections + 1, timeout) == 0 && sig::stopServer == false)
+	if ( poll(&_pollFds[0], (nfds_t) _nbConnections + 1, timeout) == -1 && sig::stopServer == false)
 		throw std::runtime_error(errMessage("Server6", -1, strerror(errno)));	
 }
 
 void	Server::createClientConnection(void)
 {
 	int	sockfdClient;
+	char	hostname_c[1024];
+	int		return_number = gethostname(hostname_c, 1024);
+
+	std::cout << "hostname_c = " << hostname_c << " return_number = " << return_number << std::endl;
 
 	sockfdClient = acceptNewClient();
 
@@ -169,28 +163,85 @@ void	Server::createClientConnection(void)
 	send(sockfdClient, "Welcome\n", 8, 0);
 }
 
+std::string t(const std::string& input) {
+    std::string result;
+    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+        char c = *it;
+        switch (c) {
+            case '\n':
+                result += "\\n";
+                break;
+            case '\r':
+                result += "\\r";
+                break;
+            case '\t':
+                result += "\\t";
+                break;
+            // Ajoutez d'autres caractères spéciaux si nécessaire
+            default:
+                result += c;
+                break;
+        }
+    }
+    return result;
+}
+
+static int get_line(int fd, std::string &line){
+	char chr[2] = {0};
+	int readed = 0;
+	int total_read = 0;;
+	while ((readed = recv(fd,chr, 1, 0)) > 0){
+		total_read += readed;
+		std::string append(chr);
+		line += append;
+		if (chr[0] == '\n')
+			break;
+		memset(chr, 0, 2);
+	}
+	return total_read;
+}
+
 void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::string& clientInput)
 {
-	char	buffer[4096] = {0};
-	size_t	readBytes = recv(clientPollFd->fd, buffer, 1024, 0);
-
+	// char	buffer[4096] = {0};
+	// size_t	readBytes = recv(clientPollFd->fd, buffer, 4096, 0);
 	// infos irssi à récup ?
-
+	
+	std::string	line;
+	size_t readBytes = get_line(clientPollFd->fd, line);
+	clientInput = line;
+	
 	if ( (int)readBytes == -1 )
 		throw std::runtime_error(errMessage("Server7", clientPollFd->fd, strerror(errno)));
 	else if (readBytes == 0)
 		return (disconnectClient(clientPollFd));
 	else
 	{
-		buffer[readBytes] = '\0';
-		clientInput = static_cast<std::string>(buffer);
+		if (clientInput == "JOIN :\r\n")
+		{
+			const char* response = ":c2r9s3.42lausanne.ch 451 test\n";
+			send(clientPollFd->fd, response, strlen(response), 0);
+			std::cerr << "SEND: " << t(response) << std::endl;
+		}
+		if (clientInput == "NICK lvogt\r\n")
+		{
+			const char* response = ":c2r9s3.42lausanne.ch 001 lvogt :Welcome to the Internet Relay Network lvogt!lvogt@127.0.0.1\n";
+			send(clientPollFd->fd, response, strlen(response), 0);
+			std::cerr << "SEND: " << t(response) << std::endl;
+		}
+		// buffer[readBytes] = '\0';
+		// clientInput = static_cast<std::string>(buffer);
 		return ;
 	}
 }
 
 void	Server::executeClientInput(std::string clientInput, int sockfdClient)
 {
-	_clients[sockfdClient - 4].setData(clientInput);
+	std::vector<Client>::iterator itC = getClientByFd(sockfdClient);
+	if ( itC == _clients.end() )
+		return (printErrMessage(errMessage("Client", sockfdClient, "could not find client with this fd")));
+
+	itC->setData(clientInput);
 	std::cout << "Client " << sockfdClient << ": " << clientInput;
 }
 
@@ -233,23 +284,26 @@ void	Server::addClientToListenPoll(int sockfdClient)
 
 void	Server::disconnectClient(std::vector<pollfd>::iterator pollfd)
 {
+	std::cout << "clients size : "  <<  _clients.size() << std::endl << "pollfds size : " << _pollFds.size() << std::endl;
+
+	std::cout << "Client " << pollfd->fd << ": disconnected" << std::endl;
 	if (close(pollfd->fd) == -1)
-		throw std::runtime_error(errMessage("Client", (*pollfd).fd, strerror(errno)));
-	std::cout << "Client " << (*pollfd).fd << ": disconnected" << std::endl;
+		throw std::runtime_error(errMessage("Client", pollfd->fd, strerror(errno)));
 
 	_nbConnections--;
 
-	std::vector<Client>::iterator itC;
-	itC = getClientByFd(pollfd->fd);
-	std::cout << pollfd->fd << " " << itC->getFd() << std::endl;
-	_pollFds.erase(pollfd);
-	
+	std::vector<Client>::iterator itC = getClientByFd(pollfd->fd);
 	if ( itC == _clients.end() )
 		return (printErrMessage(errMessage("Client", pollfd->fd, "could not find client with this fd")));
+
+	_pollFds.erase(pollfd);
 	_clients.erase(itC);
+
+	std::cout << "clients size : " <<  _clients.size() << std::endl << "pollfds size : " << _pollFds.size() << std::endl;
 }
 
 // ---------------------------- Stop signal utils --------------------------- //
+
 void    Server::closePollFds(void)
 {
 	std::vector<pollfd>::iterator	it;
@@ -292,25 +346,3 @@ void Server::printNickname() {
 	}
 }
 
-// std::string t(const std::string& input) {
-//     std::string result;
-//     for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-//         char c = *it;
-//         switch (c) {
-//             case '\n':
-//                 result += "\\n";
-//                 break;
-//             case '\r':
-//                 result += "\\r";
-//                 break;
-//             case '\t':
-//                 result += "\\t";
-//                 break;
-//             // Ajoutez d'autres caractères spéciaux si nécessaire
-//             default:
-//                 result += c;
-//                 break;
-//         }
-//     }
-//     return result;
-// }

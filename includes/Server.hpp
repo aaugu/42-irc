@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/08 15:11:58 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/11 14:40:33 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,11 @@ class Server
 		// Input utils
 		// std::string	checkCapFlags(char* buffer, int sockfdClient);
 
-		// Destructor utils
+		// Stop utils
 		void    closePollFds(void);
 
 		// Accessors
 		std::vector<Client>::iterator	getClientByFd(int sockfdClient);
-
-		// Server(void);
 
 	public :
 		Server(int port);
