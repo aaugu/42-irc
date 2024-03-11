@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/11 11:33:58 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/11 15:08:44 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,6 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 				return (disconnectClient(itP, itC));
 			else
 			{
-				itC->parseMessage(clientInput);
 				*sockfdClient = (*itP).fd;
 				return ;
 			}
@@ -210,7 +209,13 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 
 void	Server::executeClientInput(std::string clientInput, int sockfdClient)
 {
-	std::cout << "Client " << sockfdClient << ": " << clientInput;
+	std::vector<pollfd>::iterator itP = _pollFds.begin() + 1;
+	std::vector<Client>::iterator itC = _clients.begin();
+	for ( ; itP != _pollFds.end() || itC != _clients.end(); itP++, itC++ )
+	{
+		std::cout << "Client " << sockfdClient << ": " << clientInput;
+		itC->parseMessage(clientInput);
+	}
 }
 
 // ------------------------------ Client Utils ------------------------------ //

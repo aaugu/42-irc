@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/11 13:05:33 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/11 15:05:09 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ void Client::parseMessage(std::string buff) {
     std::string type[] = {"PASS", "NICK", "USER", "JOIN"}; //ajout d'autre commande 
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
-    // const char* response;
     for (int i = 0; i < (int)arraySize; i++){
         if (_message._command.compare(type[i]) != 0)
             count++;
@@ -125,6 +124,7 @@ void Client::parseMessage(std::string buff) {
         case 1:
             // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
+            _nickname = _message._params;
             send_to(MSG_WELCOME(_nickname, "_user", "_hostName"));
             break;
         case 2:
