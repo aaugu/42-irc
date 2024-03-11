@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/07 14:16:37 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/11 11:13:27 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <vector>
 # include <poll.h>
 # include <sys/socket.h>
-# include <string>
+# include <string.h>
 # include <poll.h>
 # include "../includes/Client.hpp"
 
