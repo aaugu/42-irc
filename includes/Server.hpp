@@ -58,6 +58,8 @@ class Server
 		void run(void);
 		void stop(void);
 
+        std::vector<std::string>        getNicknameList();
+
 		// DEBUG
 		void printNickname();
 };

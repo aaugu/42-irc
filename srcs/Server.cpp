@@ -196,7 +196,7 @@ void	Server::executeClientInput(std::string clientInput, int sockfdClient)
 	if ( itC == _clients.end() )
 		return (printErrMessage(errMessage("Client", sockfdClient, ERR_CLIENT_NONEX)));
 
-	itC->setData(clientInput);
+	itC->setData(this, clientInput);
 
 	std::cout << "Client " << sockfdClient << ": " << clientInput;
 }
@@ -290,6 +290,15 @@ std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 /* ************************************************************************** */
 /*                                     UTILS                                  */
 /* ************************************************************************** */
+
+std::vector<std::string> Server::getNicknameList() {
+    std::vector<Client>::iterator it;
+    std::vector<std::string> nickname;
+    for (it = _clients.begin(); it != _clients.end(); ++it) {
+        nickname.push_back(it->getNickname());
+    }
+    return nickname;
+}
 
 int Server::getLine(int fd, std::string &line)
 {
