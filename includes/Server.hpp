@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 14:08:11 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/12 13:36:33 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,7 @@
 # include <poll.h>
 # include <arpa/inet.h>
 # include <string>
-
-# define MAXCLIENT 5
-
-class Client;
+# include "../includes/Client.hpp"
 
 class Server
 {
@@ -30,33 +27,35 @@ class Server
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>		_pollFds;
 		std::vector<Client> 	_clients;
-		int run;
 
-		// Start() sub functions
-		void	setListenBackLog(void);
+		// run() sub functions
+		void	startServer(void);
 		void	waitForEvent(void);
-		void	addNewClient(void);
-		void	getClientInput(std::string& clientInput, int* sockfdClient);
-		void	executeClientInput(std::string clientInput, int fd);
+		void	createClientConnection(void);
+		void	getClientInput(std::vector<pollfd>::iterator clientPollFd, std::string& clientInput);
+		void	executeClientInput(std::string clientInput, int sockfdClient);
 
 		// Client Utils
 		int		acceptNewClient(void);
+		void	refuseClient(int sockfdClient);
 		void	addClientToListenPoll(int sockfdClient);
-		void	disconnectClient(std::vector<pollfd>::iterator pollfd, std::vector<Client>::iterator client);
-
+		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
+		
 		// Input utils
-		std::string	checkCapFlags(char* buffer, int sockfdClient);
+		int		getLine(int fd, std::string &line);
+		// std::string	checkCapFlags(char* buffer, int sockfdClient);
 
-		// Destructor utils
+		// Stop utils
 		void    closePollFds(void);
 
-		Server(void);
+		// Accessors
+		std::vector<Client>::iterator	getClientByFd(int sockfdClient);
 
 	public :
 		Server(int port);
 		~Server(void);
 
-		void start(void);
+		void run(void);
 		void stop(void);
 
 		// DEBUG
