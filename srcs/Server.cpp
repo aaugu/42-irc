@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 13:18:02 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/12 13:52:54 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,19 @@
 # include "../includes/messages.hpp"
 # include "../includes/signal.hpp"
 # include "../includes/Client.hpp"
+
+# define MAXCLIENT 5
+# define ERR_SOCK_CREATE	"Could not create socket"
+# define ERR_SOCK_OPT		"Could not set socket option"
+# define ERR_SOCK_NON_BLOCK	"Could not set sockets to be non blocking"
+# define ERR_SOCK_BIND		"Could not bind socket"
+# define ERR_SOCK_LISTEN	"Could not listen to the socket"
+# define ERR_POLL			"Problem while waiting for fd to perform"
+# define ERR_CLIENT_NONEX	"Could not find client with this fd"
+# define ERR_CLIENT_ACCEPT	"Could not create connection with client"
+# define ERR_CLOSE			"Could not close file descriptor"
+# define MAX_CONNECTIONS	"Server cannot accept more client"
+# define SERVER_FULL		"Attemped to connect but server is full"
 
 /* ************************************************************************** */
 /*                          CONSTRUCTOR & DESTRUCTOR                          */
@@ -163,12 +176,18 @@ void	Server::createClientConnection(void)
 void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::string& clientInput)
 {
 	std::string	line;
-	size_t readBytes = getLine(clientPollFd->fd, clientInput);
+	size_t readBytes = getLine(clientPollFd->fd, line);
 
 	if ( (int)readBytes < 0 )
-		printErrMessage(errMessage("Server7", clientPollFd->fd, strerror(errno))); // à changer pour gérer CTRL + D
+	{
+		// retrouver le client
+		// stocker contenu line en attente dans le client
+		printErrMessage(errMessage("Server7", clientPollFd->fd, strerror(errno))); // à enlever pour gérer CTRL + D
+	}
 	else if (readBytes == 0)
 		disconnectClient(clientPollFd);
+	else
+		clientInput = line;
 }
 
 void	Server::executeClientInput(std::string clientInput, int sockfdClient)
