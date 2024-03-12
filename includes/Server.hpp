@@ -3,21 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 13:36:33 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:45:25 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+# include <netinet/in.h>
 # include <vector>
 # include <poll.h>
+# include <sys/socket.h>
 # include <arpa/inet.h>
-# include <string>
+# include <string.h>
+# include <poll.h>
 # include "../includes/Client.hpp"
+
+class Client;
 
 class Server
 {
@@ -28,24 +33,24 @@ class Server
 		std::vector<pollfd>		_pollFds;
 		std::vector<Client> 	_clients;
 
-		// run() sub functions
+		// Start() sub functions
 		void	startServer(void);
 		void	waitForEvent(void);
 		void	createClientConnection(void);
 		void	getClientInput(std::vector<pollfd>::iterator clientPollFd, std::string& clientInput);
-		void	executeClientInput(std::string clientInput, int sockfdClient);
+		void	parseClientInput(std::string clientInput, int sockfdClient);
+		void	executeClientInput(int sockfdClient);
 
 		// Client Utils
 		int		acceptNewClient(void);
 		void	refuseClient(int sockfdClient);
 		void	addClientToListenPoll(int sockfdClient);
 		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
-		
+
 		// Input utils
 		int		getLine(int fd, std::string &line);
-		// std::string	checkCapFlags(char* buffer, int sockfdClient);
 
-		// Stop utils
+		// Destructor utils
 		void    closePollFds(void);
 
 		// Accessors
@@ -57,9 +62,8 @@ class Server
 
 		void run(void);
 		void stop(void);
-
-        std::vector<std::string>        getNicknameList();
-
+		
+		std::vector<std::string>        getNicknameList();
 		// DEBUG
 		void printNickname();
 };

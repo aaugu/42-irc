@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:04:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 11:31:38 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:58:53 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
+#include <stdlib.h>
+#include "../includes/Server.hpp"
 #include <stdlib.h>
 #include "../includes/Server.hpp"
 

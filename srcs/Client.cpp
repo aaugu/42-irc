@@ -3,18 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 12:19:31 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:46:02 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <sstream>
-#include <vector>
+#include <algorithm>
+#include <sys/socket.h>
+
 #include "../includes/Server.hpp"
+#include "../includes/Client.hpp"
 #include "../includes/messages.hpp"
+#include "../includes/SendMessages.hpp"
 
 std::vector<std::string> split(std::string value) {
     std::istringstream iss(value);
@@ -41,9 +45,15 @@ bool checkUseNickname(Server *s, std::string &nickname) {
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-Client::Client(int sockfd) : _sockfd(sockfd) {}
+// Client::Client(void) {}
 
-Client::~Client(void) {}
+Client::Client(int sockfd) : _sockfd(sockfd) {
+    std::cout << "coucou" << std::endl;
+}
+
+Client::~Client(void) {
+    std::cout << "bye bye" << std::endl;
+}
 
 /* ************************************************************************** */
 /*                           PUBLIC MEMBER FUNCTION                           */
@@ -90,6 +100,82 @@ void Client::setNickname(std::string value) {
     _nickname = value;
 }
 
+void Client::splitMessage(std::string buff) {
+    std::stringstream ss(buff);
+    std::string word;
+    int count = 0;
+    _message._paramsSplit.clear();
+    _message._params.clear();
+    while (ss >> word) {
+        if (count == 0)
+            _message._command = word;
+        else if (count == 1)
+        {
+            _message._paramsSplit.push_back(word);
+            _message._params = word;
+        }
+        else if (count > 1)
+        {
+            _message._paramsSplit.push_back(word);
+            _message._params += " " + word;
+        }
+        count++;
+    }
+}
+
+void	Client::send_to(std::string text) const {
+	send(_sockfd, text.c_str(), text.length(), 0);
+}
+
+void Client::saveMessage(std::string buff) {
+    _message._fullStr = _message._fullStr + buff;
+    std::cout << "_message._fullStr \"" << _message._fullStr << "\"" << std::endl;
+}
+
+void Client::exeCommand(void) {
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN"}; //ajout d'autre commande 
+    int count = 0;
+    size_t arraySize = sizeof(type) / sizeof(type[0]);
+    for (int i = 0; i < (int)arraySize; i++){
+        if (_message._command.compare(type[i]) != 0)
+            count++;
+        else
+            break;
+    }
+    switch (count) {
+        case 0:
+            // command_pass();
+            std::cout << "TO DO PASS OF \"" << _message._params << "\"" << std::endl;
+            break;
+        case 1:
+            // command_nick();
+            std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
+            _nickname = _message._params;
+            send_to(MSG_WELCOME(_nickname, "_user", "_hostName"));
+            break;
+        case 2:
+            // command_user();
+            std::cout << "TO DO USER OF \"" << _message._params << "\"" << std::endl;
+            break;
+        case 3:
+            // command_join();
+            std::cout << "TO DO JOIN OF \"" << _message._params << "\"" << std::endl;
+            if(_message._params.compare(":") == 0){
+                send_to(MSG_FIRSTJOIN(_nickname));
+            }
+            break;
+        // case 4:
+        //     ...
+    }
+}
+
+void Client::parseMessage(std::string buff) {
+    _message._fullStr = _message._fullStr + buff;
+    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;;
+    splitMessage(_message._fullStr);
+    _message._fullStr.erase();
+    std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
+}
 // /* ************************************************************************** */
 // /*                            NON MEMBER FUNCTIONS                            */
 // /* ************************************************************************** */
