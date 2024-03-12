@@ -6,11 +6,13 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:04:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 14:06:25 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:46:37 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
+#include <stdlib.h>
+#include "../includes/Server.hpp"
 #include <stdlib.h>
 #include "../includes/Server.hpp"
 
@@ -21,12 +23,15 @@
 int	main(int ac, char ** av)
 {
 	if (ac != 2) // change to 3 when password is implemented
+	if (ac != 2) // change to 3 when password is implemented
 	{
 		std::cout << CYAN "Usage: ./ircserv <port> <password>" END << std::endl;
 		return (1);
 	}
 
 	try {
+		Server	server(atoi(av[1]));
+		server.run();
 		Server	server(atoi(av[1]));
 		server.run();
 	}
