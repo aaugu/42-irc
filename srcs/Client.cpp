@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/08 15:29:22 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/12 12:19:31 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ std::vector<std::string> split(std::string value) {
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
-
-// Client::Client(void) {}
 
 Client::Client(int sockfd) : _sockfd(sockfd) {}
 
@@ -59,9 +57,9 @@ std::string Client::getNickname() {
     return _nickname;
 }
 
-void Client::setFd(int value) {
-    _sockfd = value;
-}
+// void Client::setFd(int value) {
+//     _sockfd = value;
+// }
 
 void Client::setNickname(std::string value) {
     _nickname = value;

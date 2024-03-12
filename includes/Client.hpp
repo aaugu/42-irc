@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/01 14:08:31 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/12 11:56:54 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ class Client
 		int			_sockfd;
 		std::string	_nickname;
 
-		// Client(void);
-
     public:
    		// Constructor and destructor
 		Client(int sockfd);
@@ -34,7 +32,7 @@ class Client
 		// Accessors
 		int			getFd(void);
 		std::string getNickname(void);
-		void		setFd(int value);
+		// void		setFd(int value);
 		void		setNickname(std::string value);
 };
 
