@@ -14,6 +14,9 @@
 #define CLIENT_HPP
 
 # include <string>
+#include "Server.hpp"
+
+class Server;
 
 class Client
 {
@@ -27,7 +30,7 @@ class Client
 		~Client(void);
 
 		// Class function
-		void setData(std::string data);
+		void setData(Server *s, std::string &buffer);
 
 		// Accessors
 		int			getFd(void);

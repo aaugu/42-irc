@@ -13,7 +13,8 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include "../includes/Client.hpp"
+#include "../includes/Server.hpp"
+#include "../includes/messages.hpp"
 
 std::vector<std::string> split(std::string value) {
     std::istringstream iss(value);
@@ -23,6 +24,17 @@ std::vector<std::string> split(std::string value) {
     while (iss >> mot)
         mots.push_back(mot);
     return mots;
+}
+
+bool checkUseNickname(Server *s, std::string &nickname) {
+    std::vector<std::string> nick = s->getNicknameList();
+    std::vector<std::string>::iterator it;
+
+    for (it = nick.begin(); it != nick.end(); ++it) {
+        if (*it == nickname)
+            return true;
+    }
+    return false;
 }
 
 /* ************************************************************************** */
@@ -38,9 +50,22 @@ Client::~Client(void) {}
 /* ************************************************************************** */
 
 // Class function
-void Client::setData(std::string buffer) {
+void Client::setData(Server *s, std::string &buffer) {
     std::vector<std::string> info = split(buffer);
+    bool dupe = false;
+
     if (info[0] == "NICK") {
+        while (checkUseNickname(s, info[1])) {
+            std::cout << "DUPE" <<std::endl;
+            info[1] += '_';
+            dupe = true;
+        }
+        if (dupe) {
+            std::cout << "change nickname" << std::endl;
+            std::string nickChangeMessage = ": NICK " + info[1];
+            sendMessage(nickChangeMessage, _sockfd);
+            sendMessage("Nickname changed to " + info[1], _sockfd);
+        }
         _nickname = info[1];
     }
 }
