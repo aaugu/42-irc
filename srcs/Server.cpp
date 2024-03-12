@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:48:30 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 16:07:09 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,7 @@ int		Server::acceptNewClient(void)
 
 	sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, (socklen_t *)&addrLenClient);
 
-	if (sockfdClient == -1)
+	if (sockfdClient < 0)
 		throw std::runtime_error(errMessage("Client : ", sockfdClient, strerror(errno)));
 	return (sockfdClient);
 }
@@ -263,7 +263,7 @@ void	Server::addClientToListenPoll(int sockfdClient)
 	pollfd	client;
 
 	client.fd = sockfdClient;
-	client.events = POLLIN;
+	client.events = POLLIN | POLLOUT;
 
 	_pollFds.push_back(client);
 	_nbConnections++;
@@ -293,11 +293,11 @@ void    Server::closePollFds(void)
 
 	for (it = _pollFds.begin(); it != _pollFds.end(); it++)
 	{
-		sockfd = (*it).fd;
+		sockfd = it->fd;
 		if (sockfd > 0)
 		{
-			if (close(sockfd) == -1)
-				throw std::runtime_error(errMessage("Client : ", sockfd, strerror(errno)));
+			if (close(sockfd) < 0)
+				throw std::runtime_error(errMessage(ERR_CLOSE, sockfd, strerror(errno)));
 		}
 	}
 }
