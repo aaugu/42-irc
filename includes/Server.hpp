@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:01:25 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:18:54 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,8 @@ class Server
 
 		void run(void);
 		void stop(void);
-
+		
+		std::vector<std::string>        getNicknameList();
 		// DEBUG
 		void printNickname();
 };

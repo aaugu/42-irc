@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:03:34 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:20:03 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,16 @@
 # include <string.h>
 # include <vector>
 
+# include "Server.hpp"
+
 struct s_message {
     std::string _fullStr;
     std::string _command;
     std::vector<std::string> _paramsSplit;
     std::string _params;
 };
+
+class Server;
 
 class Client
 {
@@ -38,12 +42,12 @@ class Client
 		~Client(void);
 
 		// Class function
-		void setData(char *data);
+		void setData(Server *s, std::string &buffer);
 
 		// Accessors
 		int			getFd(void);
 		std::string getNickname(void);
-		void		setFd(int value);
+		// void		setFd(int value);
 		void		setNickname(std::string value);
 
 		// Gestion Input + Parsing + Execution

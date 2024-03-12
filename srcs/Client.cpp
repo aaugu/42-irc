@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:04:31 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:22:40 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,29 @@
 
 #include "../includes/Server.hpp"
 #include "../includes/Client.hpp"
+#include "../includes/messages.hpp"
 #include "../includes/SendMessages.hpp"
+
+std::vector<std::string> split(std::string value) {
+    std::istringstream iss(value);
+    std::vector<std::string> mots;
+    std::string mot;
+
+    while (iss >> mot)
+        mots.push_back(mot);
+    return mots;
+}
+
+bool checkUseNickname(Server *s, std::string &nickname) {
+    std::vector<std::string> nick = s->getNicknameList();
+    std::vector<std::string>::iterator it;
+
+    for (it = nick.begin(); it != nick.end(); ++it) {
+        if (*it == nickname)
+            return true;
+    }
+    return false;
+}
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -38,24 +60,24 @@ Client::~Client(void) {
 /* ************************************************************************** */
 
 // Class function
-void Client::setData(char *buffer) {
-    (void) buffer;
-    // std::string test = buffer;
-    // // std::vector<std::string> res;
-    // // std::istringstream f(test);
-    // // std::string s;
-    // // while (getline(f, s, "\r\n")) {
-    // //     if (s.rfind("NICK", 0) == 0) {
-    // //         std::cout << "'"<< buffer << "'" << std::endl;
-    // //         _nickname = s.substr(5, 6);
-    // //     }
-    // // }
-    // std::cout << "va chier '" << t(test) << std::endl;
-    // if (test.find("NICK", 0) == 0) {
-    //     std::cout << "'" << t(test) << "'" << std::endl;
-    //     std::cout << "conard " << test.substr(5) << std::endl;
-    // }
-    //std::cout << "debug client nickname : " << _nickname << ", fd : " << _fd << " ." << std::endl;
+void Client::setData(Server *s, std::string &buffer) {
+    std::vector<std::string> info = split(buffer);
+    bool dupe = false;
+
+    if (info[0] == "NICK") {
+        while (checkUseNickname(s, info[1])) {
+            std::cout << "DUPE" <<std::endl;
+            info[1] += '_';
+            dupe = true;
+        }
+        if (dupe) {
+            std::cout << "change nickname" << std::endl;
+            std::string nickChangeMessage = ": NICK " + info[1];
+            sendMessage(nickChangeMessage, _sockfd);
+            sendMessage("Nickname changed to " + info[1], _sockfd);
+        }
+        _nickname = info[1];
+    }
 }
 
 /* ************************************************************************** */
@@ -70,9 +92,9 @@ std::string Client::getNickname() {
     return _nickname;
 }
 
-void Client::setFd(int value) {
-    _sockfd = value;
-}
+// void Client::setFd(int value) {
+//     _sockfd = value;
+// }
 
 void Client::setNickname(std::string value) {
     _nickname = value;

@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:04:35 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:13:40 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,6 +320,15 @@ std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 /* ************************************************************************** */
 /*                                     UTILS                                  */
 /* ************************************************************************** */
+
+std::vector<std::string> Server::getNicknameList() {
+    std::vector<Client>::iterator it;
+    std::vector<std::string> nickname;
+    for (it = _clients.begin(); it != _clients.end(); ++it) {
+        nickname.push_back(it->getNickname());
+    }
+    return nickname;
+}
 
 int Server::getLine(int fd, std::string &line)
 {
