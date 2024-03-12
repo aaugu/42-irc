@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/11 15:08:44 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 12:23:35 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,8 @@ void Server::start(void)
 
 		getClientInput(clientInput, &sockfdClient);
 
-		if (sockfdClient != -1 && clientInput.empty() == false)
-			executeClientInput(clientInput, sockfdClient);
+		// if (sockfdClient != -1 && clientInput.empty() == false)
+		// 	executeClientInput(clientInput, sockfdClient);
 	}
 }
 
@@ -178,6 +178,12 @@ static int get_line(int fd, std::string &line){
 			break;
 		memset(chr, 0, 2);
 	}
+	if(readed < 0){
+		total_read = -1;
+		std::string append(chr);
+		line += append;
+		memset(chr, 0, 2);
+	}
 	return total_read;
 }
 
@@ -194,12 +200,16 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 			clientInput = line;
 			std::cerr << "clientInput: " << t(clientInput) << std::endl;
 			
-			if ( (int)readBytes == -1 )
-				throw std::runtime_error(errMessage("Server : ", (*itP).fd , strerror(errno)));
+			if ( (int)readBytes == -1 ){
+				std::cerr << "WAIT finish command" << std::endl;
+				itC->saveMessage(clientInput);
+				itC->send_to("^D");
+			}
 			else if (readBytes == 0)
 				return (disconnectClient(itP, itC));
 			else
 			{
+				itC->parseMessage(clientInput);
 				*sockfdClient = (*itP).fd;
 				return ;
 			}
@@ -207,16 +217,15 @@ void	Server::getClientInput(std::string& clientInput, int* sockfdClient)
 	}
 }
 
-void	Server::executeClientInput(std::string clientInput, int sockfdClient)
-{
-	std::vector<pollfd>::iterator itP = _pollFds.begin() + 1;
-	std::vector<Client>::iterator itC = _clients.begin();
-	for ( ; itP != _pollFds.end() || itC != _clients.end(); itP++, itC++ )
-	{
-		std::cout << "Client " << sockfdClient << ": " << clientInput;
-		itC->parseMessage(clientInput);
-	}
-}
+// void	Server::executeClientInput(std::string clientInput, int sockfdClient)
+// {
+// 	std::vector<pollfd>::iterator itP = _pollFds.begin() + 1;
+// 	std::vector<Client>::iterator itC = _clients.begin();
+// 	for ( ; itP != _pollFds.end() || itC != _clients.end(); itP++, itC++ )
+// 	{
+// 		std::cout << "Client " << sockfdClient << ": " << clientInput;
+// 	}
+// }
 
 // ------------------------------ Client Utils ------------------------------ //
 

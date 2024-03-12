@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/11 11:52:15 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 11:56:44 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class Client
 
 		void 		splitMessage(std::string buff);
         void		parseMessage(std::string buff);
+		void		saveMessage(std::string buff);
 		void		send_to(std::string text) const;
 };
 
