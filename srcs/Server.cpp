@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 12:15:06 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/12 13:18:02 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ Server::~Server(void) {
 
 void Server::run(void)
 {
-	setListenBackLog();
+	startServer();
 
 	while (sig::stopServer == false)
 	{
@@ -113,7 +113,7 @@ void Server::stop(void)
 
 // ---------------------- Main function sub functions ----------------------- //
 
-void	Server::setListenBackLog(void)
+void	Server::startServer(void)
 {
 	if ( listen(_sockfd, MAXCLIENT + 1) < 0 )
 		throw std::runtime_error(errMessage(ERR_SOCK_LISTEN, -1, strerror(errno)));

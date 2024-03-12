@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 12:12:21 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/12 13:18:24 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ class Server
 		std::vector<Client> 	_clients;
 
 		// run() sub functions
-		void	setListenBackLog(void);
+		void	startServer(void);
 		void	waitForEvent(void);
 		void	createClientConnection(void);
 		void	getClientInput(std::vector<pollfd>::iterator clientPollFd, std::string& clientInput);
