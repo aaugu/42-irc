@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 11:56:44 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:03:34 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,10 @@ class Client
 		void		setFd(int value);
 		void		setNickname(std::string value);
 
+		// Gestion Input + Parsing + Execution
 		void 		splitMessage(std::string buff);
         void		parseMessage(std::string buff);
+		void		exeCommand(void);
 		void		saveMessage(std::string buff);
 		void		send_to(std::string text) const;
 };

@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/11 14:48:14 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:01:25 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <vector>
 # include <poll.h>
 # include <sys/socket.h>
+# include <arpa/inet.h>
 # include <string.h>
 # include <poll.h>
 # include "../includes/Client.hpp"
@@ -31,37 +32,39 @@ class Server
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>		_pollFds;
 		std::vector<Client> 	_clients;
-		int run;
 
 		// Start() sub functions
-		void	setListenBackLog(void);
+		void	startServer(void);
 		void	waitForEvent(void);
-		void	addNewClient(void);
-		void	getClientInput(std::string& clientInput, int* sockfdClient);
-		void	executeClientInput(std::string clientInput, int fd);
+		void	createClientConnection(void);
+		void	getClientInput(std::vector<pollfd>::iterator clientPollFd, std::string& clientInput);
+		void	parseClientInput(std::string clientInput, int sockfdClient);
+		void	executeClientInput(int sockfdClient);
 
 		// Client Utils
 		int		acceptNewClient(void);
+		void	refuseClient(int sockfdClient);
 		void	addClientToListenPoll(int sockfdClient);
-		void	disconnectClient(std::vector<pollfd>::iterator pollfd, std::vector<Client>::iterator client);
+		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
 
 		// Input utils
-		std::string	checkCapFlags(char* buffer, int sockfdClient);
+		int		getLine(int fd, std::string &line);
 
 		// Destructor utils
 		void    closePollFds(void);
 
-		Server(void);
+		// Accessors
+		std::vector<Client>::iterator	getClientByFd(int sockfdClient);
 
 	public :
 		Server(int port);
 		~Server(void);
 
-		void start(void);
+		void run(void);
 		void stop(void);
-		void handleInput(int fd, const std::string &input);
-};
 
-// std::string t(const std::string& input);
+		// DEBUG
+		void printNickname();
+};
 
 #endif

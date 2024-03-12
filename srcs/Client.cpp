@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 12:21:16 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/12 15:04:31 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,7 @@ void Client::saveMessage(std::string buff) {
     std::cout << "_message._fullStr \"" << _message._fullStr << "\"" << std::endl;
 }
 
-void Client::parseMessage(std::string buff) {
-    _message._fullStr = _message._fullStr + buff;
-    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;;
-    splitMessage(_message._fullStr);
-    _message._fullStr.erase();
-    std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
+void Client::exeCommand(void) {
     std::string type[] = {"PASS", "NICK", "USER", "JOIN"}; //ajout d'autre commande 
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
@@ -150,6 +145,14 @@ void Client::parseMessage(std::string buff) {
         // case 4:
         //     ...
     }
+}
+
+void Client::parseMessage(std::string buff) {
+    _message._fullStr = _message._fullStr + buff;
+    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;;
+    splitMessage(_message._fullStr);
+    _message._fullStr.erase();
+    std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
 }
 // /* ************************************************************************** */
 // /*                            NON MEMBER FUNCTIONS                            */
