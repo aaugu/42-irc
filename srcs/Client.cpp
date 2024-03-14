@@ -60,24 +60,22 @@ Client::~Client(void) {
 /* ************************************************************************** */
 
 // Class function
-void Client::setData(Server *s, std::string &buffer) {
-    std::vector<std::string> info = split(buffer);
+void Client::nickFunction(Server *s, std::vector<std::string> &data) {
     bool dupe = false;
 
-    if (info[0] == "NICK") {
-        while (checkUseNickname(s, info[1])) {
-            std::cout << "DUPE" <<std::endl;
-            info[1] += '_';
-            dupe = true;
-        }
-        if (dupe) {
-            std::cout << "change nickname" << std::endl;
-            std::string nickChangeMessage = ": NICK " + info[1];
-            sendMessage(nickChangeMessage, _sockfd);
-            sendMessage("Nickname changed to " + info[1], _sockfd);
-        }
-        _nickname = info[1];
+    std::vector<std::string> serverNickname = s->getNicknameList();//    bool dupe = false;
+    while (checkUseNickname(s, data[0])) {
+        std::cout << "DUPE" <<std::endl;
+        data[0] += '_';
+        dupe = true;
     }
+    if (dupe) {
+        std::cout << "change nickname" << std::endl;
+        std::string nickChangeMessage = ": NICK " + data[0];
+        sendMessage(nickChangeMessage, _sockfd);
+        sendMessage("Nickname already used, Nickname changed to " + data[0], _sockfd);
+    }
+    _nickname = data[0];
 }
 
 /* ************************************************************************** */
@@ -132,7 +130,7 @@ void Client::saveMessage(std::string buff) {
     std::cout << "_message._fullStr \"" << _message._fullStr << "\"" << std::endl;
 }
 
-void Client::exeCommand(void) {
+void Client::exeCommand(Server *s) {
     std::string type[] = {"PASS", "NICK", "USER", "JOIN"}; //ajout d'autre commande 
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
@@ -150,7 +148,8 @@ void Client::exeCommand(void) {
         case 1:
             // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
-            _nickname = _message._params;
+            nickFunction(s, _message._paramsSplit);
+            //_nickname = _message._params;
             send_to(MSG_WELCOME(_nickname, "_user", "_hostName"));
             break;
         case 2:

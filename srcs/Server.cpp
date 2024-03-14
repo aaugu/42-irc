@@ -221,7 +221,7 @@ void	Server::executeClientInput(int sockfdClient)
 	if ( itC == _clients.end() )
 		return (printErrMessage(errMessage("Client", sockfdClient, ERR_CLIENT_NONEX)));
 
-	itC->exeCommand();
+	itC->exeCommand(this);
 	// itC->setData(clientInput);
 
 	// std::cout << "Client " << sockfdClient << ": " << clientInput;

@@ -42,7 +42,7 @@ class Client
 		~Client(void);
 
 		// Class function
-		void setData(Server *s, std::string &buffer);
+		void nickFunction(Server *s, std::vector<std::string> &data);
 
 		// Accessors
 		int			getFd(void);
@@ -53,7 +53,7 @@ class Client
 		// Gestion Input + Parsing + Execution
 		void 		splitMessage(std::string buff);
         void		parseMessage(std::string buff);
-		void		exeCommand(void);
+		void		exeCommand(Server *s);
 		void		saveMessage(std::string buff);
 		void		send_to(std::string text) const;
 };
