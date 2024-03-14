@@ -76,19 +76,40 @@ void Client::nickFunction(Server *s, std::vector<std::string> &data) {
     _nickname = data[0];
 }
 
-void Client::setOperatorState(Server *s, std::string givenPassword) {
-
-    if (givenPassword == s->getOpPass()) {
-        if (!_isOp) {
-            sendMessage("You are now operator", _sockfd);
-            _isOp = true;
-            return;
-        }
-        sendMessage("You are no longer operator", _sockfd);
-        _isOp = false;
+void Client::setOperatorState(Server *s, std::vector<std::string> args) {
+    std::vector<Client>::iterator itC = s->getClientByNickname(args[0]);
+    if (itC->getFd() == 0) {
+        sendMessage("ERROR : Invalid user, please enter a valide nickname", _sockfd);
         return;
     }
-    sendMessage("ERROR : Invalid password", _sockfd);
+    if (args[1] == s->getOpPass()) {
+        if (!_isOp) {
+            if (_nickname == args[0]) {
+                sendMessage("You are now operator", itC->_sockfd);
+                itC->_isOp = true;
+                return;
+            }
+            else {
+                sendMessage("ERROR : You need to be operator to change permission of other user", _sockfd);
+                return;
+            }
+        }
+        else {
+            if (!itC->_isOp) {
+                sendMessage( itC->_nickname + " is now operator", _sockfd);
+                sendMessage("You are now operator", itC->_sockfd);
+                itC->_isOp = true;
+                return;
+            }
+            else {
+                sendMessage( itC->_nickname + " is no longer operator", _sockfd);
+                sendMessage("You are no longer operator", itC->_sockfd);
+                itC->_isOp = false;
+                return;
+            }
+        }
+    }
+    sendMessage("ERROR : Invalid password", itC->_sockfd);
 }
 
 /* ************************************************************************** */
@@ -169,7 +190,7 @@ void Client::exeCommand(Server *s) {
             }
             break;
         case 4:
-            setOperatorState(s, _message._paramsSplit[1]);
+            setOperatorState(s, _message._paramsSplit);
             break;
     }
 }

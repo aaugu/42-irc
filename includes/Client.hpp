@@ -36,7 +36,7 @@ class Client
         bool        _isOp;
 
         void nickFunction(Server *s, std::vector<std::string> &data);
-        void setOperatorState(Server *s, std::string givenPassword);
+        void setOperatorState(Server *s, std::vector<std::string> args);
 
     public:
    		// Constructor and destructor

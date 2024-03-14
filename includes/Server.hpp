@@ -66,6 +66,7 @@ class Server
 		
 		std::vector<std::string>        getNicknameList();
         std::string                     getOpPass();
+        std::vector<Client>::iterator	getClientByNickname(std::string nickname);
 
 		// DEBUG
 		void printNickname();

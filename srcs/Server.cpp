@@ -318,6 +318,17 @@ std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 	return (it);
 }
 
+std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
+{
+    std::vector<Client>::iterator it;
+    for ( it = _clients.begin(); it != _clients.end(); it++ )
+    {
+        if ( it->getNickname() == nickname)
+            return (it);
+    }
+    return (it);
+}
+
 /* ************************************************************************** */
 /*                                     UTILS                                  */
 /* ************************************************************************** */
