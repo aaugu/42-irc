@@ -19,10 +19,10 @@
 # include "Server.hpp"
 
 struct s_message {
-    std::string _fullStr;
-    std::string _command;
-    std::vector<std::string> _paramsSplit;
-    std::string _params;
+    std::string                 _fullStr;
+    std::string                 _command;
+    std::vector<std::string>    _paramsSplit;
+    std::string                 _params;
 };
 
 class Server;
@@ -31,24 +31,21 @@ class Client
 {
     private:
 		int			_sockfd;
-		std::string	_nickname;
+		std::string _nickname;
 		s_message	_message;
+        bool        _isOp;
 
-		// Client(void);
+        void nickFunction(Server *s, std::vector<std::string> &data);
+        void setOperatorState(Server *s, std::string givenPassword);
 
     public:
    		// Constructor and destructor
 		Client(int sockfd);
 		~Client(void);
 
-		// Class function
-		void nickFunction(Server *s, std::vector<std::string> &data);
-
 		// Accessors
 		int			getFd(void);
 		std::string getNickname(void);
-		// void		setFd(int value);
-		void		setNickname(std::string value);
 
 		// Gestion Input + Parsing + Execution
 		void 		splitMessage(std::string buff);

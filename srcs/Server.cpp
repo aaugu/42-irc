@@ -22,7 +22,8 @@
 # include "../includes/signal.hpp"
 # include "../includes/Client.hpp"
 
-# define MAXCLIENT 5
+# define MAXCLIENT          5
+# define OPPASS             "pass"
 # define ERR_SOCK_CREATE	"Could not create socket"
 # define ERR_SOCK_OPT		"Could not set socket option"
 # define ERR_SOCK_NON_BLOCK	"Could not set sockets to be non blocking"
@@ -62,7 +63,7 @@ std::string t(const std::string& input) {
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-Server::Server(int port) : _nbConnections(0)
+Server::Server(int port) : _nbConnections(0), _opPass(OPPASS)
 {
 	std::cout << "Initializing server..." << std::endl;
 
@@ -328,6 +329,10 @@ std::vector<std::string> Server::getNicknameList() {
         nickname.push_back(it->getNickname());
     }
     return nickname;
+}
+
+std::string Server::getOpPass() {
+    return _opPass;
 }
 
 int Server::getLine(int fd, std::string &line)

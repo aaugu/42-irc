@@ -32,6 +32,7 @@ class Server
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>		_pollFds;
 		std::vector<Client> 	_clients;
+        std::string             _opPass;
 
 		// Start() sub functions
 		void	startServer(void);
@@ -64,6 +65,8 @@ class Server
 		void stop(void);
 		
 		std::vector<std::string>        getNicknameList();
+        std::string                     getOpPass();
+
 		// DEBUG
 		void printNickname();
 };

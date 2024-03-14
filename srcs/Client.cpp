@@ -45,9 +45,7 @@ bool checkUseNickname(Server *s, std::string &nickname) {
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-// Client::Client(void) {}
-
-Client::Client(int sockfd) : _sockfd(sockfd) {
+Client::Client(int sockfd) : _sockfd(sockfd), _isOp(false) {
     std::cout << "coucou" << std::endl;
 }
 
@@ -56,14 +54,14 @@ Client::~Client(void) {
 }
 
 /* ************************************************************************** */
-/*                           PUBLIC MEMBER FUNCTION                           */
+/*                           PRIVATE MEMBER FUNCTION                           */
 /* ************************************************************************** */
 
 // Class function
 void Client::nickFunction(Server *s, std::vector<std::string> &data) {
     bool dupe = false;
 
-    std::vector<std::string> serverNickname = s->getNicknameList();//    bool dupe = false;
+    std::vector<std::string> serverNickname = s->getNicknameList();
     while (checkUseNickname(s, data[0])) {
         std::cout << "DUPE" <<std::endl;
         data[0] += '_';
@@ -78,6 +76,21 @@ void Client::nickFunction(Server *s, std::vector<std::string> &data) {
     _nickname = data[0];
 }
 
+void Client::setOperatorState(Server *s, std::string givenPassword) {
+
+    if (givenPassword == s->getOpPass()) {
+        if (!_isOp) {
+            sendMessage("You are now operator", _sockfd);
+            _isOp = true;
+            return;
+        }
+        sendMessage("You are no longer operator", _sockfd);
+        _isOp = false;
+        return;
+    }
+    sendMessage("ERROR : Invalid password", _sockfd);
+}
+
 /* ************************************************************************** */
 /*                                 ACCESSORS                                  */
 /* ************************************************************************** */
@@ -88,14 +101,6 @@ int Client::getFd() {
 
 std::string Client::getNickname() {
     return _nickname;
-}
-
-// void Client::setFd(int value) {
-//     _sockfd = value;
-// }
-
-void Client::setNickname(std::string value) {
-    _nickname = value;
 }
 
 void Client::splitMessage(std::string buff) {
@@ -131,7 +136,7 @@ void Client::saveMessage(std::string buff) {
 }
 
 void Client::exeCommand(Server *s) {
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN"}; //ajout d'autre commande 
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "OPER"}; //ajout d'autre commande
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -163,8 +168,9 @@ void Client::exeCommand(Server *s) {
                 send_to(MSG_FIRSTJOIN(_nickname));
             }
             break;
-        // case 4:
-        //     ...
+        case 4:
+            setOperatorState(s, _message._paramsSplit[1]);
+            break;
     }
 }
 
