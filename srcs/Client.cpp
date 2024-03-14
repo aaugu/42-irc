@@ -14,6 +14,7 @@
 #include <sstream>
 #include <algorithm>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include "../includes/Server.hpp"
 #include "../includes/Client.hpp"
@@ -39,6 +40,12 @@ bool checkUseNickname(Server *s, std::string &nickname) {
             return true;
     }
     return false;
+}
+
+void toUpperCase(std::string& str) {
+    for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
+        *it = std::toupper(static_cast<unsigned char>(*it));
+    }
 }
 
 /* ************************************************************************** */
@@ -112,6 +119,22 @@ void Client::setOperatorState(Server *s, std::vector<std::string> args) {
     sendMessage("ERROR : Invalid password", itC->_sockfd);
 }
 
+void    Client::killClient(Server *s, std::vector<std::string> args) {
+    if (!_isOp) {
+        sendMessage("ERROR : You need to be operator to kill a client", _sockfd);
+        return;
+    }
+    std::vector<Client>::iterator itC = s->getClientByNickname(args[0]);
+    if (itC->getFd() == 0) {
+        sendMessage("ERROR : Please enter a valid user", _sockfd);
+        return;
+    }
+    sendMessage(itC->getNickname() + " session has been killed", _sockfd);
+    sendMessage("You have been kicked by " + _nickname  + args[1], itC->_sockfd);
+    // need to clean the disconnection
+    close(itC->_sockfd);
+}
+
 /* ************************************************************************** */
 /*                                 ACCESSORS                                  */
 /* ************************************************************************** */
@@ -131,8 +154,10 @@ void Client::splitMessage(std::string buff) {
     _message._paramsSplit.clear();
     _message._params.clear();
     while (ss >> word) {
-        if (count == 0)
+        if (count == 0) {
+            toUpperCase(word);
             _message._command = word;
+        }
         else if (count == 1)
         {
             _message._paramsSplit.push_back(word);
@@ -157,7 +182,7 @@ void Client::saveMessage(std::string buff) {
 }
 
 void Client::exeCommand(Server *s) {
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "OPER"}; //ajout d'autre commande
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "OPER", "KILL"}; //ajout d'autre commande
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -191,6 +216,9 @@ void Client::exeCommand(Server *s) {
             break;
         case 4:
             setOperatorState(s, _message._paramsSplit);
+            break;
+        case 5:
+            killClient(s, _message._paramsSplit);
             break;
     }
 }

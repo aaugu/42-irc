@@ -35,8 +35,9 @@ class Client
 		s_message	_message;
         bool        _isOp;
 
-        void nickFunction(Server *s, std::vector<std::string> &data);
-        void setOperatorState(Server *s, std::vector<std::string> args);
+        void    nickFunction(Server *s, std::vector<std::string> &data);
+        void    setOperatorState(Server *s, std::vector<std::string> args);
+        void    killClient(Server *s, std::vector<std::string> args);
 
     public:
    		// Constructor and destructor
