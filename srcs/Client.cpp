@@ -85,14 +85,10 @@ void Client::nickFunction(Server *s, std::vector<std::string> &data) {
 
 void Client::setOperatorState(Server *s, std::vector<std::string> args) {
     std::vector<Client>::iterator itC = s->getClientByNickname(args[0]);
-    if (itC->getFd() == 0) {
-        sendMessage("ERROR : Invalid user, please enter a valide nickname", _sockfd);
-        return;
-    }
     if (args[1] == s->getOpPass()) {
         if (!_isOp) {
             if (_nickname == args[0]) {
-                sendMessage("You are now operator", itC->_sockfd);
+                sendMessage("You are now operator of this server", _sockfd);
                 itC->_isOp = true;
                 return;
             }
@@ -102,21 +98,31 @@ void Client::setOperatorState(Server *s, std::vector<std::string> args) {
             }
         }
         else {
+
+			if (itC->getFd() == 0 || itC->getFd() == 49) { // fd == 49 error if no other user connected in wsl (TODO tester sous mac)
+				sendMessage("ERROR : Invalid user, please enter a valide nickname", _sockfd);
+				return;
+			}
+
             if (!itC->_isOp) {
-                sendMessage( itC->_nickname + " is now operator", _sockfd);
-                sendMessage("You are now operator", itC->_sockfd);
+                sendMessage( "You have promoted " + itC->_nickname + " Operator", _sockfd);
+                sendMessage("You have been promoted Operator by " + _nickname, itC->_sockfd);
                 itC->_isOp = true;
                 return;
             }
             else {
-                sendMessage( itC->_nickname + " is no longer operator", _sockfd);
-                sendMessage("You are no longer operator", itC->_sockfd);
+				if (_nickname == args[0]){
+					sendMessage("You are no longer operator", _sockfd);
+				}else {
+					sendMessage( itC->_nickname + " is no longer operator", _sockfd);
+					sendMessage(_nickname + " have removed your permission", itC->_sockfd);
+				}
                 itC->_isOp = false;
                 return;
             }
         }
     }
-    sendMessage("ERROR : Invalid password", itC->_sockfd);
+    sendMessage("ERROR : Invalid password", _sockfd);
 }
 
 void    Client::killClient(Server *s, std::vector<std::string> args) {
