@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 16:07:09 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/15 11:05:22 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ std::string t(const std::string& input) {
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-Server::Server(int port) : _nbConnections(0)
+Server::Server(int port, std::string password) : _nbConnections(0)
 {
 	std::cout << "Initializing server..." << std::endl;
 
@@ -93,10 +93,9 @@ Server::Server(int port) : _nbConnections(0)
 		close(_sockfd);
 		throw std::runtime_error(errMessage(ERR_SOCK_BIND, -1, strerror(errno)));
 	}
-
 	// Signals
 	signal( SIGINT, sig::signalHandler );
-
+	_password = password;
 	std::cout << "Server successfully initialized! Listening for connections on port " << port << std::endl;
 }
 
@@ -130,7 +129,7 @@ void Server::run(void)
 				if (clientInput.empty() == false)
 				{
 					parseClientInput(clientInput, it->fd);
-					executeClientInput(it->fd);
+					executeClientInput(*this, it);
 				}
 			}
 		}
@@ -193,7 +192,7 @@ void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::str
 	std::vector<Client>::iterator itC = getClientByFd(clientPollFd->fd);
 	std::string	line;
 	size_t readBytes = getLine(clientPollFd->fd, line);
-	std::cerr << "clientInput: " << t(clientInput) << std::endl;
+	std::cerr << "clientInput: " << t(line) << std::endl;
 
 	if ( (int)readBytes < 0 ){
 		std::cerr << "WAIT finish command" << std::endl; // debug
@@ -215,13 +214,13 @@ void	Server::parseClientInput(std::string clientInput, int sockfdClient)
 	itC->parseMessage(clientInput);
 }
 
-void	Server::executeClientInput(int sockfdClient)
+void	Server::executeClientInput(Server &server, std::vector<pollfd>::iterator it)
 {
-	std::vector<Client>::iterator itC = getClientByFd(sockfdClient);
+	std::vector<Client>::iterator itC = getClientByFd(it->fd);
 	if ( itC == _clients.end() )
-		return (printErrMessage(errMessage("Client", sockfdClient, ERR_CLIENT_NONEX)));
+		return (printErrMessage(errMessage("Client", it->fd, ERR_CLIENT_NONEX)));
 
-	itC->exeCommand();
+	itC->exeCommand(server, it);
 	// itC->setData(clientInput);
 
 	// std::cout << "Client " << sockfdClient << ": " << clientInput;
@@ -328,6 +327,10 @@ std::vector<std::string> Server::getNicknameList() {
         nickname.push_back(it->getNickname());
     }
     return nickname;
+}
+
+std::string Server::get_password() const {
+    return _password;
 }
 
 int Server::getLine(int fd, std::string &line)

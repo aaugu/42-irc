@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:43:48 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/15 10:42:28 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ class Client
 		int			_sockfd;
 		std::string	_nickname;
 		s_message	_message;
+		bool		_passwordReceved;
+		bool		_passwordChecked;
+		bool		_welcomSended;
 
 		// Client(void);
 
@@ -53,9 +56,15 @@ class Client
 		// Gestion Input + Parsing + Execution
 		void 		splitMessage(std::string buff);
         void		parseMessage(std::string buff);
-		void		exeCommand(void);
+		void		exeCommand(Server &server, std::vector<pollfd>::iterator pollfd);
 		void		saveMessage(std::string buff);
 		void		send_to(std::string text) const;
+		
+
+		// command
+
+		void		command_pass(Server &server, std::vector<pollfd>::iterator pollfd);
+		void		check_if_pass(Server &server, std::vector<pollfd>::iterator pollfd);
 };
 
 #endif

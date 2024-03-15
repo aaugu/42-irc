@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:46:02 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/15 11:01:58 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,9 @@ bool checkUseNickname(Server *s, std::string &nickname) {
 
 Client::Client(int sockfd) : _sockfd(sockfd) {
     std::cout << "coucou" << std::endl;
+    _passwordReceved = false;
+    _passwordChecked = false;
+    _welcomSended = false;
 }
 
 Client::~Client(void) {
@@ -132,7 +135,7 @@ void Client::saveMessage(std::string buff) {
     std::cout << "_message._fullStr \"" << _message._fullStr << "\"" << std::endl;
 }
 
-void Client::exeCommand(void) {
+void Client::exeCommand(Server &server, std::vector<pollfd>::iterator pollfd) {
     std::string type[] = {"PASS", "NICK", "USER", "JOIN"}; //ajout d'autre commande 
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
@@ -144,25 +147,32 @@ void Client::exeCommand(void) {
     }
     switch (count) {
         case 0:
-            // command_pass();
             std::cout << "TO DO PASS OF \"" << _message._params << "\"" << std::endl;
+            command_pass(server, pollfd);
             break;
         case 1:
             // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
+            check_if_pass(server, pollfd);
             _nickname = _message._params;
-            send_to(MSG_WELCOME(_nickname, "_user", "_hostName"));
+            if (_passwordReceved == true && _passwordChecked == true && _welcomSended == false){
+                send_to(RPL_WELCOME(_nickname, "_user", "_hostName"));
+                _welcomSended = true;
+            }
             break;
         case 2:
             // command_user();
+            check_if_pass(server, pollfd);
             std::cout << "TO DO USER OF \"" << _message._params << "\"" << std::endl;
             break;
         case 3:
             // command_join();
             std::cout << "TO DO JOIN OF \"" << _message._params << "\"" << std::endl;
-            if(_message._params.compare(":") == 0){
-                send_to(MSG_FIRSTJOIN(_nickname));
+            if(_message._params.compare(":") == 0 && _passwordReceved == false){
+                send_to(ERR_NOTREGISTERED(_nickname));
+                break;
             }
+            check_if_pass(server, pollfd);
             break;
         // case 4:
         //     ...
@@ -176,6 +186,27 @@ void Client::parseMessage(std::string buff) {
     _message._fullStr.erase();
     std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
 }
+
+void Client::command_pass(Server &server, std::vector<pollfd>::iterator pollfd) {
+    _passwordReceved = true;
+    if (_message._params.compare(server.get_password()) == 0) {
+        _passwordChecked = true;
+    }
+    check_if_pass(server, pollfd);
+}
+
+void Client::check_if_pass(Server &server, std::vector<pollfd>::iterator pollfd) {
+    if (_passwordReceved == false) {
+        send_to(ERR_PASSWDMISS);
+        server.disconnectClient(pollfd);
+    }
+    else if (_passwordChecked == false) {
+        send_to(ERR_PASSWDMISMATCH);
+        server.disconnectClient(pollfd);
+    }
+    
+}
+
 // /* ************************************************************************** */
 // /*                            NON MEMBER FUNCTIONS                            */
 // /* ************************************************************************** */
