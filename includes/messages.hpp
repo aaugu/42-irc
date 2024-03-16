@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   messages.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 11:27:49 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:44:52 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/15 14:53:01 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 # define MESSAGES_HPP
 
 # include <string>
+# include <iostream>
 # include <sstream>
 # include <errno.h>
 # include <string.h>
+# include <sys/socket.h>
 
 # define RED  "\e[31m"
 # define END  "\e[0m"

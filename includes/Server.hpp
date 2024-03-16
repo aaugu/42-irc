@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:45:25 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/15 16:25:46 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <string.h>
-# include <poll.h>
-# include "../includes/Client.hpp"
+# include "../includes/Channel.hpp"
 
 class Client;
 
@@ -28,10 +27,12 @@ class Server
 {
 	private :
 		int						_nbConnections;
+		std::string				_password;
 		int						_sockfd;
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>		_pollFds;
 		std::vector<Client> 	_clients;
+		std::vector<Channel>	_channels;
 
 		// Start() sub functions
 		void	startServer(void);
@@ -39,13 +40,12 @@ class Server
 		void	createClientConnection(void);
 		void	getClientInput(std::vector<pollfd>::iterator clientPollFd, std::string& clientInput);
 		void	parseClientInput(std::string clientInput, int sockfdClient);
-		void	executeClientInput(int sockfdClient);
+		void	executeClientInput(Server &server, std::vector<pollfd>::iterator pollfd);
 
 		// Client Utils
 		int		acceptNewClient(void);
 		void	refuseClient(int sockfdClient);
 		void	addClientToListenPoll(int sockfdClient);
-		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
 
 		// Input utils
 		int		getLine(int fd, std::string &line);
@@ -57,15 +57,28 @@ class Server
 		std::vector<Client>::iterator	getClientByFd(int sockfdClient);
 
 	public :
-		Server(int port);
+		Server(int port, std::string password);
 		~Server(void);
 
 		void run(void);
-		void stop(void);
 		
-		std::vector<std::string>        getNicknameList();
+		// Accessors
+		std::vector<std::string>	getNicknameList(void);
+		std::string					get_password(void) const;
+		std::vector<Channel>		getChannels(void);
+		
+		// Channel utils
+		void							addChannel(Channel& channel);
+		void							removeChannel(std::vector<Channel>::iterator channel);
+		std::vector<Channel>::iterator	getChannelByName(std::string name);
+
+		
+		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
+		
 		// DEBUG
 		void printNickname();
+		std::string t(const std::string& input);
+		
 };
 
 #endif

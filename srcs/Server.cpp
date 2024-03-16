@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 16:07:09 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/15 16:26:34 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,34 +35,11 @@
 # define MAX_CONNECTIONS	"Server cannot accept more client"
 # define SERVER_FULL		"Attemped to connect but server is full"
 
-std::string t(const std::string& input) {
-    std::string result;
-    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-        char c = *it;
-        switch (c) {
-            case '\n':
-                result += "\\n";
-                break;
-            case '\r':
-                result += "\\r";
-                break;
-            case '\t':
-                result += "\\t";
-                break;
-            // Ajoutez d'autres caractères spéciaux si nécessaire
-            default:
-                result += c;
-                break;
-        }
-    }
-    return result;
-}
-
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-Server::Server(int port) : _nbConnections(0)
+Server::Server(int port, std::string password) : _nbConnections(0)
 {
 	std::cout << "Initializing server..." << std::endl;
 
@@ -93,10 +70,9 @@ Server::Server(int port) : _nbConnections(0)
 		close(_sockfd);
 		throw std::runtime_error(errMessage(ERR_SOCK_BIND, -1, strerror(errno)));
 	}
-
 	// Signals
 	signal( SIGINT, sig::signalHandler );
-
+	_password = password;
 	std::cout << "Server successfully initialized! Listening for connections on port " << port << std::endl;
 }
 
@@ -109,6 +85,7 @@ Server::~Server(void) {
 /*                              PUBLIC FUNCTIONS                              */
 /* ************************************************************************** */
 
+// ------------------------- Server Main function  -------------------------- //
 void Server::run(void)
 {
 	startServer();
@@ -130,19 +107,45 @@ void Server::run(void)
 				if (clientInput.empty() == false)
 				{
 					parseClientInput(clientInput, it->fd);
-					executeClientInput(it->fd);
+					executeClientInput(*this, it);
 				}
 			}
 		}
 	}
 }
 
+
+// ---------------------------- Channel Utils  ------------------------------ //
+void	Server::addChannel(Channel& channel)
+{
+	_channels.push_back(channel);
+	// message sur serveur pour dire qu'on a cree un channel
+}
+
+void	Server::removeChannel(std::vector<Channel>::iterator channel)
+{
+	(void) channel;
+	// _channels.push_back(channel);
+	// message sur serveur pour dire qu'on a cree un channel
+}
+
+std::vector<Channel>::iterator	Server::getChannelByName(std::string name)
+{
+	std::vector<Channel>::iterator it;
+	for( it = _channels.begin(); it < _channels.end(); it++)
+	{
+		if ( it->getName() == name)
+			break ;
+	}
+	return (it);
+}
+
+
 /* ************************************************************************** */
 /*                              PRIVATE FUNCTIONS                             */
 /* ************************************************************************** */
 
-// ---------------------- Main function sub functions ----------------------- //
-
+// ----------------------- Server Main function Utils ----------------------- //
 void	Server::startServer(void)
 {
 	if ( listen(_sockfd, MAXCLIENT + 1) < 0 )
@@ -193,13 +196,15 @@ void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::str
 	std::vector<Client>::iterator itC = getClientByFd(clientPollFd->fd);
 	std::string	line;
 	size_t readBytes = getLine(clientPollFd->fd, line);
-	std::cerr << "clientInput: " << t(clientInput) << std::endl;
+	std::cerr << "clientInput: " << t(line) << std::endl;
 
-	if ( (int)readBytes < 0 ){
+	if ( (int)readBytes < 0 && line.empty() == false){
 		std::cerr << "WAIT finish command" << std::endl; // debug
 		itC->saveMessage(line);
-		itC->send_to("^D");  // pour le visuel client
+		sendMessage("^D", itC->getFd()); // pour le visuel client
 	}
+	else if ( (int)readBytes < 0 ) {}
+		// err message
 	else if (readBytes == 0)
 		disconnectClient(clientPollFd);
 	else
@@ -215,13 +220,13 @@ void	Server::parseClientInput(std::string clientInput, int sockfdClient)
 	itC->parseMessage(clientInput);
 }
 
-void	Server::executeClientInput(int sockfdClient)
+void	Server::executeClientInput(Server &server, std::vector<pollfd>::iterator it)
 {
-	std::vector<Client>::iterator itC = getClientByFd(sockfdClient);
+	std::vector<Client>::iterator itC = getClientByFd(it->fd);
 	if ( itC == _clients.end() )
-		return (printErrMessage(errMessage("Client", sockfdClient, ERR_CLIENT_NONEX)));
+		return (printErrMessage(errMessage("Client", it->fd, ERR_CLIENT_NONEX)));
 
-	itC->exeCommand();
+	itC->exeCommand(&server, it);
 	// itC->setData(clientInput);
 
 	// std::cout << "Client " << sockfdClient << ": " << clientInput;
@@ -317,10 +322,6 @@ std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 	return (it);
 }
 
-/* ************************************************************************** */
-/*                                     UTILS                                  */
-/* ************************************************************************** */
-
 std::vector<std::string> Server::getNicknameList() {
     std::vector<Client>::iterator it;
     std::vector<std::string> nickname;
@@ -329,6 +330,19 @@ std::vector<std::string> Server::getNicknameList() {
     }
     return nickname;
 }
+
+std::string Server::get_password() const {
+    return _password;
+}
+
+std::vector<Channel>	Server::getChannels(void) {
+	return ( _channels );
+}
+
+/* ************************************************************************** */
+/*                                     UTILS                                  */
+/* ************************************************************************** */
+
 
 int Server::getLine(int fd, std::string &line)
 {
@@ -361,5 +375,28 @@ void Server::printNickname() {
 	for (it = _clients.begin(); it != _clients.end(); ++it) {
 		std::cout << "--->" << it->getNickname() << "<---" << it->getFd() << " <---- "<< std::endl;
 	}
+}
+
+std::string Server::t(const std::string& input) {
+    std::string result;
+    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+        char c = *it;
+        switch (c) {
+            case '\n':
+                result += "\\n";
+                break;
+            case '\r':
+                result += "\\r";
+                break;
+            case '\t':
+                result += "\\t";
+                break;
+            // Ajoutez d'autres caractères spéciaux si nécessaire
+            default:
+                result += c;
+                break;
+        }
+    }
+    return result;
 }
 

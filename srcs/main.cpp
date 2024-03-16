@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:04:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:58:53 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/14 13:43:06 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,22 @@
 
 int	main(int ac, char ** av)
 {
-	if (ac != 2) // change to 3 when password is implemented
+	if (ac != 3)
 	{
 		std::cout << CYAN "Usage: ./ircserv <port> <password>" END << std::endl;
 		return (1);
 	}
 
+	for (int i = 0; av[1][i] != '\0'; i++) {
+		if (!std::isdigit(av[1][i])) {
+			std::cerr << "Port must be a number" << std::endl;
+			return (1);
+		}
+	}
+
 	try {
-		Server	server(atoi(av[1]));
+		std::string password = av[2];
+		Server	server(atoi(av[1]), password);
 		server.run();
 	}
 	catch(const std::exception& e) {
