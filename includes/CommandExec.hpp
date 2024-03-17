@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/15 16:29:19 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/17 18:56:56 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ class Client;
 class Server;
 struct s_message;
 
+class Channel;
 class CommandExec
 {
     private:
@@ -27,12 +28,14 @@ class CommandExec
 		s_message*	_msg;
 
 		// UTILS
-		bool	invalidNbParams(int minNbParams, int maxNbParams);
+		bool	invalidNbParams(int nbParams, int minNbParams, int maxNbParams);
 
 		// JOIN
+		void	checkChannelName(std::string& name);
 		void	createChannel(std::string name);
-		void	checkChannelName(std::string name);
-		// bool	isChannelAlreadyOpen(std::string channelName);
+		void	joinChannel(Channel& channel);
+
+		// etc.
 
     public:
    		// Constructor and destructor

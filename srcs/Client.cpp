@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/15 13:39:39 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/17 19:18:14 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,14 @@
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-// Client::Client(void) {}
+Client::Client(int sockfd, std::string address) :
+                _sockfd(sockfd),
+                _address(address),
+                _passwordReceved(false),
+                _passwordChecked(false),
+                _welcomSended(false) {}
 
-Client::Client(int sockfd) : _sockfd(sockfd) {
-    std::cout << "coucou" << std::endl;
-    _passwordReceved = false;
-    _passwordChecked = false;
-    _welcomSended = false;
-}
-
-Client::~Client(void) {
-    std::cout << "bye bye" << std::endl;
-}
+Client::~Client(void) {}
 
 /* ************************************************************************** */
 /*                           PUBLIC MEMBER FUNCTION                           */
@@ -56,8 +52,8 @@ void Client::setData(Server *s, std::string &buffer) {
         if (dupe) {
             std::cout << "change nickname" << std::endl;
             std::string nickChangeMessage = ": NICK " + info[1];
-            sendMessage(nickChangeMessage, _sockfd);
-            sendMessage("Nickname changed to " + info[1], _sockfd);
+            sendMessage(nickChangeMessage);
+            sendMessage("Nickname changed to " + info[1]);
         }
         _nickname = info[1];
     }
@@ -71,8 +67,8 @@ void Client::saveMessage(std::string buff) {
 void Client::exeCommand(Server* server, std::vector<pollfd>::iterator pollfd)
 {
     CommandExec exec(server, this, &_message);
-    
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN"}; //ajout d'autre commande 
+
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN"}; //ajout d'autre commande
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -81,7 +77,7 @@ void Client::exeCommand(Server* server, std::vector<pollfd>::iterator pollfd)
         else
             break;
     }
-    
+
     switch (count) {
         case 0:
             std::cout << "TO DO PASS OF \"" << _message._params << "\"" << std::endl;
@@ -93,7 +89,7 @@ void Client::exeCommand(Server* server, std::vector<pollfd>::iterator pollfd)
             check_if_pass(*server, pollfd);
             _nickname = _message._params;
             if (_passwordReceved == true && _passwordChecked == true && _welcomSended == false){
-                sendMessage(RPL_WELCOME(_nickname, "_user", "_hostName"), _sockfd);
+                sendMessage(RPL_WELCOME(_nickname, "_user", "_hostName"));
                 _welcomSended = true;
             }
             break;
@@ -106,7 +102,7 @@ void Client::exeCommand(Server* server, std::vector<pollfd>::iterator pollfd)
             // command_join();
             std::cout << "TO DO JOIN OF \"" << _message._params << "\"" << std::endl;
             if(_message._params.compare(":") == 0 && _passwordReceved == false){
-                sendMessage(ERR_NOTREGISTERED(_nickname), _sockfd);
+                sendMessage(ERR_NOTREGISTERED(_nickname));
                 break;
             }
             check_if_pass(*server, pollfd);
@@ -137,9 +133,9 @@ std::string Client::getNickname() {
     return _nickname;
 }
 
-// void Client::setFd(int value) {
-//     _sockfd = value;
-// }
+std::string	Client::getAddress(void) {
+    return ( _address );
+}
 
 void Client::setNickname(std::string value) {
     _nickname = value;
@@ -148,11 +144,6 @@ void Client::setNickname(std::string value) {
 void    Client::setCurrentChannel(Channel* currentChannel) {
     _currentChannel = currentChannel;
 }
-
-// void	Client::send_to(std::string text) const {
-// 	send(_sockfd, text.c_str(), text.length(), 0);
-// }
-
 
 /* ************************************************************************** */
 /*                             PRIVATE FUNCTIONS                              */
@@ -168,14 +159,14 @@ void Client::command_pass(Server &server, std::vector<pollfd>::iterator pollfd) 
 
 void Client::check_if_pass(Server &server, std::vector<pollfd>::iterator pollfd) {
     if (_passwordReceved == false) {
-        sendMessage(ERR_PASSWDMISS, _sockfd);
+        sendMessage(ERR_PASSWDMISS);
         server.disconnectClient(pollfd);
     }
     else if (_passwordChecked == false) {
-        sendMessage(ERR_PASSWDMISMATCH, _sockfd);
+        sendMessage(ERR_PASSWDMISMATCH);
         server.disconnectClient(pollfd);
     }
-    
+
 }
 
 std::vector<std::string> Client::split(std::string value) {

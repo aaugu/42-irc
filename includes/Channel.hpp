@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/15 17:10:37 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/17 19:11:56 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,27 +20,48 @@ class Channel
 {
     private:
 		std::string				_name;
-		bool					_operatorConnected;
-		std::vector<Client*>	_clients;
-		// std::string				_password;
+		std::string				_password;
+		std::string				_topic;
+		int						_userLimit;
 
+		std::vector<Client*>	_operators;
+		std::vector<Client*>	_users;
+
+		bool	_modeI;	// invite-only
+		bool	_modeT;	// topic command only for operator
+		bool	_modeK;	// password
+		bool	_modeL;	// userlimit
 
     public:
    		// Constructor and destructor
-		Channel(void) {}
-		Channel(std::string name, Client* client);
+		Channel(std::string name, Client* user);
 		~Channel(void);
 
-		void	addClient(Client* client);
-		void	removeClient(Client* client);
+		// Modifiers
+		void	addUser(Client* user);
+		void	removeUser(Client* user);
 
-		void	informClientArrival(Client* client);
-		void	welcomeMessage(Client* client);
+		// Checks
+		bool	isOperator(Client* user);
+		bool	isPasswordValid(std::string password);
+
+		// Send
+		void	sendMessageToUsers(std::string message);
+		void	sendMessageToUsersExceptSender(Client* sender, std::string message);
 
 		// Accessors
 		std::string				getName(void);
-		bool					getOperatorConnected(void);
-		std::vector<Client*>	getClients(void);
+		std::string				getPassword(void);
+		int						getUserLimit(void);
+		std::vector<Client*>	getUsers(void);
+		bool					getModeI(void);
+		bool					getModeT(void);
+		bool					getModeK(void);
+		bool					getModeL(void);
+
+		std::string				getAllUsersList(void);
+
+
 };
 
 #endif

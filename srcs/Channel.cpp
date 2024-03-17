@@ -6,12 +6,13 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/15 17:42:34 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/17 19:23:33 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <vector>
 #include <unistd.h>
+#include <string>
 
 #include "../includes/Channel.hpp"
 #include "../includes/Client.hpp"
@@ -22,8 +23,18 @@
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-Channel::Channel(std::string name, Client* client) : _name(name), _operatorConnected(true) {
-	_clients.push_back(client);
+Channel::Channel(std::string name, Client* user) :
+					_name(name),
+					_password(""),
+					_topic(""),
+					_userLimit(-1),
+					_modeI(false),
+					_modeT(false),
+					_modeK(false),
+					_modeL(false)
+{
+	_users.push_back(user);
+	_operators.push_back(user);
 }
 
 Channel::~Channel(void) {}
@@ -32,80 +43,48 @@ Channel::~Channel(void) {}
 /*                          PUBLIC MEMBER FUNCTIONS                           */
 /* ************************************************************************** */
 
-void	Channel::addClient(Client* client)
+void	Channel::addUser(Client* user)
 {
-	if (client)
-		_clients.push_back(client);
+	if (user)
+		_users.push_back(user);
 }
 
-void	Channel::removeClient(Client* client) { (void) client; }
-
-void	Channel::informClientArrival(Client* client)
+void	Channel::removeUser(Client* user) // le paramètre sera probablement plutôt un itérateur
 {
-	char	hostname[1024];
-	gethostname(hostname, 1024);
-	std::string	msg = client->getNickname() + " [~" + client->getNickname() + "@" + hostname + "] has joined " + _name;
-	
-	std::vector<Client*>::iterator	it = _clients.begin();
-	for( ; it < _clients.end(); it++ )
-	{
-		sendMessage(msg, client->getFd());
-	}
+	(void) user;
 }
 
-void	Channel::welcomeMessage(Client* client)
+bool	Channel::isOperator(Client* user)
 {
-	std::string usersChannel = "[Users +" + _name + "]";
-	sendMessage(usersChannel, client->getFd());
-
-	std::vector<Client*>::iterator	it = _clients.begin();
-	if ( _operatorConnected )
+	std::vector<Client*>::iterator it = _operators.begin();
+	for( ; it < _operators.end(); it ++)
 	{
-		std::string	operatorName = "[@" + (*it)->getNickname() + "] ";
-		sendMessage(operatorName, (*it)->getFd());
-		it++;
+		if (user == *it)
+			return (true);
 	}
-	
-	for( ; it < _clients.end(); it++)
-	{
-		std::string	user = "[ " + (*it)->getNickname() + "] ";
-		sendMessage(user, (*it)->getFd());
-	}
+	return (false);
 }
 
-/* ************************************************************************** */
-/*                                   UTILS                                    */
-/* ************************************************************************** */
-
-/*
-void	Channel::printUsers(void)
-{
-	std::string usersChannel = "[Users +" + _name + "]\n";
-	sendMessage(usersChannel, client->getFd());
-
-	std::vector<Client*>::iterator	it = _clients.begin();
-	if ( _operatorConnected )
-	{
-		std::string	operatorName = "[@" + (*it)->getNickname() + "] ";
-		sendMessage(operatorName, (*it)->getFd());
-		it++;
-	}
-	
-	for( ; it < _clients.end(); it++)
-	{
-		std::string	user = "[ " + (*it)->getNickname() + "] ";
-		sendMessage(user, (*it)->getFd());
-	}
-	
-	sendMessage("\n", client->getFd());
+bool	Channel::isPasswordValid(std::string password) {
+	return ( _password == password );
 }
 
-void	Channel::printStatus(void)
+void	Channel::sendMessageToUsers(std::string message)
 {
-	
+	std::vector<Client*>::iterator user;
+	for( user = _users.begin(); user < _users.end(); user ++ )
+		(*user)->sendMessage(message);
 }
 
-*/
+void	Channel::sendMessageToUsersExceptSender(Client* sender, std::string message)
+{
+	std::vector<Client*>::iterator user;
+	for( user = _users.begin(); user < _users.end(); user ++ )
+	{
+		if (*user != sender)
+			(*user)->sendMessage(message);
+	}
+}
 
 /* ************************************************************************** */
 /*                                 ACCESSORS                                  */
@@ -115,10 +94,46 @@ std::string	Channel::getName(void) {
 	return ( _name );
 }
 
-bool	Channel::getOperatorConnected(void) {
-	return ( _operatorConnected );
+std::string	Channel::getPassword(void) {
+	return ( _password );
 }
 
-std::vector<Client*>	Channel::getClients(void) {
-	return ( _clients );
+int	Channel::getUserLimit(void) {
+	return ( _userLimit );
+}
+
+std::vector<Client*>	Channel::getUsers(void) {
+	return ( _users );
+}
+
+bool	Channel::getModeI(void) {
+	return ( _modeI );
+}
+
+bool	Channel::getModeT(void) {
+	return ( _modeI );
+}
+
+bool	Channel::getModeK(void) {
+	return ( _modeI );
+}
+
+bool	Channel::getModeL(void) {
+	return ( _modeI );
+}
+
+std::string	Channel::getAllUsersList(void)
+{
+	std::string userList = "";
+
+	std::vector<Client*>::iterator user;
+	for ( user = _users.begin(); user < _users.end(); user++)
+	{
+		if (isOperator(*user) == true)
+			userList += "@" + (*user)->getNickname() + " ";
+		else
+			userList += (*user)->getNickname() + " ";
+	}
+
+	return ( userList );
 }

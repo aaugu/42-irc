@@ -6,34 +6,35 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/15 16:26:34 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/17 18:52:04 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <iostream>
-# include <sys/socket.h>
-# include <fcntl.h>
-# include <unistd.h>
-# include <errno.h>
-# include <string.h>
+#include <iostream>
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
 
-# include "../includes/Server.hpp"
-# include "../includes/messages.hpp"
-# include "../includes/signal.hpp"
-# include "../includes/Client.hpp"
+#include "../includes/Server.hpp"
+#include "../includes/messages.hpp"
+#include "../includes/signal.hpp"
+#include "../includes/Client.hpp"
 
-# define MAXCLIENT 5
-# define ERR_SOCK_CREATE	"Could not create socket"
-# define ERR_SOCK_OPT		"Could not set socket option"
-# define ERR_SOCK_NON_BLOCK	"Could not set sockets to be non blocking"
-# define ERR_SOCK_BIND		"Could not bind socket"
-# define ERR_SOCK_LISTEN	"Could not listen to the socket"
-# define ERR_POLL			"Problem while waiting for fd to perform"
-# define ERR_CLIENT_NONEX	"Could not find client with this fd"
-# define ERR_CLIENT_ACCEPT	"Could not create connection with client"
-# define ERR_CLOSE			"Could not close file descriptor"
-# define MAX_CONNECTIONS	"Server cannot accept more client"
-# define SERVER_FULL		"Attemped to connect but server is full"
+/* ************************************************************************** */
+/*                                   MACROS                                   */
+/* ************************************************************************** */
+
+#define MAXCLIENT 5
+#define ERR_SOCK_CREATE	"Could not create socket"
+#define ERR_SOCK_OPT		"Could not set socket option"
+#define ERR_SOCK_NON_BLOCK	"Could not set sockets to be non blocking"
+#define ERR_SOCK_BIND		"Could not bind socket"
+#define ERR_SOCK_LISTEN	"Could not listen to the socket"
+#define ERR_POLL			"Problem while waiting for fd to perform"
+#define ERR_CLIENT_ACCEPT	"Could not create connection with client"
+
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -114,33 +115,6 @@ void Server::run(void)
 	}
 }
 
-
-// ---------------------------- Channel Utils  ------------------------------ //
-void	Server::addChannel(Channel& channel)
-{
-	_channels.push_back(channel);
-	// message sur serveur pour dire qu'on a cree un channel
-}
-
-void	Server::removeChannel(std::vector<Channel>::iterator channel)
-{
-	(void) channel;
-	// _channels.push_back(channel);
-	// message sur serveur pour dire qu'on a cree un channel
-}
-
-std::vector<Channel>::iterator	Server::getChannelByName(std::string name)
-{
-	std::vector<Channel>::iterator it;
-	for( it = _channels.begin(); it < _channels.end(); it++)
-	{
-		if ( it->getName() == name)
-			break ;
-	}
-	return (it);
-}
-
-
 /* ************************************************************************** */
 /*                              PRIVATE FUNCTIONS                             */
 /* ************************************************************************** */
@@ -163,7 +137,7 @@ void	Server::waitForEvent(void)
 	int	timeout = 0;
 
 	if ( poll(&_pollFds[0], (nfds_t) _nbConnections + 1, timeout) == -1 && sig::stopServer == false)
-		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));	
+		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
 }
 
 void	Server::createClientConnection(void)
@@ -181,8 +155,8 @@ void	Server::createClientConnection(void)
 	if (_nbConnections + 1 > MAXCLIENT)
 		return (refuseClient(sockfdClient));
 
+	createClient(sockfdClient);
 	addClientToListenPoll(sockfdClient);
-	_clients.push_back(Client(sockfdClient));
 
 	std::cout	<< "New connection : "
 				<< "[SOCKET_FD : "	<< sockfdClient
@@ -232,63 +206,6 @@ void	Server::executeClientInput(Server &server, std::vector<pollfd>::iterator it
 	// std::cout << "Client " << sockfdClient << ": " << clientInput;
 }
 
-// ------------------------------ Client Utils ------------------------------ //
-
-int		Server::acceptNewClient(void)
-{
-	int					sockfdClient;
-	struct sockaddr_in	addrClient;
-	socklen_t			addrLenClient = sizeof(addrClient);
-
-	sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, (socklen_t *)&addrLenClient);
-
-	if (sockfdClient < 0)
-		throw std::runtime_error(errMessage("Client : ", sockfdClient, strerror(errno)));
-	return (sockfdClient);
-}
-
-void	Server::refuseClient(int sockfdClient)
-{
-	sendMessage(MAX_CONNECTIONS, sockfdClient);
-
-	if (close(sockfdClient) < 0)
-		throw std::runtime_error(errMessage(ERR_CLOSE, sockfdClient, strerror(errno)));
-
-	printErrMessage(errMessage("Client", -1, SERVER_FULL));
-}
-
-void	Server::addClientToListenPoll(int sockfdClient)
-{
-	if (_nbConnections >= SOMAXCONN)
-	{
-		std::cerr << errMessage("Server : ", -1, "cannot accept more client") << std::endl;
-		return ;
-	}
-
-	pollfd	client;
-
-	client.fd = sockfdClient;
-	client.events = POLLIN | POLLOUT;
-
-	_pollFds.push_back(client);
-	_nbConnections++;
-}
-
-void	Server::disconnectClient(std::vector<pollfd>::iterator pollfd)
-{
-	std::cout << "Client " << pollfd->fd << ": disconnected" << std::endl;
-	if (close(pollfd->fd) < 0)
-		throw std::runtime_error(errMessage(ERR_CLOSE, pollfd->fd, strerror(errno)));
-
-	_nbConnections--;
-
-	std::vector<Client>::iterator itC = getClientByFd(pollfd->fd);
-	if ( itC == _clients.end() )
-		return (printErrMessage(errMessage("Client", pollfd->fd, ERR_CLIENT_NONEX)));
-
-	_pollFds.erase(pollfd);
-	_clients.erase(itC);
-}
 
 // ---------------------------- Stop signal utils --------------------------- //
 void    Server::closePollFds(void)
@@ -399,4 +316,3 @@ std::string Server::t(const std::string& input) {
     }
     return result;
 }
-

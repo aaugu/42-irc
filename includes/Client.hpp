@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/15 14:52:35 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/17 19:25:49 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,12 @@
 
 # include <string>
 # include <vector>
+# include <sstream>
 # include <poll.h>
+# include <errno.h>
+# include <string.h>
+
+# include "../includes/messages.hpp"
 
 struct s_message {
     std::string fullStr;
@@ -32,6 +37,7 @@ class Client
     private:
 		int			_sockfd;
 		std::string	_nickname;
+		std::string	_address;
 		s_message	_message;
 		bool		_passwordReceved;
 		bool		_passwordChecked;
@@ -47,7 +53,7 @@ class Client
 
     public:
    		// Constructor and destructor
-		Client(int sockfd);
+		Client(int sockfd, std::string address);
 		~Client(void);
 
 		// Class function
@@ -57,14 +63,25 @@ class Client
         void		parseMessage(std::string buff);
 		void		exeCommand(Server* server, std::vector<pollfd>::iterator pollfd);
 		void		saveMessage(std::string buff);
-		// void		send_to(std::string text) const;
 
 		// Accessors
 		int			getFd(void);
 		std::string getNickname(void);
-		// void		setFd(int value);
+		std::string	getAddress(void);
 		void		setNickname(std::string value);
 		void		setCurrentChannel(Channel* currentChannel);
+
+		// Send Message
+		template < typename T >
+		void	sendMessage(T message)
+		{
+			std::stringstream	ss;
+			ss << message << std::endl;
+			std::string			msg = ss.str();
+
+			if (send(_sockfd, msg.c_str(), msg.size(), 0) < 0)
+				printErrMessage(errMessage("Could not send message to", _sockfd, strerror(errno)));
+		}
 };
 
 #endif

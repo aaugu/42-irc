@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/15 16:25:46 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/17 18:52:48 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 # include <arpa/inet.h>
 # include <string.h>
 # include "../includes/Channel.hpp"
+
+#define ERR_CLIENT_NONEX "Could not find client with this fd"
+#define ERR_CLOSE "Could not close file descriptor"
 
 class Client;
 
@@ -45,6 +48,7 @@ class Server
 		// Client Utils
 		int		acceptNewClient(void);
 		void	refuseClient(int sockfdClient);
+		void	createClient(int sockfdClient);
 		void	addClientToListenPoll(int sockfdClient);
 
 		// Input utils
@@ -61,24 +65,24 @@ class Server
 		~Server(void);
 
 		void run(void);
-		
+
 		// Accessors
 		std::vector<std::string>	getNicknameList(void);
 		std::string					get_password(void) const;
 		std::vector<Channel>		getChannels(void);
-		
+
 		// Channel utils
 		void							addChannel(Channel& channel);
 		void							removeChannel(std::vector<Channel>::iterator channel);
 		std::vector<Channel>::iterator	getChannelByName(std::string name);
 
-		
+
 		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
-		
+
 		// DEBUG
 		void printNickname();
 		std::string t(const std::string& input);
-		
+
 };
 
 #endif
