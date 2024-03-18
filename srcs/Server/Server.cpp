@@ -3,60 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 11:58:23 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/18 14:09:13 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <iostream>
-# include <sys/socket.h>
-# include <fcntl.h>
-# include <unistd.h>
-# include <errno.h>
-# include <string.h>
+#include <iostream>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
 
-# include "../includes/Server.hpp"
-# include "../includes/messages.hpp"
-# include "../includes/signal.hpp"
-# include "../includes/Client.hpp"
+#include "../includes/Server.hpp"
+#include "../includes/messages.hpp"
+#include "../includes/signal.hpp"
+#include "../includes/Client.hpp"
 
-# define MAXCLIENT 5
-# define ERR_SOCK_CREATE	"Could not create socket"
-# define ERR_SOCK_OPT		"Could not set socket option"
-# define ERR_SOCK_NON_BLOCK	"Could not set sockets to be non blocking"
-# define ERR_SOCK_BIND		"Could not bind socket"
-# define ERR_SOCK_LISTEN	"Could not listen to the socket"
-# define ERR_POLL			"Problem while waiting for fd to perform"
-# define ERR_CLIENT_NONEX	"Could not find client with this fd"
-# define ERR_CLIENT_ACCEPT	"Could not create connection with client"
-# define ERR_CLOSE			"Could not close file descriptor"
-# define MAX_CONNECTIONS	"Server cannot accept more client"
-# define SERVER_FULL		"Attemped to connect but server is full"
+/* ************************************************************************** */
+/*                                   MACROS                                   */
+/* ************************************************************************** */
 
-std::string t(const std::string& input) {
-    std::string result;
-    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-        char c = *it;
-        switch (c) {
-            case '\n':
-                result += "\\n";
-                break;
-            case '\r':
-                result += "\\r";
-                break;
-            case '\t':
-                result += "\\t";
-                break;
-            // Ajoutez d'autres caractères spéciaux si nécessaire
-            default:
-                result += c;
-                break;
-        }
-    }
-    return result;
-}
+#define MAXCLIENT 5
+#define ERR_SOCK_CREATE		"Could not create socket"
+#define ERR_SOCK_OPT		"Could not set socket option"
+#define ERR_SOCK_NON_BLOCK	"Could not set sockets to be non blocking"
+#define ERR_SOCK_BIND		"Could not bind socket"
+#define ERR_SOCK_LISTEN		"Could not listen to the socket"
+#define ERR_POLL			"Problem while waiting for fd to perform"
+#define ERR_CLIENT_ACCEPT	"Could not create connection with client"
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -108,6 +86,7 @@ Server::~Server(void) {
 /*                              PUBLIC FUNCTIONS                              */
 /* ************************************************************************** */
 
+// ------------------------- Server Main function  -------------------------- //
 void Server::run(void)
 {
 	startServer();
@@ -140,8 +119,7 @@ void Server::run(void)
 /*                              PRIVATE FUNCTIONS                             */
 /* ************************************************************************** */
 
-// ---------------------- Main function sub functions ----------------------- //
-
+// ----------------------- Server Main function Utils ----------------------- //
 void	Server::startServer(void)
 {
 	if ( listen(_sockfd, MAXCLIENT + 1) < 0 )
@@ -159,7 +137,7 @@ void	Server::waitForEvent(void)
 	int	timeout = 0;
 
 	if ( poll(&_pollFds[0], (nfds_t) _nbConnections + 1, timeout) == -1 && sig::stopServer == false)
-		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));	
+		throw std::runtime_error(errMessage("Server : ", -1, strerror(errno)));
 }
 
 void	Server::createClientConnection(void)
@@ -177,8 +155,9 @@ void	Server::createClientConnection(void)
 	if (_nbConnections + 1 > MAXCLIENT)
 		return (refuseClient(sockfdClient));
 
+	createClient(sockfdClient);
 	addClientToListenPoll(sockfdClient);
-	_clients.push_back(Client(sockfdClient));
+	_nbConnections++;
 
 	std::cout	<< "New connection : "
 				<< "[SOCKET_FD : "	<< sockfdClient
@@ -197,10 +176,12 @@ void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::str
 	if ( (int)readBytes < 0 && line.empty() == false){
 		std::cerr << "WAIT finish command" << std::endl; // debug
 		itC->saveMessage(line);
-		itC->send_to("^D");  // pour le visuel client
+		sendMessage("^D", itC->getFd()); // pour le visuel client
 	}
+	else if ( (int)readBytes < 0 ) {}
+		// errMsg
 	else if (readBytes == 0)
-		clientInput = "QUIT :lost connexion\r\n";// disconnectClient(clientPollFd);
+		clientInput = "QUIT :lost connexion\r\n";
 	else
 		clientInput = line;
 }
@@ -220,69 +201,12 @@ void	Server::executeClientInput(Server &server, std::vector<pollfd>::iterator it
 	if ( itC == _clients.end() )
 		return (printErrMessage(errMessage("Client", it->fd, ERR_CLIENT_NONEX)));
 
-	itC->exeCommand(server, it);
+	itC->exeCommand(&server, it);
 	// itC->setData(clientInput);
 
 	// std::cout << "Client " << sockfdClient << ": " << clientInput;
 }
 
-// ------------------------------ Client Utils ------------------------------ //
-
-int		Server::acceptNewClient(void)
-{
-	int					sockfdClient;
-	struct sockaddr_in	addrClient;
-	socklen_t			addrLenClient = sizeof(addrClient);
-
-	sockfdClient = accept(_sockfd, (struct sockaddr *)&addrClient, (socklen_t *)&addrLenClient);
-
-	if (sockfdClient < 0)
-		throw std::runtime_error(errMessage("Client : ", sockfdClient, strerror(errno)));
-	return (sockfdClient);
-}
-
-void	Server::refuseClient(int sockfdClient)
-{
-	sendMessage(MAX_CONNECTIONS, sockfdClient);
-
-	if (close(sockfdClient) < 0)
-		throw std::runtime_error(errMessage(ERR_CLOSE, sockfdClient, strerror(errno)));
-
-	printErrMessage(errMessage("Client", -1, SERVER_FULL));
-}
-
-void	Server::addClientToListenPoll(int sockfdClient)
-{
-	if (_nbConnections >= SOMAXCONN)
-	{
-		std::cerr << errMessage("Server : ", -1, "cannot accept more client") << std::endl;
-		return ;
-	}
-
-	pollfd	client;
-
-	client.fd = sockfdClient;
-	client.events = POLLIN | POLLOUT;
-
-	_pollFds.push_back(client);
-	_nbConnections++;
-}
-
-void	Server::disconnectClient(std::vector<pollfd>::iterator pollfd)
-{
-	std::cout << "Client " << pollfd->fd << ": disconnected" << std::endl;
-	if (close(pollfd->fd) < 0)
-		throw std::runtime_error(errMessage(ERR_CLOSE, pollfd->fd, strerror(errno)));
-
-	_nbConnections--;
-
-	std::vector<Client>::iterator itC = getClientByFd(pollfd->fd);
-	if ( itC == _clients.end() )
-		return (printErrMessage(errMessage("Client", pollfd->fd, ERR_CLIENT_NONEX)));
-
-	_pollFds.erase(pollfd);
-	_clients.erase(itC);
-}
 
 // ---------------------------- Stop signal utils --------------------------- //
 void    Server::closePollFds(void)
@@ -316,10 +240,6 @@ std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 	return (it);
 }
 
-/* ************************************************************************** */
-/*                                     UTILS                                  */
-/* ************************************************************************** */
-
 std::vector<std::string> Server::getNicknameList() {
     std::vector<Client>::iterator it;
     std::vector<std::string> nickname;
@@ -332,6 +252,15 @@ std::vector<std::string> Server::getNicknameList() {
 std::string Server::get_password() const {
     return _password;
 }
+
+std::vector<Channel>	Server::getChannels(void) {
+	return ( _channels );
+}
+
+/* ************************************************************************** */
+/*                                     UTILS                                  */
+/* ************************************************************************** */
+
 
 int Server::getLine(int fd, std::string &line)
 {
@@ -366,3 +295,25 @@ void Server::printNickname() {
 	}
 }
 
+std::string Server::t(const std::string& input) {
+    std::string result;
+    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+        char c = *it;
+        switch (c) {
+            case '\n':
+                result += "\\n";
+                break;
+            case '\r':
+                result += "\\r";
+                break;
+            case '\t':
+                result += "\\t";
+                break;
+            // Ajoutez d'autres caractères spéciaux si nécessaire
+            default:
+                result += c;
+                break;
+        }
+    }
+    return result;
+}
