@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/14 15:47:42 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/18 12:03:36 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <string.h>
-# include <poll.h>
-# include "../includes/Client.hpp"
+# include "../includes/Channel.hpp"
+
+#define ERR_CLIENT_NONEX "Could not find client with this fd"
+#define ERR_CLOSE "Could not close file descriptor"
 
 class Client;
 
@@ -33,6 +35,7 @@ class Server
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>		_pollFds;
 		std::vector<Client> 	_clients;
+		std::vector<Channel>	_channels;
 
 		// Start() sub functions
 		void	startServer(void);
@@ -45,6 +48,7 @@ class Server
 		// Client Utils
 		int		acceptNewClient(void);
 		void	refuseClient(int sockfdClient);
+		void	createClient(int sockfdClient);
 		void	addClientToListenPoll(int sockfdClient);
 
 		// Input utils
@@ -61,13 +65,25 @@ class Server
 		~Server(void);
 
 		void run(void);
-		void stop(void);
+
+		// Accessors
+		std::vector<std::string>	getNicknameList(void);
+		std::string					get_password(void) const;
+		std::vector<Channel>		getChannels(void);
 		
-		std::vector<std::string>	getNicknameList();
-		std::string					get_password() const;
-		void		disconnectClient(std::vector<pollfd>::iterator pollfd);
+
+		// Channel utils
+		void							addChannel(Channel& channel);
+		void							removeChannel(std::vector<Channel>::iterator channel);
+		std::vector<Channel>::iterator	getChannelByName(std::string name);
+
+
+		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
+
 		// DEBUG
 		void printNickname();
+		std::string t(const std::string& input);
+
 };
 
 #endif
