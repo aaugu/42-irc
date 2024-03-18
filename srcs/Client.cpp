@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/15 11:01:58 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/18 11:47:27 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ void Client::saveMessage(std::string buff) {
 }
 
 void Client::exeCommand(Server &server, std::vector<pollfd>::iterator pollfd) {
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN"}; //ajout d'autre commande 
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT"}; //ajout d'autre commande 
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -174,8 +174,24 @@ void Client::exeCommand(Server &server, std::vector<pollfd>::iterator pollfd) {
             }
             check_if_pass(server, pollfd);
             break;
-        // case 4:
-        //     ...
+        case 4:
+            check_if_pass(server, pollfd);
+            std::cout << "TO DO MODE OF \"" << _message._params << "\"" << std::endl;
+            // command_mode();
+            break;
+        case 5:
+            check_if_pass(server, pollfd);
+            std::cout << "TO DO PING OF \"" << _message._params << "\"" << std::endl;
+            command_ping();
+            break;
+        case 6:
+            std::cout << "TO DO QUIT OF \"" << _message._params << "\"" << std::endl;
+            command_quit(server, pollfd);
+            break;
+        case 7: //dernier case pour l'invalide command 
+            send_to(ERR_INVALID_ERROR);
+        // case X: 
+        //      ...
     }
 }
 
@@ -189,8 +205,9 @@ void Client::parseMessage(std::string buff) {
 
 void Client::command_pass(Server &server, std::vector<pollfd>::iterator pollfd) {
     _passwordReceved = true;
-    if (_message._params.compare(server.get_password()) == 0) {
+    if (_message._params.compare(server.get_password()) == 0 && _passwordChecked == false) {
         _passwordChecked = true;
+        send_to("Password Accepted\r\n");
     }
     check_if_pass(server, pollfd);
 }
@@ -205,6 +222,21 @@ void Client::check_if_pass(Server &server, std::vector<pollfd>::iterator pollfd)
         server.disconnectClient(pollfd);
     }
     
+}
+
+void Client::command_quit(Server &server, std::vector<pollfd>::iterator pollfd) {
+    //envoyer un message "Machin" + _message._params 
+    // à tout les utilisateurs des channels de Machin
+    server.disconnectClient(pollfd);
+}
+
+void Client::command_ping(void) {
+    if (_message._params.empty()) {
+        send_to(ERR_NOORIGIN(_message._command));
+        return;
+    }
+    else
+        send_to(PONG(_message._params));
 }
 
 // /* ************************************************************************** */

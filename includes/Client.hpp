@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/15 10:42:28 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/18 11:43:32 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ class Client
 
 		void		command_pass(Server &server, std::vector<pollfd>::iterator pollfd);
 		void		check_if_pass(Server &server, std::vector<pollfd>::iterator pollfd);
+		void		command_ping(void);
+		void		command_quit(Server &server, std::vector<pollfd>::iterator pollfd);
 };
 
 #endif
