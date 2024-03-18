@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 11:43:32 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/18 14:27:15 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class Client
 		// Gestion Input + Parsing + Execution
 		void 		splitMessage(std::string buff);
         void		parseMessage(std::string buff);
+		void		eraseFullstr(void);
 		void		exeCommand(Server &server, std::vector<pollfd>::iterator pollfd);
 		void		saveMessage(std::string buff);
 		void		send_to(std::string text) const;

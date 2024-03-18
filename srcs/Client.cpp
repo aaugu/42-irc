@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 11:47:27 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/18 14:23:36 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ void Client::saveMessage(std::string buff) {
 }
 
 void Client::exeCommand(Server &server, std::vector<pollfd>::iterator pollfd) {
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT"}; //ajout d'autre commande 
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP"}; //ajout d'autre commande 
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -188,18 +188,26 @@ void Client::exeCommand(Server &server, std::vector<pollfd>::iterator pollfd) {
             std::cout << "TO DO QUIT OF \"" << _message._params << "\"" << std::endl;
             command_quit(server, pollfd);
             break;
-        case 7: //dernier case pour l'invalide command 
+        case 7: //autorisation de la commande CAP mais on fait rien avec pour le moment
+            break;
+        case 8: //dernier case pour l'invalide command 
             send_to(ERR_INVALID_ERROR);
         // case X: 
         //      ...
     }
 }
 
-void Client::parseMessage(std::string buff) {
-    _message._fullStr = _message._fullStr + buff;
-    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;;
+void Client::eraseFullstr(void) {
     splitMessage(_message._fullStr);
     _message._fullStr.erase();
+    std::cout << "_message._fullStr erased" << std::endl;
+}
+
+void Client::parseMessage(std::string buff) {
+    _message._fullStr = _message._fullStr + buff;
+    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;
+    splitMessage(_message._fullStr);
+    eraseFullstr();
     std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
 }
 
@@ -221,7 +229,6 @@ void Client::check_if_pass(Server &server, std::vector<pollfd>::iterator pollfd)
         send_to(ERR_PASSWDMISMATCH);
         server.disconnectClient(pollfd);
     }
-    
 }
 
 void Client::command_quit(Server &server, std::vector<pollfd>::iterator pollfd) {

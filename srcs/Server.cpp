@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 11:58:23 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/18 14:43:52 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,8 +199,12 @@ void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::str
 		itC->saveMessage(line);
 		itC->send_to("^D");  // pour le visuel client
 	}
-	else if (readBytes == 0)
+	else if (readBytes < 0)
+		std::cerr << "Error: readBytes < 0" << std::endl;
+	else if (readBytes == 0){
 		clientInput = "QUIT :lost connexion\r\n";// disconnectClient(clientPollFd);
+		itC->eraseFullstr();
+	}
 	else
 		clientInput = line;
 }
