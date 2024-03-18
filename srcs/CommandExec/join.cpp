@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/17 19:14:49 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 11:08:40 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,13 @@ void	CommandExec::join(void)
 
 	if (channel->getModeI() == true)
 		_client->sendMessage(ERR_INVITEONLYCHAN(_client->getAddress(), _client->getNickname(), channel->getName()));
-
+	else if (channel->getModeL() == true && (int)channel->getUsers().size() >= channel->getUserLimit())
+		_client->sendMessage(ERR_CHANNELISFULL(_client->getAddress(), _client->getNickname(), channel->getName()));
 	else if (channel->getPassword() != "")
 	{
 		if (_msg->_paramsSplit.size() != 2 || channel->isPasswordValid(_msg->_paramsSplit[1]) == false)
 			_client->sendMessage(ERR_BADCHANNELKEY(_client->getAddress(), _client->getNickname(), channel->getName()));
 	}
-	else if (channel->getModeL() == true && (int)channel->getUsers().size() >= channel->getUserLimit())
-		_client->sendMessage(ERR_CHANNELISFULL(_client->getAddress(), _client->getNickname(), channel->getName()));
 	else
 		joinChannel(*channel);
 }

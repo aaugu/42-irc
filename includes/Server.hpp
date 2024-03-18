@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/17 18:52:48 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 10:59:58 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ class Server
 		std::vector<std::string>	getNicknameList(void);
 		std::string					get_password(void) const;
 		std::vector<Channel>		getChannels(void);
+		
 
 		// Channel utils
 		void							addChannel(Channel& channel);

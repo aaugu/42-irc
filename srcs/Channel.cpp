@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/17 19:23:33 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 10:34:00 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,10 @@ Channel::Channel(std::string name, Client* user) :
 {
 	_users.push_back(user);
 	_operators.push_back(user);
+
+	(void) _modeT;
+	(void) _modeK;
+	(void) _modeL;
 }
 
 Channel::~Channel(void) {}

@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/17 18:52:04 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 11:40:20 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,13 @@
 /* ************************************************************************** */
 
 #define MAXCLIENT 5
-#define ERR_SOCK_CREATE	"Could not create socket"
+#define ERR_SOCK_CREATE		"Could not create socket"
 #define ERR_SOCK_OPT		"Could not set socket option"
 #define ERR_SOCK_NON_BLOCK	"Could not set sockets to be non blocking"
 #define ERR_SOCK_BIND		"Could not bind socket"
-#define ERR_SOCK_LISTEN	"Could not listen to the socket"
+#define ERR_SOCK_LISTEN		"Could not listen to the socket"
 #define ERR_POLL			"Problem while waiting for fd to perform"
 #define ERR_CLIENT_ACCEPT	"Could not create connection with client"
-
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -201,7 +200,6 @@ void	Server::executeClientInput(Server &server, std::vector<pollfd>::iterator it
 		return (printErrMessage(errMessage("Client", it->fd, ERR_CLIENT_NONEX)));
 
 	itC->exeCommand(&server, it);
-	// itC->setData(clientInput);
 
 	// std::cout << "Client " << sockfdClient << ": " << clientInput;
 }
