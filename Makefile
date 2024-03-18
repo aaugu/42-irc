@@ -10,16 +10,7 @@ INCLUDE	=	-I includes
 RM		=	rm -rf
 
 SRC_D 	=	srcs/
-SRC		=	main \
-			Client \
-			signal \
-			Channel \
-			CommandExec/CommandExec \
-			CommandExec/join \
-			Server/serverChannelUtils \
-			Server/serverClientUtils \
-			Server/Server \
-
+SRC		=	main Server Client signal 
 SRCS	=	$(addprefix  $(SRC_D), $(addsuffix .cpp, $(SRC)))
 
 OBJ_D 	=	objs/
@@ -28,8 +19,6 @@ OBJS	=	$(addprefix $(OBJ_D), $(addsuffix .o, $(OBJ)))
 
 $(OBJ_D)%.o : $(SRC_D)%.cpp
 			@mkdir -p $(OBJ_D)
-			@mkdir -p $(OBJ_D)/CommandExec
-			@mkdir -p $(OBJ_D)/Server
 			@($(CC) $(FLAGS) $(INCLUDE) -c $< -o $@)
 
 all:		$(NAME)
