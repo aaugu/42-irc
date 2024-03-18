@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   messages.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 11:27:49 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/17 17:39:51 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 15:27:34 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ template < typename T >
 void	sendMessage(T message, int sockfd)
 {
 	std::stringstream	ss;
-	ss << message << std::endl;
+	ss << message;
 	std::string			msg = ss.str();
 
 	if (send(sockfd, msg.c_str(), msg.size(), 0) < 0)

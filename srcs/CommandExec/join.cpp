@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 14:06:29 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 15:30:15 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@
 void	CommandExec::join(void)
 {
 	if (invalidNbParams((int)_msg->_paramsSplit.size(), 1, 2))
-		return (_client->sendMessage("join nb arg"));
+		return (_client->sendMessage("join nb arg \r\n"));
 
 	checkChannelName(_msg->_paramsSplit[0]);
 

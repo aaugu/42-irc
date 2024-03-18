@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverClientUtils.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 18:33:19 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 14:10:58 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 15:31:21 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 /*                                   MACROS                                   */
 /* ************************************************************************** */
 
-#define MAX_CONNECTIONS		"Server cannot accept more client"
+#define MAX_CONNECTIONS		"Server cannot accept more client \r\n"
 #define SERVER_FULL			"Client attemped to connect but server is full"
 #define ERR_CLIENT_NONEX	"Could not find client with this fd"
 

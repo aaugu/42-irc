@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 14:37:29 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 15:28:25 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ class Client
 		// Gestion Input + Parsing + Execution
 		void 		splitMessage(std::string buff);
         void		parseMessage(std::string buff);
+		void		eraseFullstr(void);
 		void		exeCommand(Server* server, std::vector<pollfd>::iterator pollfd);
 		void		saveMessage(std::string buff);
 
@@ -78,7 +79,7 @@ class Client
 		void	sendMessage(T message)
 		{
 			std::stringstream	ss;
-			ss << message << std::endl;
+			ss << message;
 			std::string			msg = ss.str();
 
 			if (send(_sockfd, msg.c_str(), msg.size(), 0) < 0)

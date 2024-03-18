@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 14:38:49 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 15:29:23 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void Client::setData(Server *s, std::string &buffer) {
             std::cout << "change nickname" << std::endl;
             std::string nickChangeMessage = ": NICK " + info[1];
             sendMessage(nickChangeMessage);
-            sendMessage("Nickname changed to " + info[1]);
+            sendMessage("Nickname changed to " + info[1] + "\r\n");
         }
         _nickname = info[1];
     }
@@ -66,7 +66,7 @@ void Client::saveMessage(std::string buff) {
 
 void Client::exeCommand(Server* server, std::vector<pollfd>::iterator pollfd)
 {
-    CommandExec exec(server, this, &_message);
+    CommandExec exec(server, this, &_message); //pour le join pour le moment
 
     std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT"}; //ajout d'autre commande
     int count = 0;
@@ -122,17 +122,26 @@ void Client::exeCommand(Server* server, std::vector<pollfd>::iterator pollfd)
             std::cout << "TO DO QUIT OF \"" << _message._params << "\"" << std::endl;
             command_quit(*server, pollfd);
             break;
+        case 7: //autorisation de la commande CAP mais on fait rien avec pour le moment
+            break;
         default: //dernier case pour l'invalide command 
             sendMessage(ERR_INVALID_ERROR);
-
+        // case X: 
+        //      ...
     }
+}
+
+void Client::eraseFullstr(void) {
+    splitMessage(_message._fullStr);
+    _message._fullStr.erase();
+    std::cout << "_message._fullStr erased" << std::endl;
 }
 
 void Client::parseMessage(std::string buff) {
     _message._fullStr = _message._fullStr + buff;
-    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;;
+    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;
     splitMessage(_message._fullStr);
-    _message._fullStr.erase();
+    eraseFullstr();
     std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
 }
 
@@ -182,7 +191,6 @@ void Client::check_if_pass(Server &server, std::vector<pollfd>::iterator pollfd)
         sendMessage(ERR_PASSWDMISMATCH);
         server.disconnectClient(pollfd);
     }
-
 }
 
 void Client::command_quit(Server &server, std::vector<pollfd>::iterator pollfd) {
