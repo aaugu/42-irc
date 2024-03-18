@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 13:51:08 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 14:38:49 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ void Client::setData(Server *s, std::string &buffer) {
 }
 
 void Client::saveMessage(std::string buff) {
-    _message.fullStr = _message.fullStr + buff;
-    std::cout << "_message.fullStr \"" << _message.fullStr << "\"" << std::endl;
+    _message._fullStr = _message._fullStr + buff;
+    std::cout << "_message._fullStr \"" << _message._fullStr << "\"" << std::endl;
 }
 
 void Client::exeCommand(Server* server, std::vector<pollfd>::iterator pollfd)
@@ -72,7 +72,7 @@ void Client::exeCommand(Server* server, std::vector<pollfd>::iterator pollfd)
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
-        if (_message.command.compare(type[i]) != 0)
+        if (_message._command.compare(type[i]) != 0)
             count++;
         else
             break;
@@ -129,11 +129,11 @@ void Client::exeCommand(Server* server, std::vector<pollfd>::iterator pollfd)
 }
 
 void Client::parseMessage(std::string buff) {
-    _message.fullStr = _message.fullStr + buff;
-    std::cout << "Client " << _sockfd << ": " << _message.fullStr << std::endl;;
-    splitMessage(_message.fullStr);
-    _message.fullStr.erase();
-    std::cout << "_message.fullStr aftersplit\"" << _message.fullStr << "\"" << std::endl;
+    _message._fullStr = _message._fullStr + buff;
+    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;;
+    splitMessage(_message._fullStr);
+    _message._fullStr.erase();
+    std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
 }
 
 /* ************************************************************************** */
@@ -193,7 +193,7 @@ void Client::command_quit(Server &server, std::vector<pollfd>::iterator pollfd) 
 
 void Client::command_ping(void) {
     if (_message._params.empty()) {
-        sendMessage(ERR_NOORIGIN(_message.command));
+        sendMessage(ERR_NOORIGIN(_message._command));
         return;
     }
     else
@@ -218,7 +218,7 @@ void Client::splitMessage(std::string buff) {
     _message._params.clear();
     while (ss >> word) {
         if (count == 0)
-            _message.command = word;
+            _message._command = word;
         else if (count == 1)
         {
             _message._paramsSplit.push_back(word);

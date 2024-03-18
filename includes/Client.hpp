@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 13:37:41 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/18 14:37:29 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@
 # include "../includes/messages.hpp"
 
 struct s_message {
-    std::string fullStr;
-    std::string command;
-    std::vector<std::string> _paramsSplit;
-    std::string _params;
+    std::string 				_fullStr;
+    std::string 				_command;
+    std::vector<std::string>	_paramsSplit;
+    std::string					_params;
 };
 
 class Server;
