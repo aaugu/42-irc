@@ -22,6 +22,8 @@
 #include "../includes/SendMessages.hpp"
 #include "../includes/CommandExec.hpp"
 
+#define DEFAULTNICKNAME "G'raha Tia"
+
 void toUpperCase(std::string& str) {
     for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
         *it = std::toupper(static_cast<unsigned char>(*it));
@@ -34,6 +36,7 @@ void toUpperCase(std::string& str) {
 
 Client::Client(int sockfd, std::string address) :
                 _sockfd(sockfd),
+                _nickname(DEFAULTNICKNAME),
                 _isOp(false), 
                 _address(address),
                 _passwordReceved(false),
@@ -47,22 +50,37 @@ Client::~Client(void) {}
 /* ************************************************************************** */
 
 // Class function
-void Client::nickFunction(Server *s, std::vector<std::string> &data) {
+bool Client::checkUseNickname(Server *s, std::string &nickname) {
+       std::vector<std::string> nick = s->getNicknameList();
+    std::vector<std::string>::iterator it;
+
+    for (it = nick.begin(); it != nick.end(); ++it) {
+        std::cout << "checkUseNickname" << std::endl;
+        if (*it == nickname)
+            return true;
+    }
+    return false;
+}
+
+std::string Client::nickFunction(Server *s, std::string nickname) {
     bool dupe = false;
 
-    std::vector<std::string> serverNickname = s->getNicknameList();
-    while (checkUseNickname(s, data[0])) {
-        std::cout << "DUPE" <<std::endl;
-        data[0] += '_';
+    if (nickname[0] == '#') {
+        nickname.erase(0, 1);
+        sendMessage("Nickname can't sttart with '#', we have remove it for you\r\n");
+    }
+
+    while (checkUseNickname(s, nickname)) {
+        std::cout << "nickfunction" << std::endl;
+        nickname += '_';
         dupe = true;
     }
     if (dupe) {
-        std::cout << "change nickname" << std::endl;
-        std::string nickChangeMessage = ": NICK " + data[0];
+        std::string nickChangeMessage = ": NICK " + nickname + "\r\n";
         sendMessage(nickChangeMessage);
-        sendMessage("Nickname already used, Nickname changed to " + data[0]);
+        sendMessage("Nickname already used, Nickname changed to " + nickname + "\r\n");
     }
-    _nickname = data[0];
+    return nickname;
 }
 
 void Client::setOperatorState(Server *s, std::vector<std::string> args) {
@@ -155,7 +173,7 @@ void Client::exeCommand(Server* server)
             // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
             check_if_pass(*server);
-            _nickname = _message._params;
+            _nickname = nickFunction(server, _message._params);
             if (_passwordReceved == true && _passwordChecked == true && _welcomSended == false){
                 sendMessage(RPL_WELCOME(_nickname, "_user", "_hostName"));
                 _welcomSended = true;
@@ -318,17 +336,6 @@ void Client::splitMessage(std::string buff) {
         }
         count++;
     }
-}
-
-bool Client::checkUseNickname(Server *s, std::string &nickname) {
-       std::vector<std::string> nick = s->getNicknameList();
-    std::vector<std::string>::iterator it;
-
-    for (it = nick.begin(); it != nick.end(); ++it) {
-        if (*it == nickname)
-            return true;
-    }
-    return false;
 }
 
 // /* ************************************************************************** */
