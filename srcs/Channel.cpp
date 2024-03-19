@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 10:34:00 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/19 16:26:37 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	Channel::sendMessageToUsers(std::string message)
 void	Channel::sendMessageToUsersExceptSender(Client* sender, std::string message)
 {
 	std::vector<Client*>::iterator user;
-	for( user = _users.begin(); user < _users.end(); user ++ )
+	for( user = _users.begin(); user < _users.end(); user++ )
 	{
 		if (*user != sender)
 			(*user)->sendMessage(message);

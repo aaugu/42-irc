@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 18:34:08 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 14:05:17 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/19 15:54:20 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,17 @@ void	Server::removeChannel(std::vector<Channel>::iterator channel)
 	(void) channel;
 	// _channels.push_back(channel);
 	// message sur serveur pour dire qu'un channel a été fermé
+}
+
+bool	Server::channelExists(std::string name)
+{
+	std::vector<Channel>::iterator it;
+	for( it = _channels.begin(); it < _channels.end(); it++)
+	{
+		if ( it->getName() == name)
+			return (true) ;
+	}
+	return (false);
 }
 
 std::vector<Channel>::iterator	Server::getChannelByName(std::string name)
