@@ -44,7 +44,7 @@ int		Server::acceptNewClient(void)
 
 void	Server::refuseClient(int sockfdClient)
 {
-	sendMessage(MAX_CONNECTIONS, sockfdClient);
+	sendMessageTo(MAX_CONNECTIONS, sockfdClient);
 
 	if (close(sockfdClient) < 0)
 		throw std::runtime_error(errMessage(ERR_CLOSE, sockfdClient, strerror(errno)));
@@ -80,18 +80,24 @@ void	Server::createClient(int sockfdClient)
 	_clients.push_back(Client(sockfdClient, address));
 }
 
-void	Server::disconnectClient(std::vector<pollfd>::iterator pollfd)
+void	Server::disconnectClient(Client *client)
 {
-	std::cout << "Client " << pollfd->fd << ": disconnected" << std::endl;
-	if (close(pollfd->fd) < 0)
-		throw std::runtime_error(errMessage(ERR_CLOSE, pollfd->fd, strerror(errno)));
+	std::cout << "Client " << client->getFd() << ": disconnected" << std::endl;
+
+	std::vector<pollfd>::iterator itP = getPollFdByFd(client->getFd());
+	if ( itP == _pollFds.end() )
+		return (printErrMessage(errMessage("Pollfd", client->getFd(), ERR_CLIENT_NONEX)));
+
+	if (close(itP->fd) < 0)
+		throw std::runtime_error(errMessage(ERR_CLOSE, itP->fd, strerror(errno)));
 
 	_nbConnections--;
 
-	std::vector<Client>::iterator itC = getClientByFd(pollfd->fd);
-	if ( itC == _clients.end() )
-		return (printErrMessage(errMessage("Client", pollfd->fd, ERR_CLIENT_NONEX)));
-
-	_pollFds.erase(pollfd);
-	_clients.erase(itC);
+	_pollFds.erase(itP);
+	std::vector<Client>::iterator itC = getClientByFd(client->getFd());
+	if ( itC < _clients.end() ) {
+		_clients.erase(itC);
+		return;
+	}
+	printErrMessage(errMessage("client", client->getFd(), ERR_CLIENT_NONEX));
 }

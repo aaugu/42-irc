@@ -27,7 +27,8 @@
 /*                                   MACROS                                   */
 /* ************************************************************************** */
 
-#define MAXCLIENT 5
+#define MAXCLIENT 			5
+#define OPPASS				"pass"
 #define ERR_SOCK_CREATE		"Could not create socket"
 #define ERR_SOCK_OPT		"Could not set socket option"
 #define ERR_SOCK_NON_BLOCK	"Could not set sockets to be non blocking"
@@ -40,7 +41,7 @@
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
 
-Server::Server(int port, std::string password) : _nbConnections(0)
+Server::Server(int port, std::string password) : _nbConnections(0), _opPass(OPPASS)
 {
 	std::cout << "Initializing server..." << std::endl;
 
@@ -176,10 +177,10 @@ void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::str
 	if ( (int)readBytes < 0 && line.empty() == false){
 		std::cerr << "WAIT finish command" << std::endl; // debug
 		itC->saveMessage(line);
-		sendMessage("^D", itC->getFd()); // pour le visuel client
+		sendMessageTo("^D", itC->getFd()); // pour le visuel client
 	}
-	else if ( (int)readBytes < 0 ) {}
-		// errMsg
+	else if ( (int)readBytes < 0 )
+		printErrMessage("error when read client buffer.");
 	else if (readBytes == 0)
 		clientInput = "QUIT :lost connexion\r\n";
 	else
@@ -201,7 +202,7 @@ void	Server::executeClientInput(Server &server, std::vector<pollfd>::iterator it
 	if ( itC == _clients.end() )
 		return (printErrMessage(errMessage("Client", it->fd, ERR_CLIENT_NONEX)));
 
-	itC->exeCommand(&server, it);
+	itC->exeCommand(&server);
 	// itC->setData(clientInput);
 
 	// std::cout << "Client " << sockfdClient << ": " << clientInput;
@@ -214,7 +215,7 @@ void    Server::closePollFds(void)
 	std::vector<pollfd>::iterator	it;
 	int	sockfd;
 
-	for (it = _pollFds.begin(); it != _pollFds.end(); it++)
+	for (it = _pollFds.begin(); it < _pollFds.end(); it++)
 	{
 		sockfd = it->fd;
 		if (sockfd > 0)
@@ -232,13 +233,48 @@ void    Server::closePollFds(void)
 std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 {
 	std::vector<Client>::iterator it;
-	for ( it = _clients.begin(); it != _clients.end(); it++ )
+	for ( it = _clients.begin(); it < _clients.end(); it++ )
 	{
 		if ( it->getFd() == sockfdClient)
 			return (it);
 	}
 	return (it);
 }
+
+std::vector<pollfd>::iterator Server::getPollFdByFd(int sockfd) {
+	std::vector<pollfd>::iterator it;
+	for ( it = _pollFds.begin(); it < _pollFds.end(); it++ )
+	{
+		if ( it->fd == sockfd)
+			return (it);
+	}
+	return (it);
+}
+
+bool Server::checkClientPresence(std::string nickname){ 
+	std::vector<Client>::iterator it;
+    for ( it = _clients.begin(); it < _clients.end(); it++ )
+    {
+        if ( it->getNickname() == nickname)
+            return(true);
+    }
+    return (false);
+}
+
+std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
+{
+    std::vector<Client>::iterator it;
+    for ( it = _clients.begin(); it < _clients.end(); it++ )
+    {
+        if ( it->getNickname() == nickname)
+            return(it);
+    }
+    return (it);
+}
+
+/* ************************************************************************** */
+/*                                    ACCESSOR                                */
+/* ************************************************************************** */
 
 std::vector<std::string> Server::getNicknameList() {
     std::vector<Client>::iterator it;
@@ -249,8 +285,16 @@ std::vector<std::string> Server::getNicknameList() {
     return nickname;
 }
 
+std::string Server::getOpPass() {
+    return _opPass;
+}
+
 std::string Server::get_password() const {
     return _password;
+}
+
+std::vector<Client> Server::getClients(void) {
+	return _clients;
 }
 
 std::vector<Channel>	Server::getChannels(void) {

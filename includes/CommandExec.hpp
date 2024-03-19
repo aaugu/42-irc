@@ -18,8 +18,8 @@
 class Client;
 class Server;
 struct s_message;
-
 class Channel;
+
 class CommandExec
 {
     private:

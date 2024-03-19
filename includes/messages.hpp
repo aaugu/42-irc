@@ -43,7 +43,7 @@ void	printErrMessage(T errMessage)
 }
 
 template < typename T >
-void	sendMessage(T message, int sockfd)
+void	sendMessageTo(T message, int sockfd)
 {
 	std::stringstream	ss;
 	ss << message;
