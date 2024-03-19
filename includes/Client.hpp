@@ -23,10 +23,10 @@
 # include "../includes/messages.hpp"
 
 struct s_message {
-    std::string 				_fullStr;
-    std::string 				_command;
-    std::vector<std::string>	_paramsSplit;
-    std::string					_params;
+    std::string                 _fullStr;
+    std::string                 _command;
+    std::vector<std::string>    _paramsSplit;
+    std::string                 _params;
 };
 
 class Server;
@@ -36,18 +36,23 @@ class Client
 {
     private:
 		int			_sockfd;
-		std::string	_nickname;
-		std::string	_address;
+		std::string _nickname;
 		s_message	_message;
+        bool        _isOp;
+		std::string	_address;
 		bool		_passwordReceved;
 		bool		_passwordChecked;
 		bool		_welcomSended;
 		Channel*	_currentChannel;
 
-		void		command_pass(Server &server, std::vector<pollfd>::iterator pollfd);
-		void		check_if_pass(Server &server, std::vector<pollfd>::iterator pollfd);
+		void		command_pass(Server &server);
+		void		check_if_pass(Server &server);
 		void		command_ping(void);
-		void		command_quit(Server &server, std::vector<pollfd>::iterator pollfd);
+		void		command_quit(Server &server);
+
+		void    nickFunction(Server *s, std::vector<std::string> &data);
+        void    setOperatorState(Server *s, std::vector<std::string> args);
+        void    killClient(Server *s, std::vector<std::string> args);
 
 		bool						checkUseNickname(Server *s, std::string &nickname);
 		std::vector<std::string>	split(std::string value);
@@ -64,7 +69,7 @@ class Client
 		void 		splitMessage(std::string buff);
         void		parseMessage(std::string buff);
 		void		eraseFullstr(void);
-		void		exeCommand(Server* server, std::vector<pollfd>::iterator pollfd);
+		void		exeCommand(Server* server);
 		void		saveMessage(std::string buff);
 
 		// Accessors
@@ -86,5 +91,4 @@ class Client
 				printErrMessage(errMessage("Could not send message to", _sockfd, strerror(errno)));
 		}
 };
-
 #endif

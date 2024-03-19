@@ -33,6 +33,7 @@ class Server
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>		_pollFds;
 		std::vector<Client> 	_clients;
+        std::string             _opPass;
 		std::vector<Channel>	_channels;
 
 		// Start() sub functions
@@ -57,6 +58,7 @@ class Server
 
 		// Accessors
 		std::vector<Client>::iterator	getClientByFd(int sockfdClient);
+		std::vector<pollfd>::iterator 	getPollFdByFd(int sockfd);
 
 	public :
 		Server(int port, std::string password);
@@ -65,17 +67,20 @@ class Server
 		void run(void);
 
 		// Accessors
-		std::vector<std::string>	getNicknameList(void);
-		std::string					get_password(void) const;
-		std::vector<Channel>		getChannels(void);
-		
+		std::vector<std::string>		getNicknameList(void);
+		std::string						get_password(void) const;
+		std::vector<Client>				getClients(void);
+		std::vector<Channel>			getChannels(void);
+        std::string                     getOpPass();
+        std::vector<Client>::iterator	getClientByNickname(std::string nickname);
+		bool 							checkClientPresence(std::string nickname);
 
 		// Channel utils
 		void							addChannel(Channel& channel);
 		void							removeChannel(std::vector<Channel>::iterator channel);
 		std::vector<Channel>::iterator	getChannelByName(std::string name);
 
-		void	disconnectClient(std::vector<pollfd>::iterator pollfd);
+		void	disconnectClient(Client *client);
 
 		// DEBUG
 		void printNickname();
