@@ -3,3 +3,4 @@
 *.o
 ircserv
 temp.txt
+.DS_Store

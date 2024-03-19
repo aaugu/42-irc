@@ -6,17 +6,21 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:43:48 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/18 15:28:25 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-# include <string.h>
+# include <string>
 # include <vector>
+# include <sstream>
+# include <poll.h>
+# include <errno.h>
+# include <string.h>
 
-# include "Server.hpp"
+# include "../includes/messages.hpp"
 
 struct s_message {
     std::string                 _fullStr;
@@ -26,6 +30,7 @@ struct s_message {
 };
 
 class Server;
+class Channel;
 
 class Client
 {
@@ -34,26 +39,56 @@ class Client
 		std::string _nickname;
 		s_message	_message;
         bool        _isOp;
+		std::string	_address;
+		bool		_passwordReceved;
+		bool		_passwordChecked;
+		bool		_welcomSended;
+		Channel*	_currentChannel;
 
-        void    nickFunction(Server *s, std::vector<std::string> &data);
+		void		command_pass(Server &server);
+		void		check_if_pass(Server &server);
+		void		command_ping(void);
+		void		command_quit(Server &server);
+
+		void    nickFunction(Server *s, std::vector<std::string> &data);
         void    setOperatorState(Server *s, std::vector<std::string> args);
         void    killClient(Server *s, std::vector<std::string> args);
 
+		bool						checkUseNickname(Server *s, std::string &nickname);
+		std::vector<std::string>	split(std::string value);
+
     public:
    		// Constructor and destructor
-		Client(int sockfd);
+		Client(int sockfd, std::string address);
 		~Client(void);
 
-		// Accessors
-		int			getFd(void);
-		std::string getNickname(void);
+		// Class function
+		void setData(Server *s, std::string &buffer);
 
 		// Gestion Input + Parsing + Execution
 		void 		splitMessage(std::string buff);
         void		parseMessage(std::string buff);
-		void		exeCommand(Server *s);
+		void		eraseFullstr(void);
+		void		exeCommand(Server* server);
 		void		saveMessage(std::string buff);
-		void		send_to(std::string text) const;
-};
 
+		// Accessors
+		int			getFd(void);
+		std::string getNickname(void);
+		std::string	getAddress(void);
+		void		setNickname(std::string value);
+		void		setCurrentChannel(Channel* currentChannel);
+
+		// Send Message
+		template < typename T >
+		void	sendMessage(T message)
+		{
+			std::stringstream	ss;
+			ss << message;
+			std::string			msg = ss.str();
+
+			if (send(_sockfd, msg.c_str(), msg.size(), 0) < 0)
+				printErrMessage(errMessage("Could not send message to", _sockfd, strerror(errno)));
+		}
+};
 #endif

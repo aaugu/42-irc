@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 11:27:49 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 15:44:52 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/18 15:27:34 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 # define MESSAGES_HPP
 
 # include <string>
+# include <iostream>
 # include <sstream>
 # include <errno.h>
 # include <string.h>
+# include <sys/socket.h>
 
 # define RED  "\e[31m"
 # define END  "\e[0m"
@@ -41,10 +43,10 @@ void	printErrMessage(T errMessage)
 }
 
 template < typename T >
-void	sendMessage(T message, int sockfd)
+void	sendMessageTo(T message, int sockfd)
 {
 	std::stringstream	ss;
-	ss << message << std::endl;
+	ss << message;
 	std::string			msg = ss.str();
 
 	if (send(sockfd, msg.c_str(), msg.size(), 0) < 0)
