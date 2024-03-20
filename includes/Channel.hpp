@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/17 19:11:56 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 14:25:14 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Channel
 		// Checks
 		bool	isOperator(Client* user);
 		bool	isPasswordValid(std::string password);
+		bool	isUserPresent(Client* client);
 
 		// Send
 		void	sendMessageToUsers(std::string message);

@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/19 16:37:37 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 16:24:45 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void toUpperCase(std::string& str) {
 Client::Client(int sockfd, std::string address) :
                 _sockfd(sockfd),
                 _nickname(DEFAULTNICKNAME),
-                _isOp(false), 
+                _isOp(false),
                 _address(address),
                 _passwordReceved(false),
                 _passwordChecked(false),
@@ -55,7 +55,7 @@ bool Client::checkUseNickname(Server *s, std::string &nickname) {
     std::vector<std::string>::iterator it;
 
     for (it = nick.begin(); it != nick.end(); ++it) {
-        std::cout << "checkUseNickname" << std::endl;
+        // std::cout << "checkUseNickname" << std::endl;
         if (*it == nickname)
             return true;
     }
@@ -71,7 +71,7 @@ std::string Client::nickFunction(Server *s, std::string nickname) {
     }
 
     while (checkUseNickname(s, nickname)) {
-        std::cout << "nickfunction" << std::endl;
+        // std::cout << "nickfunction" << std::endl;
         nickname += '_';
         dupe = true;
     }
@@ -223,9 +223,9 @@ void Client::exeCommand(Server* server)
             check_if_pass(*server);
             exec.privmsg();
             break ;
-        default: //dernier case pour l'invalide command 
+        default: //dernier case pour l'invalide command
             sendMessage(ERR_INVALID_ERROR);
-        // case X: 
+        // case X:
         //      ...
     }
 }
@@ -238,7 +238,7 @@ void Client::eraseFullstr(void) {
 
 void Client::parseMessage(std::string buff) {
     _message._fullStr = _message._fullStr + buff;
-    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;
+    // std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;
     splitMessage(_message._fullStr);
     // std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
     eraseFullstr();
@@ -293,7 +293,7 @@ void Client::check_if_pass(Server &server) {
 }
 
 void Client::command_quit(Server &server) {
-    //envoyer un message "Machin" + _message._params 
+    //envoyer un message "Machin" + _message._params
     // à tout les utilisateurs des channels de Machin
     server.disconnectClient(this);
 }

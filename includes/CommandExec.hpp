@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/19 15:55:17 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 16:31:26 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ class Server;
 class Client;
 class Channel;
 struct s_message;
+												// shoud be username
+#define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
 
 class CommandExec
 {
@@ -28,7 +30,7 @@ class CommandExec
 		s_message*	_msg;
 
 		// UTILS
-		bool	invalidNbParams(int nbParams, int minNbParams, int maxNbParams);
+		bool	minNbParams(int nbParams, int minNbParams);
 
 		// JOIN
 		void	checkChannelName(std::string& name);
@@ -36,8 +38,9 @@ class CommandExec
 		void	joinChannel(Channel& channel);
 
 		// PRIVMSG
-		void	sendMessageToChannel(std::string target, std::string message);
-		void	sendPrivateMessage(std::string target, std::string message);
+		void		sendMessageToChannel(std::string target, std::string message);
+		void		sendPrivateMessage(std::string target, std::string message);
+		std::string	getFullMessage(void);
 
 		// etc.
 

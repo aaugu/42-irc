@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/19 16:26:37 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 14:27:32 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,17 @@ bool	Channel::isOperator(Client* user)
 
 bool	Channel::isPasswordValid(std::string password) {
 	return ( _password == password );
+}
+
+bool	Channel::isUserPresent(Client* client)
+{
+	std::vector<Client*>::iterator user = _users.begin();
+	for( ; user < _users.end(); user++ )
+	{
+		if (*user == client)
+			return (true);
+	}
+	return (false);
 }
 
 void	Channel::sendMessageToUsers(std::string message)

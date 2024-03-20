@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/19 16:07:13 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 16:25:11 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,7 @@ void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::str
 	std::vector<Client>::iterator itC = getClientByFd(clientPollFd->fd);
 	std::string	line;
 	size_t readBytes = getLine(clientPollFd->fd, line);
-	std::cerr << "clientInput: " << t(line) << std::endl;
+	std::cout << "\nclient " << itC->getFd() << " " << t(line) << std::endl;
 
 	if ( (int)readBytes < 0 && line.empty() == false){
 		std::cerr << "WAIT finish command" << std::endl; // debug
@@ -248,7 +248,7 @@ std::vector<std::string> Server::getNicknameList() {
     std::vector<Client>::iterator it;
     std::vector<std::string> nickname;
     for (it = _clients.begin(); it != _clients.end(); ++it) {
-		std::cout << "getnicknamelist" << std::endl;
+		// std::cout << "getnicknamelist" << std::endl;
         nickname.push_back(it->getNickname());
     }
     return nickname;

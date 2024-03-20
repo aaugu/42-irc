@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:53:34 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 14:06:13 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 15:15:24 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ CommandExec::~CommandExec(void) {}
 /*                                    UTILS                                   */
 /* ************************************************************************** */
 
-bool	CommandExec::invalidNbParams(int nbParams, int minNbParams, int maxNbParams)
+bool	CommandExec::minNbParams(int nbParams, int minNbParams)
 {
-	if ( nbParams < minNbParams || nbParams > maxNbParams)
+	if ( nbParams >= minNbParams)
 		return (true);
 	return (false);
 }
