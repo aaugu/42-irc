@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/17 18:56:56 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/19 15:55:17 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 
 # include <string>
 
-class Client;
 class Server;
-struct s_message;
+class Client;
 class Channel;
+struct s_message;
 
 class CommandExec
 {
@@ -35,6 +35,10 @@ class CommandExec
 		void	createChannel(std::string name);
 		void	joinChannel(Channel& channel);
 
+		// PRIVMSG
+		void	sendMessageToChannel(std::string target, std::string message);
+		void	sendPrivateMessage(std::string target, std::string message);
+
 		// etc.
 
     public:
@@ -43,7 +47,8 @@ class CommandExec
 		~CommandExec(void);
 
 		// Commands
-		void	join();
+		void	join(void);
+		void	privmsg(void);
 		// etc.
 
 };

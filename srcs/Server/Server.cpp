@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 15:31:51 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/19 16:07:13 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,16 +227,7 @@ void    Server::closePollFds(void)
 /*                                  ACCESSORS                                 */
 /* ************************************************************************** */
 
-std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
-{
-	std::vector<Client>::iterator it;
-	for ( it = _clients.begin(); it < _clients.end(); it++ )
-	{
-		if ( it->getFd() == sockfdClient)
-			return (it);
-	}
-	return (it);
-}
+
 
 std::vector<pollfd>::iterator Server::getPollFdByFd(int sockfd) {
 	std::vector<pollfd>::iterator it;
@@ -248,29 +239,9 @@ std::vector<pollfd>::iterator Server::getPollFdByFd(int sockfd) {
 	return (it);
 }
 
-bool Server::checkClientPresence(std::string nickname){ 
-	std::vector<Client>::iterator it;
-    for ( it = _clients.begin(); it < _clients.end(); it++ )
-    {
-        if ( it->getNickname() == nickname)
-            return(true);
-    }
-    return (false);
-}
-
-std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
-{
-    std::vector<Client>::iterator it;
-    for ( it = _clients.begin(); it < _clients.end(); it++ )
-    {
-        if ( it->getNickname() == nickname)
-            return(it);
-    }
-    return (it);
-}
 
 /* ************************************************************************** */
-/*                                    ACCESSOR                                */
+/*                                 ACCESSORS                                  */
 /* ************************************************************************** */
 
 std::vector<std::string> Server::getNicknameList() {
