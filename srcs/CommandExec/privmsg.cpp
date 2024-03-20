@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 15:32:28 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 16:53:02 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 18:43:12 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 /* ************************************************************************** */
 
 // RESPONSES														// should be username
-#define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
+
 												// shoud be username
 // #define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
 // #define RPL_JOIN(client, channel) (":" + USER(client) + " JOIN " + channel + "\r\n")
@@ -30,10 +30,9 @@
 
 // ERRORS
 	// Channel
-#define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + ":Channel name is invalid, or does not exist\r\n")
 #define ERR_CANNOTSENDTOCHAN(address, client, channel) (":" + address + " 404 " + client + " " + channel + ":You are not part of this channel\r\n")
 	// Private messages
-#define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " " + ":Nickname is invalid, or does not exist\r\n")
+
 // #define ERR_CHANNELISFULL(address, client, channel)  (":" + address + " 471 " + client + " " + channel + ":Cannot join channel (+l)\r\n")
 
 /* ************************************************************************** */
@@ -61,8 +60,6 @@ void CommandExec::sendMessageToChannel(std::string target, std::string message)
 		std::vector<Channel>::iterator	channel = _server->getChannelByName(target);
 		if ( channel->isUserPresent(_client) )
 		{
-			std::cout << channel->getName() << ": " << message << std::endl;
-
 			std::string	response = RPL_PRIVMSG(_client, channel->getName(), message);
 			channel->sendMessageToUsersExceptSender(_client, response);
 		}
@@ -84,19 +81,4 @@ void CommandExec::sendPrivateMessage(std::string target, std::string message)
 	}
 	else
 		_client->sendMessage(ERR_NOSUCHNICK(_client->getAddress(), target));
-}
-
-std::string	CommandExec::getFullMessage(void)
-{
-	std::string	message = "";
-
-	std::vector<std::string>::iterator	it = _msg->_paramsSplit.begin() + 1;
-	for( ; it < _msg->_paramsSplit.end(); it++)
-	{
-		if (it + 1 != _msg->_paramsSplit.end())
-			message += *it + " ";
-		else
-			message += *it;
-	}
-	return (message);
 }

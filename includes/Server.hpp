@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/19 16:07:26 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 17:33:42 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ class Server
 		void							removeChannel(std::vector<Channel>::iterator channel);
 		bool							channelExists(std::string name);
 		std::vector<Channel>::iterator	getChannelByName(std::string name);
+		void							closeChannel(std::string name);
 
 		// Client utils
 		void							disconnectClient(Client *client);

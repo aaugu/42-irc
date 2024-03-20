@@ -6,12 +6,13 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 18:34:08 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/19 15:54:20 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 17:33:27 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 #include "../includes/Channel.hpp"
+#include "../includes/messages.hpp"
 
 /* ************************************************************************** */
 /*                                CHANNEL UTILS                               */
@@ -50,4 +51,15 @@ std::vector<Channel>::iterator	Server::getChannelByName(std::string name)
 			break ;
 	}
 	return (it);
+}
+
+void	Server::closeChannel(std::string name)
+{
+	if ( channelExists(name))
+	{
+		std::vector<Channel>::iterator channel = getChannelByName(name);
+		_channels.erase(channel);
+	}
+	else
+		printErrMessage(errMessage(name, -1, "channel not found"));
 }

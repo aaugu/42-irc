@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 16:31:26 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 18:54:58 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ class Channel;
 struct s_message;
 												// shoud be username
 #define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
+#define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + ":Channel name is invalid, or does not exist\r\n")
+#define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " " + ":Nickname is invalid, or does not exist\r\n")
+#define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
 
 class CommandExec
 {
@@ -30,7 +33,8 @@ class CommandExec
 		s_message*	_msg;
 
 		// UTILS
-		bool	minNbParams(int nbParams, int minNbParams);
+		bool		minNbParams(int nbParams, int minNbParams);
+		std::string	getFullMessage(void);
 
 		// JOIN
 		void	checkChannelName(std::string& name);
@@ -38,9 +42,8 @@ class CommandExec
 		void	joinChannel(Channel& channel);
 
 		// PRIVMSG
-		void		sendMessageToChannel(std::string target, std::string message);
-		void		sendPrivateMessage(std::string target, std::string message);
-		std::string	getFullMessage(void);
+		void	sendMessageToChannel(std::string target, std::string message);
+		void	sendPrivateMessage(std::string target, std::string message);
 
 		// etc.
 
@@ -52,6 +55,7 @@ class CommandExec
 		// Commands
 		void	join(void);
 		void	privmsg(void);
+		void	part(void);
 		// etc.
 
 };

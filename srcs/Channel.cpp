@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 14:27:32 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 19:11:29 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "../includes/Channel.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/messages.hpp"
-
+#include "../includes/Server.hpp"
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -33,8 +33,7 @@ Channel::Channel(std::string name, Client* user) :
 					_modeK(false),
 					_modeL(false)
 {
-	_users.push_back(user);
-	_operators.push_back(user);
+	_users.insert(std::pair<Client*, bool>(user, true));
 
 	(void) _modeT;
 	(void) _modeK;
@@ -47,26 +46,36 @@ Channel::~Channel(void) {}
 /*                          PUBLIC MEMBER FUNCTIONS                           */
 /* ************************************************************************** */
 
-void	Channel::addUser(Client* user)
+void	Channel::addUser(Client* user, bool isOperator)
 {
 	if (user)
-		_users.push_back(user);
+		_users.insert(std::pair<Client*, bool>(user, isOperator));
+	else
+		printErrMessage(errMessage("User", user->getFd(), "could not add unknown user to channel"));
 }
 
-void	Channel::removeUser(Client* user) // le paramètre sera probablement plutôt un itérateur
+void	Channel::removeUser(Client* user, Server* server)
 {
-	(void) user;
+	std::map<Client*, bool>::iterator userFound = _users.find(user);
+	if ( userFound != _users.end())
+	{
+		_users.erase(user);
+		user->sendMessage("You have left " + this->_name + "\r\n");
+		if ( _users.size() == 0)
+			server->closeChannel(this->_name);
+	}
+	else
+		printErrMessage(errMessage("User", user->getFd(), "could not remove unknown user of channel"));
+
 }
 
 bool	Channel::isOperator(Client* user)
 {
-	std::vector<Client*>::iterator it = _operators.begin();
-	for( ; it < _operators.end(); it ++)
-	{
-		if (user == *it)
-			return (true);
-	}
-	return (false);
+	std::map<Client*, bool>::iterator userFound = _users.find(user);
+	if ( userFound != _users.end())
+		return (userFound->second);
+	else
+		return (false);
 }
 
 bool	Channel::isPasswordValid(std::string password) {
@@ -75,29 +84,25 @@ bool	Channel::isPasswordValid(std::string password) {
 
 bool	Channel::isUserPresent(Client* client)
 {
-	std::vector<Client*>::iterator user = _users.begin();
-	for( ; user < _users.end(); user++ )
-	{
-		if (*user == client)
-			return (true);
-	}
+	if ( _users.find(client) != _users.end() )
+		return (true);
 	return (false);
 }
 
 void	Channel::sendMessageToUsers(std::string message)
 {
-	std::vector<Client*>::iterator user;
-	for( user = _users.begin(); user < _users.end(); user ++ )
-		(*user)->sendMessage(message);
+	std::map<Client*, bool>::iterator user;
+	for( user = _users.begin(); user != _users.end(); user++ )
+		user->first->sendMessage(message);
 }
 
 void	Channel::sendMessageToUsersExceptSender(Client* sender, std::string message)
 {
-	std::vector<Client*>::iterator user;
-	for( user = _users.begin(); user < _users.end(); user++ )
+	std::map<Client*, bool>::iterator user;
+	for( user = _users.begin(); user != _users.end(); user++ )
 	{
-		if (*user != sender)
-			(*user)->sendMessage(message);
+		if (user->first != sender)
+			user->first->sendMessage(message);
 	}
 }
 
@@ -117,7 +122,7 @@ int	Channel::getUserLimit(void) {
 	return ( _userLimit );
 }
 
-std::vector<Client*>	Channel::getUsers(void) {
+std::map<Client*, bool>	Channel::getUsers(void) {
 	return ( _users );
 }
 
@@ -141,13 +146,13 @@ std::string	Channel::getAllUsersList(void)
 {
 	std::string userList = "";
 
-	std::vector<Client*>::iterator user;
-	for ( user = _users.begin(); user < _users.end(); user++)
+	std::map<Client*, bool>::iterator user;
+	for( user = _users.begin(); user != _users.end(); user++ )
 	{
-		if (isOperator(*user) == true)
-			userList += "@" + (*user)->getNickname() + " ";
+		if (isOperator(user->first) == true)
+			userList += "@" + user->first->getNickname() + " ";
 		else
-			userList += (*user)->getNickname() + " ";
+			userList += user->first->getNickname() + " ";
 	}
 
 	return ( userList );

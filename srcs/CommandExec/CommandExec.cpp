@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:53:34 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 15:15:24 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 18:49:31 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,19 @@ bool	CommandExec::minNbParams(int nbParams, int minNbParams)
 	if ( nbParams >= minNbParams)
 		return (true);
 	return (false);
+}
+
+std::string	CommandExec::getFullMessage(void)
+{
+	std::string	message = "";
+
+	std::vector<std::string>::iterator	it = _msg->_paramsSplit.begin() + 1;
+	for( ; it < _msg->_paramsSplit.end(); it++)
+	{
+		if (it + 1 != _msg->_paramsSplit.end())
+			message += *it + " ";
+		else
+			message += *it;
+	}
+	return (message);
 }

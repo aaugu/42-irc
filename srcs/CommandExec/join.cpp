@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 15:16:20 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 17:39:27 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	CommandExec::createChannel(std::string name)
 
 void	CommandExec::joinChannel(Channel& channel)
 {
-	channel.addUser(_client);
+	channel.addUser(_client, false);
 	_client->setCurrentChannel(&channel);
 
 	channel.sendMessageToUsers(RPL_JOIN(_client, channel.getName()));
