@@ -44,6 +44,7 @@ class CommandExec
 
 		// Commands
 		void	join();
+        void    oper(Server *server, Client *client, std::vector<std::string> args);
 		// etc.
 
 };

@@ -75,8 +75,9 @@ class Client
 		int			getFd(void);
 		std::string getNickname(void);
 		std::string	getAddress(void);
-		void		setNickname(std::string value);
+        bool        getOperatorState();
 		void		setCurrentChannel(Channel* currentChannel);
+        void        setOperatorState(bool value);
 
 		// Send Message
 		template < typename T >

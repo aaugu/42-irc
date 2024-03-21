@@ -83,48 +83,6 @@ std::string Client::nickFunction(Server *s, std::string nickname) {
     return nickname;
 }
 
-void Client::setOperatorState(Server *s, std::vector<std::string> args) {
-    std::vector<Client>::iterator itC = s->getClientByNickname(args[0]);
-    if (args[1] == s->getOpPass()) {
-        if (!_isOp) {
-            if (_nickname == args[0]) {
-                sendMessage("You are now operator of this server\r\n");
-                itC->_isOp = true;
-                return;
-            }
-            else {
-                sendMessage("ERROR : You need to be operator to change permission of other user\r\n");
-                return;
-            }
-        }
-        else {
-
-			if (itC->getFd() == 0 || itC->getFd() == 49) { // fd == 49 error if no other user connected in wsl (TODO tester sous mac)
-				sendMessage("ERROR : Invalid user, please enter a valide nickname\r\n");
-				return;
-			}
-
-            if (!itC->_isOp) {
-                sendMessage( "You have promoted " + itC->_nickname + " Operator\r\n");
-                sendMessageTo("You have been promoted Operator by " + _nickname + "\r\n", itC->_sockfd);
-                itC->_isOp = true;
-                return;
-            }
-            else {
-				if (_nickname == args[0]){
-					sendMessage("You are no longer operator\r\n");
-				}else {
-					sendMessage( itC->_nickname + " is no longer operator\r\n");
-					sendMessageTo(_nickname + " have removed your permission\r\n", itC->_sockfd);
-				}
-                itC->_isOp = false;
-                return;
-            }
-        }
-    }
-    sendMessage("ERROR : Invalid password");
-}
-
 void    Client::killClient(Server *s, std::vector<std::string> args) {
     if (!_isOp) {
         sendMessage("ERROR : You need to be operator to kill a client\r\n");
@@ -218,9 +176,9 @@ void Client::exeCommand(Server* server)
         case 7: //autorisation de la commande CAP mais on fait rien avec pour le moment
             break;
         case 8:
-            std::cout << "DEBUG" << std::endl;
             check_if_pass(*server);
-            setOperatorState(server, _message._paramsSplit);
+            exec.oper(server, this, _message._paramsSplit);
+            //setOperatorState(server, _message._paramsSplit);
             break;
         case 9:
             check_if_pass(*server);
@@ -263,12 +221,16 @@ std::string	Client::getAddress(void) {
     return ( _address );
 }
 
-void Client::setNickname(std::string value) {
-    _nickname = value;
+bool    Client::getOperatorState() {
+    return _isOp;
 }
 
 void    Client::setCurrentChannel(Channel* currentChannel) {
     _currentChannel = currentChannel;
+}
+
+void    Client::setOperatorState(bool value) {
+    _isOp = value;
 }
 
 /* ************************************************************************** */
