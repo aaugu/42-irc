@@ -36,7 +36,7 @@ class CommandExec
 		void	joinChannel(Channel& channel);
 
         // OPER
-        bool    checkUserExsist(Server *server, std::string nickname);
+        bool    checkUserExsist(std::string nickname);
 
 		// etc.
 
@@ -47,7 +47,7 @@ class CommandExec
 
 		// Commands
 		void	join();
-        void    oper(std::vector<std::string> args);
+        void    oper();
         void    kill();
 		// etc.
 

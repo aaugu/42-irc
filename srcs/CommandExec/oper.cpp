@@ -26,9 +26,9 @@
 /*                                   OPER                                     */
 /* ************************************************************************** */
 
-void CommandExec::oper(std::vector<std::string> args) {
+void CommandExec::oper() {
     std::vector<std::string> nicknameList = _server->getNicknameList();
-    if (!checkUserExsist(_server, args[0])) {
+    if (!checkUserExsist(_msg->_paramsSplit[0])) {
         if (_client->getOperatorState())
             _client->sendMessage(ERR_NOUSER);
         else
@@ -36,11 +36,11 @@ void CommandExec::oper(std::vector<std::string> args) {
         return;
     }
 
-    std::vector<Client>::iterator itC = _server->getClientByNickname(args[0]);
+    std::vector<Client>::iterator itC = _server->getClientByNickname(_msg->_paramsSplit[0]);
 
-    if (args[1] == _server->getOpPass()) {
+    if (_msg->_paramsSplit[1] == _server->getOpPass()) {
         if (!_client->getOperatorState()) {
-            if (_client->getNickname() == args[0]) {
+            if (_client->getNickname() == _msg->_paramsSplit[0]) {
                 _client->sendMessage(MSG_NOWOPER);
                 itC->setOperatorState(true);;
                 return;
@@ -58,7 +58,7 @@ void CommandExec::oper(std::vector<std::string> args) {
                 return;
             }
             else {
-                if (_client->getNickname() == args[0]){
+                if (_client->getNickname() == _msg->_paramsSplit[0]){
                     _client->sendMessage(MSG_REMOVEOPER);
                 }else {
                     _client->sendMessage(MSG_REMOVEOTHEROPER(itC->getNickname()));
@@ -76,9 +76,9 @@ void CommandExec::oper(std::vector<std::string> args) {
 /*                               SUB FUNCTIONS                                */
 /* ************************************************************************** */
 
-bool CommandExec::checkUserExsist(Server *server, std::string nickname)
+bool CommandExec::checkUserExsist(std::string nickname)
 {
-    std::vector<std::string> nicknameList = server->getNicknameList();
+    std::vector<std::string> nicknameList = _server->getNicknameList();
 
     if (std::count(nicknameList.begin(), nicknameList.end(), nickname))
         return true;
