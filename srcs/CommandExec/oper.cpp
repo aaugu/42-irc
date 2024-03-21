@@ -3,47 +3,85 @@
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
 
-void CommandExec::oper(Server *server, Client *client, std::vector<std::string> args) {
-    std::vector<Client>::iterator itC = server->getClientByNickname(args[0]);
-    if (args[1] == server->getOpPass()) {
-        if (!client->getOperatorState()) {
-            if (client->getNickname() == args[0]) {
-                client->sendMessage("You are now operator of this server\r\n");
-                // TODO create "set op state"
+/* ************************************************************************** */
+/*                                   MACROS                                   */
+/* ************************************************************************** */
+
+// MESSAGES
+
+#define MSG_NOWOPER                         "You are now operator of this server\r\n"
+#define MSG_REMOVEOPER                      "You are no longer operator\r\n"
+#define MSG_REMOVEOTHEROPER(nickname)       (nickname + " is no longer operator")
+#define MSG_REMOVEOPERBY(nickname)          (nickname + " have removed your permission\r\n")
+#define MSG_PROMOTOTHER(nickname)           ("You have promoted " + nickname + " Operator\r\n")
+#define MSG_PROMOTBY(nickname)              ("You have been promoted Operator by " + nickname + "\r\n")
+
+//ERRORS
+
+#define ERR_NOPERM      "ERROR : You need to be operator to change permission of other user\r\n"
+#define ERR_NOUSER      "ERROR : Invalid user, please enter a valide nickname\r\n"
+#define ERR_WRONGPASS   "ERROR : Invalid password\r\n"
+
+/* ************************************************************************** */
+/*                                   OPER                                     */
+/* ************************************************************************** */
+
+void CommandExec::oper(std::vector<std::string> args) {
+    std::vector<std::string> nicknameList = _server->getNicknameList();
+    if (!checkUserExsist(_server, args[0])) {
+        if (_client->getOperatorState())
+            _client->sendMessage(ERR_NOUSER);
+        else
+            _client->sendMessage(ERR_NOPERM);
+        return;
+    }
+
+    std::vector<Client>::iterator itC = _server->getClientByNickname(args[0]);
+
+    if (args[1] == _server->getOpPass()) {
+        if (!_client->getOperatorState()) {
+            if (_client->getNickname() == args[0]) {
+                _client->sendMessage(MSG_NOWOPER);
                 itC->setOperatorState(true);;
                 return;
             }
             else {
-                client->sendMessage("ERROR : You need to be operator to change permission of other user\r\n");
+                _client->sendMessage(ERR_NOPERM);
                 return;
             }
         }
         else {
-
-            if (itC->getFd() == 0 || itC->getFd() == 49) { // fd == 49 error if no other user connected in wsl (TODO tester sous mac)
-                client->sendMessage("ERROR : Invalid user, please enter a valide nickname\r\n");
-                return;
-            }
-
             if (!itC->getOperatorState()) {
-                client->sendMessage( "You have promoted " + itC->getNickname() + " Operator\r\n");
-                sendMessageTo("You have been promoted Operator by " + client->getNickname() + "\r\n", itC->getFd());
-                // TODO create "set op state"
+                _client->sendMessage(MSG_PROMOTOTHER(itC->getNickname()));
+                sendMessageTo(MSG_PROMOTBY(_client->getNickname()), itC->getFd());
                 itC->setOperatorState(true);
                 return;
             }
             else {
-                if (client->getNickname() == args[0]){
-                    client->sendMessage("You are no longer operator\r\n");
+                if (_client->getNickname() == args[0]){
+                    _client->sendMessage(MSG_REMOVEOPER);
                 }else {
-                    client->sendMessage( itC->getNickname() + " is no longer operator\r\n");
-                    sendMessageTo(client->getNickname() + " have removed your permission\r\n", itC->getFd());
+                    _client->sendMessage(MSG_REMOVEOTHEROPER(itC->getNickname()));
+                    sendMessageTo(MSG_REMOVEOPERBY(_client->getNickname()), itC->getFd());
                 }
-                // TODO create "set op state"
                 itC->setOperatorState(false);
                 return;
             }
         }
     }
-    client->sendMessage("ERROR : Invalid password");
+    _client->sendMessage(ERR_WRONGPASS);
+}
+
+/* ************************************************************************** */
+/*                               SUB FUNCTIONS                                */
+/* ************************************************************************** */
+
+bool CommandExec::checkUserExsist(Server *server, std::string nickname)
+{
+    std::vector<std::string> nicknameList = server->getNicknameList();
+
+    if (std::count(nicknameList.begin(), nicknameList.end(), nickname))
+        return true;
+    else
+        return false;
 }

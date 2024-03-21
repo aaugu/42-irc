@@ -177,8 +177,7 @@ void Client::exeCommand(Server* server)
             break;
         case 8:
             check_if_pass(*server);
-            exec.oper(server, this, _message._paramsSplit);
-            //setOperatorState(server, _message._paramsSplit);
+            exec.oper(_message._paramsSplit);
             break;
         case 9:
             check_if_pass(*server);

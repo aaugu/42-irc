@@ -17,6 +17,7 @@ SRC		=	main \
 			CommandExec/CommandExec \
 			CommandExec/join \
 			CommandExec/oper \
+			CommandExec/kill \
 			Server/Server \
 			Server/serverChannelUtils \
 			Server/serverClientUtils \
