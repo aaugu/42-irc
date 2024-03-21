@@ -23,6 +23,7 @@
 #include "../includes/CommandExec.hpp"
 
 #define DEFAULTNICKNAME "G'raha Tia"
+#define DEFAULTUSERNAME "Meteor"
 
 void toUpperCase(std::string& str) {
     for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
@@ -37,6 +38,7 @@ void toUpperCase(std::string& str) {
 Client::Client(int sockfd, std::string address) :
                 _sockfd(sockfd),
                 _nickname(DEFAULTNICKNAME),
+                _username(DEFAULTUSERNAME),
                 _isOp(false), 
                 _address(address),
                 _passwordReceved(false),
@@ -55,7 +57,6 @@ bool Client::checkUseNickname(Server *s, std::string &nickname) {
     std::vector<std::string>::iterator it;
 
     for (it = nick.begin(); it != nick.end(); ++it) {
-        std::cout << "checkUseNickname" << std::endl;
         if (*it == nickname)
             return true;
     }
@@ -71,7 +72,6 @@ std::string Client::nickFunction(Server *s, std::string nickname) {
     }
 
     while (checkUseNickname(s, nickname)) {
-        std::cout << "nickfunction" << std::endl;
         nickname += '_';
         dupe = true;
     }
@@ -147,7 +147,12 @@ void    Client::killClient(Server *s, std::vector<std::string> args) {
 
 void Client::saveMessage(std::string buff) {
     _message._fullStr = _message._fullStr + buff;
-    std::cout << "_message._fullStr \"" << _message._fullStr << "\"" << std::endl;
+}
+
+void Client::getUserCmdInfo() {
+    _username = _message._paramsSplit[0];
+    _address = _message._paramsSplit[2];
+
 }
 
 void Client::exeCommand(Server* server)
@@ -183,6 +188,8 @@ void Client::exeCommand(Server* server)
             // command_user();
             check_if_pass(*server);
             std::cout << "TO DO USER OF \"" << _message._params << "\"" << std::endl;
+            getUserCmdInfo();
+            std::cout << "DEBUG => " << _username << " : " << _address << std::endl;
             break;
         case 3:
             // command_join();

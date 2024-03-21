@@ -37,6 +37,7 @@ class Client
     private:
 		int			_sockfd;
 		std::string _nickname;
+		std::string	_username;
 		s_message	_message;
         bool        _isOp;
 		std::string	_address;
@@ -54,6 +55,7 @@ class Client
         void    					setOperatorState(Server *s, std::vector<std::string> args);
         void    					killClient(Server *s, std::vector<std::string> args);
 		bool						checkUseNickname(Server *s, std::string &nickname);
+		void 						getUserCmdInfo();
 
 		std::vector<std::string>	split(std::string value);
 

@@ -277,7 +277,6 @@ std::vector<std::string> Server::getNicknameList() {
     std::vector<Client>::iterator it;
     std::vector<std::string> nickname;
     for (it = _clients.begin(); it != _clients.end(); ++it) {
-		std::cout << "getnicknamelist" << std::endl;
         nickname.push_back(it->getNickname());
     }
     return nickname;
