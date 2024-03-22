@@ -1,6 +1,5 @@
 #include "../includes/CommandExec.hpp"
 #include "../includes/messages.hpp"
-#include "SendMessages.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
 
@@ -9,16 +8,13 @@
 /* ************************************************************************** */
 
 /* ************************************************************************** */
-/*                                   PING                                     */
+/*                                   QUIT                                     */
 /* ************************************************************************** */
 
-void CommandExec::ping(void) {
-    if (_msg->_params.empty()) {
-        _client->sendMessage(ERR_NOORIGIN(_msg->_command));
-        return;
-    }
-    else
-        _client->sendMessage(PONG(_msg->_params));
+void CommandExec::quit() {
+    //TODO envoyer un message "Machin" + _message._params
+    // à tout les utilisateurs des channels de Machin
+    _server->disconnectClient(_client);
 }
 
 /* ************************************************************************** */

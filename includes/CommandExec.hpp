@@ -27,7 +27,7 @@ class CommandExec
 		Client*		_client;
 		s_message*	_msg;
 
-		// UTILS
+		// PRIVATE UTILS
 		bool	invalidNbParams(int nbParams, int minNbParams, int maxNbParams);
         Client* getptrClientByName();
 
@@ -35,7 +35,6 @@ class CommandExec
 		void	checkChannelName(std::string& name);
 		void	createChannel(std::string name);
 		void	joinChannel(Channel& channel);
-
 
 		// etc.
 
@@ -45,11 +44,17 @@ class CommandExec
 		~CommandExec(void);
 
 		// Commands
-		void	join();
-        void    oper();
-        void    kill();
+		void	    join();
+        void        oper();
+        void        kill();
         std::string nick();
+        void        ping();
+        void        quit();
+        void        pass();
 		// etc.
+
+        // PUBLIC UTILS
+        void    check_if_pass();
 
 };
 

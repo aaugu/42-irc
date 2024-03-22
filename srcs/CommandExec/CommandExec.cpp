@@ -12,6 +12,7 @@
 
 #include "../includes/CommandExec.hpp"
 #include "../includes/messages.hpp"
+#include "../includes/SendMessages.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
 
@@ -46,4 +47,15 @@ Client* CommandExec::getptrClientByName() {
             return &(*it);
     }
     return nullptr;
+}
+
+void CommandExec::check_if_pass() {
+    if (!_client->isPasswordReceved()) {
+        _client->sendMessage(ERR_PASSWDMISS);
+        _server->disconnectClient(_client);
+    }
+    else if (!_client->isPasswordChecked()) {
+        _client->sendMessage(ERR_PASSWDMISMATCH);
+        _server->disconnectClient(_client);
+    }
 }

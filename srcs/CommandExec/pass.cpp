@@ -1,6 +1,6 @@
 #include "../includes/CommandExec.hpp"
 #include "../includes/messages.hpp"
-#include "SendMessages.hpp"
+#include "../includes/SendMessages.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
 
@@ -9,18 +9,19 @@
 /* ************************************************************************** */
 
 /* ************************************************************************** */
-/*                                   PING                                     */
+/*                                   PASS                                     */
 /* ************************************************************************** */
 
-void CommandExec::ping(void) {
-    if (_msg->_params.empty()) {
-        _client->sendMessage(ERR_NOORIGIN(_msg->_command));
-        return;
+void CommandExec::pass() {
+    _client->setPasswordReceved(true);
+    if (_msg->_params.compare(_server->get_password()) == 0 && !_client->isPasswordChecked()) {
+        _client->setPasswordChecked(true);
+        _client->sendMessage("Password Accepted\r\n");
     }
-    else
-        _client->sendMessage(PONG(_msg->_params));
+    check_if_pass();
 }
 
 /* ************************************************************************** */
 /*                               SUB FUNCTIONS                                */
 /* ************************************************************************** */
+

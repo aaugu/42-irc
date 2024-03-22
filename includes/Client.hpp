@@ -82,6 +82,8 @@ class Client
 		void		setCurrentChannel(Channel* currentChannel);
         void        setOperatorState(bool value);
         void        setWelcomSended(bool welcomSended);
+        void        setPasswordReceved(bool passwordReceved);
+        void        setPasswordChecked(bool passwordChecked);
 
 		// Send Message
 		template < typename T >

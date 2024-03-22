@@ -172,7 +172,6 @@ void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::str
 	std::vector<Client>::iterator itC = getClientByFd(clientPollFd->fd);
 	std::string	line;
 	size_t readBytes = getLine(clientPollFd->fd, line);
-	std::cerr << "clientInput: " << t(line) << std::endl;
 
 	if ( (int)readBytes < 0 && line.empty() == false){
 		std::cerr << "WAIT finish command" << std::endl; // debug

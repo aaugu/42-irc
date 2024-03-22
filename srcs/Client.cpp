@@ -25,12 +25,6 @@
 #define DEFAULTNICKNAME "G'raha Tia"
 #define DEFAULTUSERNAME "Meteor"
 
-void toUpperCase(std::string& str) {
-    for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
-        *it = std::toupper(static_cast<unsigned char>(*it));
-    }
-}
-
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
 /* ************************************************************************** */
@@ -51,7 +45,40 @@ Client::~Client(void) {}
 /*                           PRIVATE MEMBER FUNCTION                           */
 /* ************************************************************************** */
 
-// Class function
+// Utils
+
+void toUpperCase(std::string& str) {
+    for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
+        *it = std::toupper(static_cast<unsigned char>(*it));
+    }
+}
+
+void Client::splitMessage(std::string buff) {
+    std::stringstream ss(buff);
+    std::string word;
+    int count = 0;
+    _message._paramsSplit.clear();
+    _message._params.clear();
+    while (ss >> word) {
+        if (count == 0) {
+            toUpperCase(word);
+            _message._command = word;
+        }
+        else if (count == 1)
+        {
+            _message._paramsSplit.push_back(word);
+            _message._params = word;
+        }
+        else if (count > 1)
+        {
+            _message._paramsSplit.push_back(word);
+            _message._params += " " + word;
+        }
+        count++;
+    }
+}
+
+// Gestion signal CTRL-D
 
 void Client::saveMessage(std::string buff) {
     _message._fullStr = _message._fullStr + buff;
@@ -63,9 +90,22 @@ void Client::getUserCmdInfo() {
 
 }
 
+void Client::eraseFullstr(void) {
+    splitMessage(_message._fullStr);
+    _message._fullStr.erase();
+}
+
+void Client::parseMessage(std::string buff) {
+    _message._fullStr = _message._fullStr + buff;
+    splitMessage(_message._fullStr);
+    eraseFullstr();
+}
+
+// commande execution
+
 void Client::exeCommand(Server* server)
 {
-    CommandExec exec(server, this, &_message); //pour le join pour le moment
+    CommandExec exec(server, this, &_message);
 
     std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL"}; //ajout d'autre commande
     int count = 0;
@@ -80,19 +120,19 @@ void Client::exeCommand(Server* server)
     switch (count) {
         case 0:
             std::cout << "TO DO PASS OF \"" << _message._params << "\"" << std::endl;
-            command_pass(*server);
+            exec.pass();
             break;
         case 1:
             // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
-            check_if_pass(*server);
+            exec.check_if_pass();
             //_nickname = nickFunction(server, _message._params);
             _nickname = exec.nick();
 
             break;
         case 2:
             // command_user();
-            check_if_pass(*server);
+            exec.check_if_pass();
             std::cout << "TO DO USER OF \"" << _message._params << "\"" << std::endl;
             getUserCmdInfo();
             break;
@@ -103,31 +143,31 @@ void Client::exeCommand(Server* server)
                 sendMessage(ERR_NOTREGISTERED(_nickname));
                 break;
             }
-            check_if_pass(*server);
+            exec.check_if_pass();
             exec.join();
             break;
         case 4:
-            check_if_pass(*server);
+            exec.check_if_pass();
             std::cout << "TO DO MODE OF \"" << _message._params << "\"" << std::endl;
             // command_mode();
             break;
         case 5:
-            check_if_pass(*server);
+            exec.check_if_pass();
             std::cout << "TO DO PING OF \"" << _message._params << "\"" << std::endl;
-            command_ping();
+            exec.ping();
             break;
         case 6:
             std::cout << "TO DO QUIT OF \"" << _message._params << "\"" << std::endl;
-            command_quit(*server);
+            exec.quit();
             break;
         case 7: //autorisation de la commande CAP mais on fait rien avec pour le moment
             break;
         case 8:
-            check_if_pass(*server);
+            exec.check_if_pass();
             exec.oper();
             break;
         case 9:
-            check_if_pass(*server);
+            exec.check_if_pass();
             exec.kill();
             break;
         default: //dernier case pour l'invalide command 
@@ -135,20 +175,6 @@ void Client::exeCommand(Server* server)
         // case X: 
         //      ...
     }
-}
-
-void Client::eraseFullstr(void) {
-    splitMessage(_message._fullStr);
-    _message._fullStr.erase();
-    std::cout << "_message._fullStr erased" << std::endl;
-}
-
-void Client::parseMessage(std::string buff) {
-    _message._fullStr = _message._fullStr + buff;
-    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;
-    splitMessage(_message._fullStr);
-    eraseFullstr();
-    std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
 }
 
 /* ************************************************************************** */
@@ -179,80 +205,6 @@ void    Client::setOperatorState(bool value) {
     _isOp = value;
 }
 
-/* ************************************************************************** */
-/*                             PRIVATE FUNCTIONS                              */
-/* ************************************************************************** */
-
-void Client::command_pass(Server &server) {
-    _passwordReceved = true;
-    if (_message._params.compare(server.get_password()) == 0 && _passwordChecked == false) {
-        _passwordChecked = true;
-        sendMessage("Password Accepted\r\n");
-    }
-    check_if_pass(server);
-}
-
-void Client::check_if_pass(Server &server) {
-    if (_passwordReceved == false) {
-        sendMessage(ERR_PASSWDMISS);
-        server.disconnectClient(this);
-    }
-    else if (_passwordChecked == false) {
-        sendMessage(ERR_PASSWDMISMATCH);
-        server.disconnectClient(this);
-    }
-}
-
-void Client::command_quit(Server &server) {
-    //TODO envoyer un message "Machin" + _message._params
-    // à tout les utilisateurs des channels de Machin
-    server.disconnectClient(this);
-}
-
-void Client::command_ping(void) {
-    if (_message._params.empty()) {
-        sendMessage(ERR_NOORIGIN(_message._command));
-        return;
-    }
-    else
-        sendMessage(PONG(_message._params));
-}
-
-std::vector<std::string> Client::split(std::string value) {
-    std::istringstream iss(value);
-    std::vector<std::string> mots;
-    std::string mot;
-
-    while (iss >> mot)
-        mots.push_back(mot);
-    return mots;
-}
-
-void Client::splitMessage(std::string buff) {
-    std::stringstream ss(buff);
-    std::string word;
-    int count = 0;
-    _message._paramsSplit.clear();
-    _message._params.clear();
-    while (ss >> word) {
-        if (count == 0) {
-            toUpperCase(word);
-            _message._command = word;
-        }
-        else if (count == 1)
-        {
-            _message._paramsSplit.push_back(word);
-            _message._params = word;
-        }
-        else if (count > 1)
-        {
-            _message._paramsSplit.push_back(word);
-            _message._params += " " + word;
-        }
-        count++;
-    }
-}
-
 bool Client::isPasswordReceved() {
     return _passwordReceved;
 }
@@ -269,29 +221,14 @@ void Client::setWelcomSended(bool welcomSended) {
     _welcomSended = welcomSended;
 }
 
-// /* ************************************************************************** */
-// /*                            NON MEMBER FUNCTIONS                            */
-// /* ************************************************************************** */
+void Client::setPasswordReceved(bool passwordReceved) {
+    _passwordReceved = passwordReceved;
+}
 
-// std::string t(const std::string& input) {
-//     std::string result;
-//     for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-//         char c = *it;
-//         switch (c) {
-//             case '\n':
-//                 result += "\\n";
-//                 break;
-//             case '\r':
-//                 result += "\\r";
-//                 break;
-//             case '\t':
-//                 result += "\\t";
-//                 break;
-//             // Ajoutez d'autres caractères spéciaux si nécessaire
-//             default:
-//                 result += c;
-//                 break;
-//         }
-//     }
-//     return result;
-// }
+void Client::setPasswordChecked(bool passwordChecked) {
+    _passwordChecked = passwordChecked;
+}
+
+/* ************************************************************************** */
+/*                             PRIVATE FUNCTIONS                              */
+/* ************************************************************************** */
