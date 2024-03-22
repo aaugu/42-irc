@@ -51,6 +51,7 @@ class CommandExec
         void        ping();
         void        quit();
         void        pass();
+        void        invite();
 		// etc.
 
         // PUBLIC UTILS

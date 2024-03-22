@@ -107,7 +107,7 @@ void Client::exeCommand(Server* server)
 {
     CommandExec exec(server, this, &_message);
 
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL"}; //ajout d'autre commande
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "INVITE"}; //ajout d'autre commande
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -138,12 +138,12 @@ void Client::exeCommand(Server* server)
             break;
         case 3:
             // command_join();
-            std::cout << "TO DO JOIN OF \"" << _message._params << "\"" << std::endl;
             if(_message._params.compare(":") == 0 && _passwordReceved == false){
                 sendMessage(ERR_NOTREGISTERED(_nickname));
                 break;
             }
             exec.check_if_pass();
+            std::cout << "TO DO JOIN OF \"" << _message._params << "\"" << std::endl;
             exec.join();
             break;
         case 4:
@@ -164,11 +164,18 @@ void Client::exeCommand(Server* server)
             break;
         case 8:
             exec.check_if_pass();
+            std::cout << "TO DO OPER OF \"" << _message._params << "\"" << std::endl;
             exec.oper();
             break;
         case 9:
             exec.check_if_pass();
+            std::cout << "TO DO KILL OF \"" << _message._params << "\"" << std::endl;
             exec.kill();
+            break;
+        case 10:
+            exec.check_if_pass();
+            std::cout << "TO DO INVITE OF \"" << _message._params << "\"" << std::endl;
+            exec.invite();
             break;
         default: //dernier case pour l'invalide command 
             sendMessage(ERR_INVALID_ERROR);

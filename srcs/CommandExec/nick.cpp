@@ -11,6 +11,9 @@
 // MESSAGE
 #define MSG_SETNICKNAME(nickname) ("Your nickname was set to " + _msg->_paramsSplit[0] + "\r\n")
 
+// REPLY
+#define RPL_CHANGENICKNAME(nickname) (": NICK " + nickname + "\r\n")
+
 // ERRORS
 #define ERR_INVALIDCHAR "Nickname can't start with '#', we have remove it for you\r\n"
 #define ERR_ALLREADYUSEDNICKNAME(nickname) ("Nickname already used, Nickname changed to " + nickname + "\r\n")
@@ -32,8 +35,7 @@ std::string CommandExec::nick() {
         dupe = true;
     }
     if (dupe) {
-        std::string nickChangeMessage = ": NICK " + _msg->_paramsSplit[0] + "\r\n";
-        _client->sendMessage(nickChangeMessage);
+        _client->sendMessage(RPL_CHANGENICKNAME(_msg->_paramsSplit[0]));
         _client->sendMessage(ERR_ALLREADYUSEDNICKNAME(_msg->_paramsSplit[0]));
     }
 

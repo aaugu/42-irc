@@ -22,6 +22,7 @@ SRC		=	main \
 			CommandExec/ping \
 			CommandExec/quit \
 			CommandExec/pass \
+			CommandExec/invite \
 			Server/Server \
 			Server/serverChannelUtils \
 			Server/serverClientUtils \
