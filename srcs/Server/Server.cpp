@@ -248,16 +248,6 @@ std::vector<pollfd>::iterator Server::getPollFdByFd(int sockfd) {
 	return (it);
 }
 
-bool Server::checkClientPresence(std::string nickname){ 
-	std::vector<Client>::iterator it;
-    for ( it = _clients.begin(); it < _clients.end(); it++ )
-    {
-        if ( it->getNickname() == nickname)
-            return(true);
-    }
-    return (false);
-}
-
 std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
 {
     std::vector<Client>::iterator it;

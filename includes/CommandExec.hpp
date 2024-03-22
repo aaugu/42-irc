@@ -36,7 +36,10 @@ class CommandExec
 		void	joinChannel(Channel& channel);
 
         // OPER
-        bool    checkUserExsist(std::string nickname);
+        Client* getptrClientByName(std::string nickname);
+
+        // KILL
+        bool    checkClientPresence(std::string nickname);
 
 		// etc.
 

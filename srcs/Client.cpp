@@ -130,7 +130,6 @@ void Client::exeCommand(Server* server)
             check_if_pass(*server);
             std::cout << "TO DO USER OF \"" << _message._params << "\"" << std::endl;
             getUserCmdInfo();
-            std::cout << "DEBUG => " << _username << " : " << _address << std::endl;
             break;
         case 3:
             // command_join();
@@ -164,7 +163,7 @@ void Client::exeCommand(Server* server)
             break;
         case 9:
             check_if_pass(*server);
-            //killClient(server, _message._paramsSplit);
+            exec.kill();
             break;
         default: //dernier case pour l'invalide command 
             sendMessage(ERR_INVALID_ERROR);
