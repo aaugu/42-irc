@@ -1,12 +1,13 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   serverClientUtils.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 18:33:19 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 15:31:21 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/19 16:08:38 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +27,7 @@
 #define ERR_CLIENT_NONEX	"Could not find client with this fd"
 
 /* ************************************************************************** */
-/*                                CHANNEL UTILS                               */
+/*                          PRIVATE MEMBER FUNCTIONS                          */
 /* ************************************************************************** */
 
 int		Server::acceptNewClient(void)
@@ -52,16 +53,6 @@ void	Server::refuseClient(int sockfdClient)
 	printErrMessage(errMessage("Client", -1, SERVER_FULL));
 }
 
-void	Server::addClientToListenPoll(int sockfdClient)
-{
-	pollfd	client;
-
-	client.fd = sockfdClient;
-	client.events = POLLIN | POLLOUT;
-
-	_pollFds.push_back(client);
-}
-
 void	Server::createClient(int sockfdClient)
 {
 	struct sockaddr_in	clientAddress;
@@ -79,6 +70,31 @@ void	Server::createClient(int sockfdClient)
 
 	_clients.push_back(Client(sockfdClient, address));
 }
+
+void	Server::addClientToListenPoll(int sockfdClient)
+{
+	pollfd	client;
+
+	client.fd = sockfdClient;
+	client.events = POLLIN | POLLOUT;
+
+	_pollFds.push_back(client);
+}
+
+std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
+{
+	std::vector<Client>::iterator it;
+	for ( it = _clients.begin(); it < _clients.end(); it++ )
+	{
+		if ( it->getFd() == sockfdClient)
+			return (it);
+	}
+	return (it);
+}
+
+/* ************************************************************************** */
+/*                          PUBLIC MEMBER FUNCTIONS                           */
+/* ************************************************************************** */
 
 void	Server::disconnectClient(Client *client)
 {
@@ -100,4 +116,26 @@ void	Server::disconnectClient(Client *client)
 		return;
 	}
 	printErrMessage(errMessage("client", client->getFd(), ERR_CLIENT_NONEX));
+}
+
+bool Server::clientExists(std::string nickname){ 
+	std::vector<Client>::iterator it;
+    for ( it = _clients.begin(); it < _clients.end(); it++ )
+    {
+        if ( it->getNickname() == nickname)
+            return(true);
+    }
+    return (false);
+}
+
+
+std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
+{
+    std::vector<Client>::iterator it;
+    for ( it = _clients.begin(); it < _clients.end(); it++ )
+    {
+        if ( it->getNickname() == nickname)
+            return(it);
+    }
+    return (it);
 }

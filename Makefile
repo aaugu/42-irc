@@ -23,6 +23,8 @@ SRC		=	main \
 			CommandExec/quit \
 			CommandExec/pass \
 			CommandExec/invite \
+			CommandExec/part \
+			CommandExec/privmsg \
 			Server/Server \
 			Server/serverChannelUtils \
 			Server/serverClientUtils \

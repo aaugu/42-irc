@@ -15,10 +15,15 @@
 
 # include <string>
 
-class Client;
 class Server;
-struct s_message;
+class Client;
 class Channel;
+struct s_message;
+												// shoud be username
+#define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
+#define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + ":Channel name is invalid, or does not exist\r\n")
+#define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " " + ":Nickname is invalid, or does not exist\r\n")
+#define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
 
 class CommandExec
 {
@@ -30,11 +35,18 @@ class CommandExec
 		// PRIVATE UTILS
 		bool	invalidNbParams(int nbParams, int minNbParams, int maxNbParams);
         Client* getptrClientByName();
+		// UTILS
+		bool		minNbParams(int nbParams, int minNbParams);
+		std::string	getFullMessage(void);
 
 		// JOIN
 		void	checkChannelName(std::string& name);
 		void	createChannel(std::string name);
 		void	joinChannel(Channel& channel);
+
+		// PRIVMSG
+		void	sendMessageToChannel(std::string target, std::string message);
+		void	sendPrivateMessage(std::string target, std::string message);
 
 		// etc.
 
@@ -52,6 +64,8 @@ class CommandExec
         void        quit();
         void        pass();
         void        invite();
+		void	    privmsg(void);
+		void	    part(void);
 		// etc.
 
         // PUBLIC UTILS

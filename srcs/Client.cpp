@@ -33,7 +33,7 @@ Client::Client(int sockfd, std::string address) :
                 _sockfd(sockfd),
                 _nickname(DEFAULTNICKNAME),
                 _username(DEFAULTUSERNAME),
-                _isOp(false), 
+                _isOp(false),
                 _address(address),
                 _passwordReceved(false),
                 _passwordChecked(false),
@@ -107,7 +107,8 @@ void Client::exeCommand(Server* server)
 {
     CommandExec exec(server, this, &_message);
 
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "INVITE"}; //ajout d'autre commande
+
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART", "INVITE"};
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -126,7 +127,6 @@ void Client::exeCommand(Server* server)
             // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
             exec.check_if_pass();
-            //_nickname = nickFunction(server, _message._params);
             _nickname = exec.nick();
 
             break;
@@ -174,10 +174,18 @@ void Client::exeCommand(Server* server)
             break;
         case 10:
             exec.check_if_pass();
+            exec.privmsg();
+            break ;
+        case 11:
+            exec.check_if_pass();
+            exec.part();
+            break ;
+        case 12:
+            exec.check_if_pass();
             std::cout << "TO DO INVITE OF \"" << _message._params << "\"" << std::endl;
             exec.invite();
             break;
-        default: //dernier case pour l'invalide command 
+        default: //dernier case pour l'invalide command
             sendMessage(ERR_INVALID_ERROR);
         // case X: 
         //      ...
