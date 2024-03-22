@@ -32,7 +32,7 @@ void    CommandExec::kill() {
         return;
     }
 
-    if (getptrClientByName(_msg->_paramsSplit[0]) == nullptr) {
+    if (getptrClientByName() == nullptr) {
         _client->sendMessage(ERR_NOUSER);
         return;
     }
@@ -55,13 +55,3 @@ void    CommandExec::kill() {
 /* ************************************************************************** */
 /*                               SUB FUNCTIONS                                */
 /* ************************************************************************** */
-
-Client* CommandExec::getptrClientByName(std::string  nickname) {
-    std::vector<Client> cli = _server->getClients();
-    for (std::vector<Client>::iterator it = cli.begin(); it != cli.end(); ++it) {
-        if (it->getNickname() == nickname)
-            return &(*it);
-    }
-    return nullptr;
-}
-

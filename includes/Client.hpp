@@ -42,21 +42,19 @@ class Client
         bool        _isOp;
 		std::string	_address;
 		bool		_passwordReceved;
-		bool		_passwordChecked;
+        bool		_passwordChecked;
 		bool		_welcomSended;
-		Channel*	_currentChannel;
+        Channel*	_currentChannel;
 
 		void						command_pass(Server &server);
 		void						check_if_pass(Server &server);
 		void						command_ping(void);
 		void						command_quit(Server &server);
-
 		std::string					nickFunction(Server *s, std::string name);
         void    					setOperatorState(Server *s, std::vector<std::string> args);
         void    					killClient(Server *s, std::vector<std::string> args);
 		bool						checkUseNickname(Server *s, std::string &nickname);
 		void 						getUserCmdInfo();
-
 		std::vector<std::string>	split(std::string value);
 
     public:
@@ -76,8 +74,14 @@ class Client
 		std::string getNickname(void);
 		std::string	getAddress(void);
         bool        getOperatorState();
+        bool        isPasswordReceved();
+        bool        isPasswordChecked();
+        bool        isWelcomSended();
+
+
 		void		setCurrentChannel(Channel* currentChannel);
         void        setOperatorState(bool value);
+        void        setWelcomSended(bool welcomSended);
 
 		// Send Message
 		template < typename T >

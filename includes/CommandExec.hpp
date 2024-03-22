@@ -29,17 +29,13 @@ class CommandExec
 
 		// UTILS
 		bool	invalidNbParams(int nbParams, int minNbParams, int maxNbParams);
+        Client* getptrClientByName();
 
 		// JOIN
 		void	checkChannelName(std::string& name);
 		void	createChannel(std::string name);
 		void	joinChannel(Channel& channel);
 
-        // OPER
-        Client* getptrClientByName(std::string nickname);
-
-        // KILL
-        bool    checkClientPresence(std::string nickname);
 
 		// etc.
 
@@ -52,6 +48,7 @@ class CommandExec
 		void	join();
         void    oper();
         void    kill();
+        std::string nick();
 		// etc.
 
 };

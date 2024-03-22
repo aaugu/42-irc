@@ -28,7 +28,7 @@
 
 void CommandExec::oper() {
     std::vector<std::string> nicknameList = _server->getNicknameList();
-    if (!checkUserExist(_msg->_paramsSplit[0])) {
+    if (getptrClientByName() == nullptr) {
         if (_client->getOperatorState())
             _client->sendMessage(ERR_NOUSER);
         else
@@ -75,13 +75,3 @@ void CommandExec::oper() {
 /* ************************************************************************** */
 /*                               SUB FUNCTIONS                                */
 /* ************************************************************************** */
-
-bool CommandExec::checkUserExist(std::string nickname)
-{
-    std::vector<std::string> nicknameList = _server->getNicknameList();
-
-    if (std::count(nicknameList.begin(), nicknameList.end(), nickname))
-        return true;
-    else
-        return false;
-}

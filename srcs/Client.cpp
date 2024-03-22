@@ -52,39 +52,6 @@ Client::~Client(void) {}
 /* ************************************************************************** */
 
 // Class function
-bool Client::checkUseNickname(Server *s, std::string &nickname) {
-       std::vector<std::string> nick = s->getNicknameList();
-    std::vector<std::string>::iterator it;
-
-    for (it = nick.begin(); it != nick.end(); ++it) {
-        if (*it == nickname)
-            return true;
-    }
-    return false;
-}
-
-std::string Client::nickFunction(Server *s, std::string nickname) {
-    bool dupe = false;
-
-    if (nickname[0] == '#') {
-        nickname.erase(0, 1);
-        sendMessage("Nickname can't sttart with '#', we have remove it for you\r\n");
-    }
-
-    while (checkUseNickname(s, nickname)) {
-        nickname += '_';
-        dupe = true;
-    }
-    if (dupe) {
-        std::string nickChangeMessage = ": NICK " + nickname + "\r\n";
-        sendMessage(nickChangeMessage);
-        sendMessage("Nickname already used, Nickname changed to " + nickname + "\r\n");
-    }
-    return nickname;
-}
-
-
-
 
 void Client::saveMessage(std::string buff) {
     _message._fullStr = _message._fullStr + buff;
@@ -119,11 +86,9 @@ void Client::exeCommand(Server* server)
             // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
             check_if_pass(*server);
-            _nickname = nickFunction(server, _message._params);
-            if (_passwordReceved == true && _passwordChecked == true && _welcomSended == false){
-                sendMessage(RPL_WELCOME(_nickname, "_user", "_hostName"));
-                _welcomSended = true;
-            }
+            //_nickname = nickFunction(server, _message._params);
+            _nickname = exec.nick();
+
             break;
         case 2:
             // command_user();
@@ -239,7 +204,7 @@ void Client::check_if_pass(Server &server) {
 }
 
 void Client::command_quit(Server &server) {
-    //envoyer un message "Machin" + _message._params 
+    //TODO envoyer un message "Machin" + _message._params
     // à tout les utilisateurs des channels de Machin
     server.disconnectClient(this);
 }
@@ -286,6 +251,22 @@ void Client::splitMessage(std::string buff) {
         }
         count++;
     }
+}
+
+bool Client::isPasswordReceved() {
+    return _passwordReceved;
+}
+
+bool Client::isPasswordChecked() {
+    return _passwordChecked;
+}
+
+bool Client::isWelcomSended() {
+    return _welcomSended;
+}
+
+void Client::setWelcomSended(bool welcomSended) {
+    _welcomSended = welcomSended;
 }
 
 // /* ************************************************************************** */
