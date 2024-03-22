@@ -1,3 +1,4 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -6,7 +7,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:53:34 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 14:06:13 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/20 18:49:31 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +33,33 @@ CommandExec::~CommandExec(void) {}
 /*                                    UTILS                                   */
 /* ************************************************************************** */
 
-bool	CommandExec::invalidNbParams(int nbParams, int minNbParams, int maxNbParams)
+bool	CommandExec::minNbParams(int nbParams, int minNbParams)
 {
-	if ( nbParams < minNbParams || nbParams > maxNbParams)
+	if ( nbParams >= minNbParams)
 		return (true);
 	return (false);
+}
+
+std::string	CommandExec::getFullMessage(void)
+{
+	std::string	message = "";
+
+	std::vector<std::string>::iterator	it = _msg->_paramsSplit.begin() + 1;
+	for( ; it < _msg->_paramsSplit.end(); it++)
+	{
+		if (it + 1 != _msg->_paramsSplit.end())
+			message += *it + " ";
+		else
+			message += *it;
+	}
+	return (message);
+}
+
+Client* CommandExec::getptrClientByName(std::string nickname) {
+    std::vector<Client> cli = _server->getClients();
+    for (std::vector<Client>::iterator it = cli.begin(); it != cli.end(); ++it) {
+        if (it->getNickname() == nickname)
+            return &(*it);
+    }
+    return nullptr;
 }

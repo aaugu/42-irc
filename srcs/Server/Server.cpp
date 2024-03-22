@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/19 14:42:27 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/22 10:42:37 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,17 +230,6 @@ void    Server::closePollFds(void)
 /*                                  ACCESSORS                                 */
 /* ************************************************************************** */
 
-std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
-{
-	std::vector<Client>::iterator it;
-	for ( it = _clients.begin(); it < _clients.end(); it++ )
-	{
-		if ( it->getFd() == sockfdClient)
-			return (it);
-	}
-	return (it);
-}
-
 std::vector<pollfd>::iterator Server::getPollFdByFd(int sockfd) {
 	std::vector<pollfd>::iterator it;
 	for ( it = _pollFds.begin(); it < _pollFds.end(); it++ )
@@ -249,27 +238,6 @@ std::vector<pollfd>::iterator Server::getPollFdByFd(int sockfd) {
 			return (it);
 	}
 	return (it);
-}
-
-bool Server::checkClientPresence(std::string nickname){ 
-	std::vector<Client>::iterator it;
-    for ( it = _clients.begin(); it < _clients.end(); it++ )
-    {
-        if ( it->getNickname() == nickname)
-            return(true);
-    }
-    return (false);
-}
-
-std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
-{
-    std::vector<Client>::iterator it;
-    for ( it = _clients.begin(); it < _clients.end(); it++ )
-    {
-        if ( it->getNickname() == nickname)
-            return(it);
-    }
-    return (it);
 }
 
 /* ************************************************************************** */

@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 15:30:15 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/22 15:10:52 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@
 /* ************************************************************************** */
 
 // RESPONSES
-												// shoud be username
-#define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
 #define RPL_JOIN(client, channel) (":" + USER(client) + " JOIN " + channel + "\r\n")
 #define RPL_ENDOFNAMES(address, client, channel) (":" + address + " 366 " + client + " " + channel + " :End of /NAMES list\r\n")
 #define RPL_NAMREPLY(address, client, channel, nickname) (":" + address + " 353 " + client + " = " + channel + " :" + nickname + "\r\n")
@@ -39,7 +37,7 @@
 
 void	CommandExec::join(void)
 {
-	if (invalidNbParams((int)_msg->_paramsSplit.size(), 1, 2))
+	if (minNbParams((int)_msg->_paramsSplit.size(), 1) == false)
 		return (_client->sendMessage("join nb arg \r\n"));
 
 	checkChannelName(_msg->_paramsSplit[0]);
@@ -79,7 +77,7 @@ void	CommandExec::createChannel(std::string name)
 
 	_server->addChannel(channel);
 	_client->setCurrentChannel(&channel);
-
+	
 	_client->sendMessage(RPL_JOIN(_client, channel.getName()));
 	_client->sendMessage(RPL_NAMREPLY(_client->getAddress(), _client->getNickname(), channel.getName(), "@" + _client->getNickname()));
 	_client->sendMessage(RPL_ENDOFNAMES(_client->getAddress(), _client->getNickname(), channel.getName()));
@@ -87,7 +85,7 @@ void	CommandExec::createChannel(std::string name)
 
 void	CommandExec::joinChannel(Channel& channel)
 {
-	channel.addUser(_client);
+	channel.addUser(_client, false);
 	_client->setCurrentChannel(&channel);
 
 	channel.sendMessageToUsers(RPL_JOIN(_client, channel.getName()));

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/17 19:11:56 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/22 14:31:32 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,10 @@
 #define CHANNEL_HPP
 
 # include <string>
+# include <map>
+
 class Client;
+class Server;
 
 class Channel
 {
@@ -24,8 +27,7 @@ class Channel
 		std::string				_topic;
 		int						_userLimit;
 
-		std::vector<Client*>	_operators;
-		std::vector<Client*>	_users;
+		std::map<Client*, bool>	_users;
 
 		bool	_modeI;	// invite-only
 		bool	_modeT;	// topic command only for operator
@@ -38,12 +40,13 @@ class Channel
 		~Channel(void);
 
 		// Modifiers
-		void	addUser(Client* user);
-		void	removeUser(Client* user);
+		void	addUser(Client* user, bool isOperator);
+		void	removeUser(Client* user, Server* server);
 
 		// Checks
 		bool	isOperator(Client* user);
 		bool	isPasswordValid(std::string password);
+		bool	isUserPresent(Client* client);
 
 		// Send
 		void	sendMessageToUsers(std::string message);
@@ -53,11 +56,19 @@ class Channel
 		std::string				getName(void);
 		std::string				getPassword(void);
 		int						getUserLimit(void);
-		std::vector<Client*>	getUsers(void);
+		std::map<Client*, bool>	getUsers(void);
 		bool					getModeI(void);
 		bool					getModeT(void);
 		bool					getModeK(void);
 		bool					getModeL(void);
+		void					setPassword(std::string Password);
+		void					setUserLimit(int limit);
+		void					setModeI(bool newmode);
+		void					setModeT(bool newmode);
+		void					setModeK(bool newmode);
+		void					setModeL(bool newmode);
+
+		void					setOperator(Client* user, bool oper);
 
 		std::string				getAllUsersList(void);
 

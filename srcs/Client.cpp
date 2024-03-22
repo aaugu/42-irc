@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/19 11:12:17 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/22 15:11:38 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 #include "../includes/SendMessages.hpp"
 #include "../includes/CommandExec.hpp"
 
+#define DEFAULTNICKNAME "G'raha Tia"
+
 void toUpperCase(std::string& str) {
     for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
         *it = std::toupper(static_cast<unsigned char>(*it));
@@ -34,7 +36,8 @@ void toUpperCase(std::string& str) {
 
 Client::Client(int sockfd, std::string address) :
                 _sockfd(sockfd),
-                _isOp(false), 
+                _nickname(DEFAULTNICKNAME),
+                _isOp(false),
                 _address(address),
                 _passwordReceved(false),
                 _passwordChecked(false),
@@ -104,7 +107,7 @@ void Client::setOperatorState(Server *s, std::vector<std::string> args) {
             }
         }
     }
-    sendMessage("ERROR : Invalid password");
+    sendMessage("ERROR : Invalid password\r\n");
 }
 
 void    Client::killClient(Server *s, std::vector<std::string> args) {
@@ -113,7 +116,7 @@ void    Client::killClient(Server *s, std::vector<std::string> args) {
         return;
     }
 
-    if (s->checkClientPresence(args[0])) {
+    if (s->clientExists(args[0])) {
         std::vector<Client>::iterator itC = s->getClientByNickname(args[0]);
         if (args[1] == ":") {
             args[1] += "unknown reason";
@@ -134,9 +137,9 @@ void Client::saveMessage(std::string buff) {
 
 void Client::exeCommand(Server* server)
 {
-    CommandExec exec(server, this, &_message); //pour le join pour le moment
-
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL"}; //ajout d'autre commande
+    CommandExec exec(server, this, &_message);
+    
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART"}; //ajout d'autre commande
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -179,7 +182,7 @@ void Client::exeCommand(Server* server)
         case 4:
             check_if_pass(*server);
             std::cout << "TO DO MODE OF \"" << _message._params << "\"" << std::endl;
-            // command_mode();
+            exec.mode();
             break;
         case 5:
             check_if_pass(*server);
@@ -193,14 +196,23 @@ void Client::exeCommand(Server* server)
         case 7: //autorisation de la commande CAP mais on fait rien avec pour le moment
             break;
         case 8:
-            std::cout << "DEBUG" << std::endl;
+            std::cout << "TO DO OPER OF \"" << _message._params << "\""  << std::endl;
             check_if_pass(*server);
             setOperatorState(server, _message._paramsSplit);
             break;
         case 9:
+            std::cout << "TO DO KILL OF \"" << _message._params << "\""  << std::endl;
             check_if_pass(*server);
             killClient(server, _message._paramsSplit);
             break;
+        case 10:
+            check_if_pass(*server);
+            exec.privmsg();
+            break ;
+        case 11:
+            check_if_pass(*server);
+            exec.part();
+            break ;
         default: //dernier case pour l'invalide command 
             sendMessage(ERR_INVALID_ERROR);
         // case X: 

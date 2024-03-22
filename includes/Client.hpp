@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 15:28:25 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/22 15:08:14 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ class Client
 		std::string getNickname(void);
 		std::string	getAddress(void);
 		void		setNickname(std::string value);
+		void		setisInAChannel(bool);
 		void		setCurrentChannel(Channel* currentChannel);
 
 		// Send Message
@@ -88,7 +89,7 @@ class Client
 			std::string			msg = ss.str();
 
 			if (send(_sockfd, msg.c_str(), msg.size(), 0) < 0)
-				printErrMessage(errMessage("Could not send message to", _sockfd, strerror(errno)));
+				printErrMessage(errMessage("Could not seasdfnd message to", _sockfd, strerror(errno)));
 		}
 };
 #endif

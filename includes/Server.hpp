@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 14:10:20 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/22 10:25:52 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,12 @@ class Server
 		void							addChannel(Channel& channel);
 		void							removeChannel(std::vector<Channel>::iterator channel);
 		std::vector<Channel>::iterator	getChannelByName(std::string name);
+		bool							channelExists(std::string name);
+		Channel *						getptrChannelByName(std::string name);
+		void							closeChannel(std::string name);
 
-		void	disconnectClient(Client *client);
-
+		void							disconnectClient(Client *client);
+		bool 							clientExists(std::string nickname);
 		// DEBUG
 		void printNickname();
 		std::string t(const std::string& input);
