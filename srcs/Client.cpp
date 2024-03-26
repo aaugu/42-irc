@@ -85,6 +85,7 @@ void Client::saveMessage(std::string buff) {
 }
 
 void Client::getUserCmdInfo() {
+    //TODO Gris?
     _username = _message._paramsSplit[0];
     _address = _message._paramsSplit[2];
 

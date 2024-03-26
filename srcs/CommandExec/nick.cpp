@@ -3,6 +3,7 @@
 #include "../includes/SendMessages.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
+#include "../includes/Channel.hpp"
 
 /* ************************************************************************** */
 /*                                   MACROS                                   */
@@ -53,6 +54,15 @@ void CommandExec::nick() {
     }
 
     _client->setNickname(_msg->_paramsSplit[0]);
+
+    std::vector<Channel> chan = _server->getChannels();
+
+    std::vector<Channel>::iterator itChan;
+    std::map<Client*, bool>::iterator itUser;
+
+    for (itChan = chan.begin(); itChan < chan.end(); itChan++) {
+        std::map<Client*, bool> users = itChan->getUsers();
+    }
 }
 
 /* ************************************************************************** */
