@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 10:57:34 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:47:42 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	CommandExec::createChannel(std::string name)
 
 	_server->addChannel(channel);
 	_client->setCurrentChannel(&channel);
-
+	
 	_client->sendMessage(RPL_JOIN(_client, channel.getName()));
 	_client->sendMessage(RPL_NAMREPLY(_client->getAddress(), _client->getNickname(), channel.getName(), "@" + _client->getNickname()));
 	_client->sendMessage(RPL_ENDOFNAMES(_client->getAddress(), _client->getNickname(), channel.getName()));

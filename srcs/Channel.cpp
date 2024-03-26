@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:02:34 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:47:27 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,13 @@ bool	Channel::isOperator(Client* user)
 		return (false);
 }
 
+void	Channel::setOperator(Client* user, bool oper)
+{
+	std::map<Client*, bool>::iterator userFound = _users.find(user);
+	if ( userFound != _users.end())
+		userFound->second = oper;
+}
+
 bool	Channel::isPasswordValid(std::string password) {
 	return ( _password == password );
 }
@@ -85,6 +92,15 @@ bool	Channel::isUserPresent(Client* client)
 	if ( _users.find(client) != _users.end() )
 		return (true);
 	return (false);
+}
+
+Client* Channel::getMapptrClientByName(std::string nickname) {
+    std::map<Client*, bool>::iterator user;
+    for( user = _users.begin(); user != _users.end(); user++ ) {
+        if (user->first->getNickname() == nickname)
+            return user->first;
+    }
+    return nullptr;
 }
 
 void	Channel::sendMessageToUsers(std::string message)
@@ -116,8 +132,16 @@ std::string	Channel::getPassword(void) {
 	return ( _password );
 }
 
+void	Channel::setPassword(std::string password) {
+	_password = password;
+}
+
 int	Channel::getUserLimit(void) {
 	return ( _userLimit );
+}
+
+void	Channel::setUserLimit(int limit) {
+	_userLimit = limit;
 }
 
 std::map<Client*, bool>	Channel::getUsers(void) {
@@ -129,15 +153,31 @@ bool	Channel::getModeI(void) {
 }
 
 bool	Channel::getModeT(void) {
-	return ( _modeI );
+	return ( _modeT );
 }
 
 bool	Channel::getModeK(void) {
-	return ( _modeI );
+	return ( _modeK );
 }
 
 bool	Channel::getModeL(void) {
-	return ( _modeI );
+	return ( _modeL );
+}
+
+void	Channel::setModeI(bool newmode) {
+	_modeI = newmode;
+}
+
+void	Channel::setModeT(bool newmode) {
+	_modeT = newmode;
+}
+
+void	Channel::setModeK(bool newmode) {
+	_modeK = newmode;
+}
+
+void	Channel::setModeL(bool newmode) {
+	_modeL = newmode;
 }
 
 std::string	Channel::getAllUsersList(void)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 16:25:11 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 11:12:04 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,8 +227,6 @@ void    Server::closePollFds(void)
 /*                                  ACCESSORS                                 */
 /* ************************************************************************** */
 
-
-
 std::vector<pollfd>::iterator Server::getPollFdByFd(int sockfd) {
 	std::vector<pollfd>::iterator it;
 	for ( it = _pollFds.begin(); it < _pollFds.end(); it++ )
@@ -239,7 +237,6 @@ std::vector<pollfd>::iterator Server::getPollFdByFd(int sockfd) {
 	return (it);
 }
 
-
 /* ************************************************************************** */
 /*                                 ACCESSORS                                  */
 /* ************************************************************************** */
@@ -248,7 +245,6 @@ std::vector<std::string> Server::getNicknameList() {
     std::vector<Client>::iterator it;
     std::vector<std::string> nickname;
     for (it = _clients.begin(); it != _clients.end(); ++it) {
-		// std::cout << "getnicknamelist" << std::endl;
         nickname.push_back(it->getNickname());
     }
     return nickname;

@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 12:59:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/12 16:09:12 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/19 14:42:40 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,3 +23,4 @@ void sig::signalHandler( int signum )
 		sig::stopServer = true;
 	}
 }
+
