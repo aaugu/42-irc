@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:02:34 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 13:05:32 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ Channel::Channel(std::string name, Client* user) :
 					_topic(""),
 					_userLimit(-1),
 					_modeI(false),
-					_modeT(false),
+					_modeT(true),
 					_modeK(false),
 					_modeL(false)
 {

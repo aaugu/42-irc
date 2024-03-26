@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 10:58:35 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 13:36:39 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ struct s_message;
 #define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + ":Channel name is invalid, or does not exist\r\n")
 #define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " " + ":Nickname is invalid, or does not exist\r\n")
 #define ERR_NEEDMOREPARAMS(address, client, command) (":" + address + " 461 " + client + " " + command + ":Not enough parameters given\r\n")
+#define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + ":You're not on that channel\r\n")
 
 class CommandExec
 {
@@ -57,6 +58,7 @@ class CommandExec
 		void	join(void);
 		void	privmsg(void);
 		void	part(void);
+		void	topic(void);
 		// etc.
 
 };
