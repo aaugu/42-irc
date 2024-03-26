@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 10:06:28 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 11:02:34 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	Channel::removeUser(Client* user)
 	if ( userFound != _users.end())
 	{
 		_users.erase(user);
-		user->sendMessage("You have left " + this->_name + "\r\n");
+		user->sendMessage(":You have left " + this->_name + "\r\n");
 	}
 	else
 		printErrMessage(errMessage("User", user->getFd(), "could not remove unknown user of channel"));
