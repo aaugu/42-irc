@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 10:06:33 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:46:58 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class Channel
 		// Send
 		void	sendMessageToUsers(std::string message);
 		void	sendMessageToUsersExceptSender(Client* sender, std::string message);
+		Client*	getMapptrClientByName(std::string nickname);
 
 		// Accessors
 		std::string				getName(void);
@@ -61,6 +62,14 @@ class Channel
 		bool					getModeT(void);
 		bool					getModeK(void);
 		bool					getModeL(void);
+		void					setPassword(std::string Password);
+		void					setUserLimit(int limit);
+		void					setModeI(bool newmode);
+		void					setModeT(bool newmode);
+		void					setModeK(bool newmode);
+		void					setModeL(bool newmode);
+
+		void					setOperator(Client* user, bool oper);
 
 		std::string				getAllUsersList(void);
 
