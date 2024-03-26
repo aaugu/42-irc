@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/18 15:29:23 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/20 18:55:53 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void toUpperCase(std::string& str) {
 Client::Client(int sockfd, std::string address) :
                 _sockfd(sockfd),
                 _nickname(DEFAULTNICKNAME),
-                _isOp(false), 
+                _isOp(false),
                 _address(address),
                 _passwordReceved(false),
                 _passwordChecked(false),
@@ -55,7 +55,7 @@ bool Client::checkUseNickname(Server *s, std::string &nickname) {
     std::vector<std::string>::iterator it;
 
     for (it = nick.begin(); it != nick.end(); ++it) {
-        std::cout << "checkUseNickname" << std::endl;
+        // std::cout << "checkUseNickname" << std::endl;
         if (*it == nickname)
             return true;
     }
@@ -71,7 +71,7 @@ std::string Client::nickFunction(Server *s, std::string nickname) {
     }
 
     while (checkUseNickname(s, nickname)) {
-        std::cout << "nickfunction" << std::endl;
+        // std::cout << "nickfunction" << std::endl;
         nickname += '_';
         dupe = true;
     }
@@ -131,7 +131,7 @@ void    Client::killClient(Server *s, std::vector<std::string> args) {
         return;
     }
 
-    if (s->checkClientPresence(args[0])) {
+    if (s->clientExists(args[0])) {
         std::vector<Client>::iterator itC = s->getClientByNickname(args[0]);
         if (args[1] == ":") {
             args[1] += "unknown reason";
@@ -147,14 +147,14 @@ void    Client::killClient(Server *s, std::vector<std::string> args) {
 
 void Client::saveMessage(std::string buff) {
     _message._fullStr = _message._fullStr + buff;
-    std::cout << "_message._fullStr \"" << _message._fullStr << "\"" << std::endl;
+    // std::cout << "_message._fullStr \"" << _message._fullStr << "\"" << std::endl;
 }
 
 void Client::exeCommand(Server* server)
 {
-    CommandExec exec(server, this, &_message); //pour le join pour le moment
+    CommandExec exec(server, this, &_message);
 
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL"}; //ajout d'autre commande
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART"}; //ajout d'autre commande
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -219,9 +219,17 @@ void Client::exeCommand(Server* server)
             check_if_pass(*server);
             killClient(server, _message._paramsSplit);
             break;
-        default: //dernier case pour l'invalide command 
+        case 10:
+            check_if_pass(*server);
+            exec.privmsg();
+            break ;
+        case 11:
+            check_if_pass(*server);
+            exec.part();
+            break ;
+        default: //dernier case pour l'invalide command
             sendMessage(ERR_INVALID_ERROR);
-        // case X: 
+        // case X:
         //      ...
     }
 }
@@ -229,15 +237,15 @@ void Client::exeCommand(Server* server)
 void Client::eraseFullstr(void) {
     splitMessage(_message._fullStr);
     _message._fullStr.erase();
-    std::cout << "_message._fullStr erased" << std::endl;
+    // std::cout << "_message._fullStr erased" << std::endl;
 }
 
 void Client::parseMessage(std::string buff) {
     _message._fullStr = _message._fullStr + buff;
-    std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;
+    // std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;
     splitMessage(_message._fullStr);
+    // std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
     eraseFullstr();
-    std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
 }
 
 /* ************************************************************************** */
@@ -289,7 +297,7 @@ void Client::check_if_pass(Server &server) {
 }
 
 void Client::command_quit(Server &server) {
-    //envoyer un message "Machin" + _message._params 
+    //envoyer un message "Machin" + _message._params
     // à tout les utilisateurs des channels de Machin
     server.disconnectClient(this);
 }

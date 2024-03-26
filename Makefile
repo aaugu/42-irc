@@ -16,6 +16,8 @@ SRC		=	main \
 			Channel \
 			CommandExec/CommandExec \
 			CommandExec/join \
+			CommandExec/part \
+			CommandExec/privmsg \
 			Server/Server \
 			Server/serverChannelUtils \
 			Server/serverClientUtils \

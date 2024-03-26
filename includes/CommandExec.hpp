@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/17 18:56:56 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 10:58:35 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,16 @@
 
 # include <string>
 
-class Client;
 class Server;
-struct s_message;
+class Client;
 class Channel;
+struct s_message;
+												// shoud be username
+#define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
+#define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
+#define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + ":Channel name is invalid, or does not exist\r\n")
+#define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " " + ":Nickname is invalid, or does not exist\r\n")
+#define ERR_NEEDMOREPARAMS(address, client, command) (":" + address + " 461 " + client + " " + command + ":Not enough parameters given\r\n")
 
 class CommandExec
 {
@@ -28,12 +34,17 @@ class CommandExec
 		s_message*	_msg;
 
 		// UTILS
-		bool	invalidNbParams(int nbParams, int minNbParams, int maxNbParams);
+		bool		minNbParams(int nbParams, int minNbParams);
+		std::string	getFullMessage(void);
 
 		// JOIN
 		void	checkChannelName(std::string& name);
 		void	createChannel(std::string name);
 		void	joinChannel(Channel& channel);
+
+		// PRIVMSG
+		void	sendMessageToChannel(std::string target, std::string message);
+		void	sendPrivateMessage(std::string target, std::string message);
 
 		// etc.
 
@@ -43,7 +54,9 @@ class CommandExec
 		~CommandExec(void);
 
 		// Commands
-		void	join();
+		void	join(void);
+		void	privmsg(void);
+		void	part(void);
 		// etc.
 
 };
