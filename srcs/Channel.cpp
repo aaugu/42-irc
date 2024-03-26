@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:10:55 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:47:27 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,19 +54,17 @@ void	Channel::addUser(Client* user, bool isOperator)
 		printErrMessage(errMessage("User", user->getFd(), "could not add unknown user to channel"));
 }
 
-void	Channel::removeUser(Client* user, Server* server)
+int	Channel::removeUser(Client* user)
 {
 	std::map<Client*, bool>::iterator userFound = _users.find(user);
 	if ( userFound != _users.end())
 	{
 		_users.erase(user);
-		user->sendMessage("You have left " + this->_name + "\r\n");
-		if ( _users.size() == 0)
-			server->closeChannel(this->_name);
+		user->sendMessage(":You have left " + this->_name + "\r\n");
 	}
 	else
 		printErrMessage(errMessage("User", user->getFd(), "could not remove unknown user of channel"));
-
+	return ( _users.size() );
 }
 
 bool	Channel::isOperator(Client* user)

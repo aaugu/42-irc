@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:31:55 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:12:19 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ class Client
 			std::string			msg = ss.str();
 
 			if (send(_sockfd, msg.c_str(), msg.size(), 0) < 0)
-				printErrMessage(errMessage("Could not seasdfnd message to", _sockfd, strerror(errno)));
+				printErrMessage(errMessage("Could not send message to", _sockfd, strerror(errno)));
 		}
 };
 #endif

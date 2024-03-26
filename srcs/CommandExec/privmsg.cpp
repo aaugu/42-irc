@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 15:32:28 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:12:51 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:48:20 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@
 void	CommandExec::privmsg(void)
 {
 	if (minNbParams((int)_msg->_paramsSplit.size(), 2) == false)
-		return (_client->sendMessage("privmsg nb arg \r\n"));
+		return ( _client->sendMessage(ERR_NEEDMOREPARAMS(_client->getAddress(), _client->getNickname(), "privmsg")));
 
 	std::string	target = _msg->_paramsSplit[0];
 	std::string	message = getFullMessage();

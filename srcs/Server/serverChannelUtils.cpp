@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 18:34:08 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:11:36 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:48:34 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,6 @@
 void	Server::addChannel(Channel& channel)
 {
 	_channels.push_back(channel);
-	// message sur serveur pour dire qu'on a crée un channel
-}
-
-void	Server::removeChannel(std::vector<Channel>::iterator channel)
-{
-	(void) channel;
-	// _channels.push_back(channel);
-	// message sur serveur pour dire qu'un channel a été fermé
 }
 
 bool	Server::channelExists(std::string name)
@@ -68,7 +60,8 @@ void	Server::closeChannel(std::string name)
 	{
 		std::vector<Channel>::iterator channel = getChannelByName(name);
 		_channels.erase(channel);
+		std::cout << "Channel " << name << " closed\n";
 	}
 	else
-		printErrMessage(errMessage(name, -1, "channel not found"));
+		printErrMessage(errMessage(name, -1, "Channel not found"));
 }

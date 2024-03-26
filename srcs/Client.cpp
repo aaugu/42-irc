@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:10:58 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:34:09 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,6 @@ void Client::exeCommand(Server* server)
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
             exec.check_if_pass();
             _nickname = exec.nick();
-
             break;
         case 2:
             // command_user();

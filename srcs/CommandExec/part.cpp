@@ -6,9 +6,11 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 14:19:52 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:13:41 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:48:05 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <iostream>
 
 #include "../includes/CommandExec.hpp"
 #include "../includes/Client.hpp"
@@ -20,7 +22,7 @@
 void	CommandExec::part(void)
 {
 	if (minNbParams((int)_msg->_paramsSplit.size(), 1) == false)
-		return (_client->sendMessage("part nb arg \r\n"));
+		return ( _client->sendMessage(ERR_NEEDMOREPARAMS(_client->getAddress(), _client->getNickname(), "part")));
 
 	std::string	channelName = _msg->_paramsSplit[0];
 	if (_server->channelExists(channelName))
@@ -31,8 +33,13 @@ void	CommandExec::part(void)
 			std::string	message = "";
 			if ( _msg->_paramsSplit.size() > 1 )
 				message += getFullMessage();
-			channel->removeUser(_client, _server);
 			channel->sendMessageToUsers(RPL_PART(_client, channel->getName(), message));
+			if (channel->removeUser(_client) == 0)
+			{
+				std::cout << _client->getNickname() << " successfully removed from " << channel->getName() << std::endl;
+				_server->closeChannel(channel->getName());
+			}
+			std::cout << _server->getChannels().size() << std::endl;
 		}
 		else
 			_client->sendMessage(ERR_NOTONCHANNEL(_client->getAddress(), _client->getNickname(), channel->getName()));

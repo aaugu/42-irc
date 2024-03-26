@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:31:55 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:46:58 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ class Channel
 
 		// Modifiers
 		void	addUser(Client* user, bool isOperator);
-		void	removeUser(Client* user, Server* server);
+		int		removeUser(Client* user);
 
 		// Checks
 		bool	isOperator(Client* user);
