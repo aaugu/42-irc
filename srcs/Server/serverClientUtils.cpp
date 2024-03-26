@@ -7,7 +7,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 18:33:19 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/19 16:08:38 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 10:45:08 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	Server::disconnectClient(Client *client)
 	printErrMessage(errMessage("client", client->getFd(), ERR_CLIENT_NONEX));
 }
 
-bool Server::clientExists(std::string nickname){ 
+bool Server::clientExists(std::string nickname){
 	std::vector<Client>::iterator it;
     for ( it = _clients.begin(); it < _clients.end(); it++ )
     {
@@ -127,7 +127,6 @@ bool Server::clientExists(std::string nickname){
     }
     return (false);
 }
-
 
 std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
 {

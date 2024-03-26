@@ -127,7 +127,7 @@ void Client::exeCommand(Server* server)
             // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
             exec.check_if_pass();
-            _nickname = exec.nick();
+            exec.nick();
 
             break;
         case 2:
@@ -174,10 +174,12 @@ void Client::exeCommand(Server* server)
             break;
         case 10:
             exec.check_if_pass();
+            std::cout << "TO DO PRIVMSG OF \"" << _message._params << "\"" << std::endl;
             exec.privmsg();
             break ;
         case 11:
             exec.check_if_pass();
+            std::cout << "TO DO PART OF \"" << _message._params << "\"" << std::endl;
             exec.part();
             break ;
         case 12:
@@ -242,6 +244,10 @@ void Client::setPasswordReceved(bool passwordReceved) {
 
 void Client::setPasswordChecked(bool passwordChecked) {
     _passwordChecked = passwordChecked;
+}
+
+void Client::setNickname(std::string nickname) {
+    _nickname = nickname;
 }
 
 /* ************************************************************************** */
