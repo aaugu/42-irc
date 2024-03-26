@@ -6,15 +6,16 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 12:29:27 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 13:36:51 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 14:31:34 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include <exception>
 
 #include "../includes/CommandExec.hpp"
 #include "../includes/Server.hpp"
 #include "../includes/Client.hpp"
+
+#define RPL_NOTOPIC(address, client, channel) (":" + address + " 331 " + client + " " + channel + " :No topic is set\r\n")
+#define RPL_TOPIC(address, client, channel, topic) (":" + address + " 332 " + client + " " + channel + " " + topic + "\r\n")
 
 void	CommandExec::topic(void)
 {
@@ -32,35 +33,39 @@ void	CommandExec::topic(void)
 			throw ( ERR_NOTONCHANNEL(_client->getAddress(), _client->getNickname(), channel->getName()) );
 
 		if ( _msg->_paramsSplit.size() == 1)
-		{
-
-
-		}
+			sendTopic(&(*channel));
 		else
-		{
-			if ( channel->getModeT() == false )
-				throw ( ":Could no\r\n" );
-			/* code */
-		}
-
-
+			modifyTopic(&(*channel));
 	}
-	catch(const std::string& message)
-	{
+	catch(const std::string& message) {
 		_client->sendMessage(message);
 	}
 }
 
+void	CommandExec::sendTopic(Channel* channel)
+{
+	std::string message = "";
 
-// void	CommandExec::sendTopic(Channel& channel)
-// {
-// 	if ( channel.getTopic() == "")
-// 		_client->sendMessage( /* RPL_NOTOPIC*/ )
-// 	else
-// 		_client->sendMessage( /* RPL_TOPIC */)
-// }
+	std::cout << "TOPIC : " << channel->getTopic() << std::endl;
 
-// void	CommandExec::setTopic(Channel& channel)
-// {
+	if ( channel->getTopic().empty() )
+		message = RPL_NOTOPIC(_client->getAddress(), _client->getNickname(), channel->getName());
+	else
+	{
+		std::cout << "ici\n";
+		message = RPL_TOPIC(_client->getAddress(), _client->getNickname(), channel->getName(), channel->getTopic());
+	}
 
-// }
+	_client->sendMessage(message);
+}
+
+void	CommandExec::modifyTopic(Channel* channel)
+{
+	if ( channel->getModeT() == false || channel->isOperator(_client) == false)
+		throw ( ERR_CHANOPRIVSNEEDED(channel->getName()) );
+
+	std::string	topic = getFullMessage();
+	std::cout << "Topic : " << topic << std::endl;
+	channel->setTopic(topic);
+	std::cout << "Topic set : " << channel->getTopic() << std::endl;
+}

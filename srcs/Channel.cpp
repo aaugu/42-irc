@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 13:39:01 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 14:17:53 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ Client* Channel::getMapptrClientByName(std::string nickname) {
         if (user->first->getNickname() == nickname)
             return user->first;
     }
-    return nullptr;
+    return (NULL);
 }
 
 void	Channel::sendMessageToUsers(std::string message)
@@ -138,6 +138,10 @@ void	Channel::setPassword(std::string password) {
 
 int	Channel::getUserLimit(void) {
 	return ( _userLimit );
+}
+
+std::string	Channel::getTopic(void) {
+	return ( _topic );
 }
 
 void	Channel::setUserLimit(int limit) {
@@ -178,6 +182,10 @@ void	Channel::setModeK(bool newmode) {
 
 void	Channel::setModeL(bool newmode) {
 	_modeL = newmode;
+}
+
+void	Channel::setTopic(std::string& topic) {
+	_topic = topic;
 }
 
 std::string	Channel::getAllUsersList(void)

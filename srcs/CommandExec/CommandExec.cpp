@@ -45,7 +45,7 @@ Client* CommandExec::getptrClientByName(std::string nickname) {
         if (it->getNickname() == nickname)
             return &(*it);
     }
-    return nullptr;
+    return NULL;
 }
 
 void CommandExec::check_if_pass() {

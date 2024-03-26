@@ -30,7 +30,7 @@ std::string CommandExec::nick() {
         _client->sendMessage(ERR_INVALIDCHAR);
     }
 
-    while (getptrClientByName(_msg->_paramsSplit[0]) != nullptr) {
+    while (getptrClientByName(_msg->_paramsSplit[0]) != NULL) {
         _msg->_paramsSplit[0] += '_';
         dupe = true;
     }

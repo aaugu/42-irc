@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverChannelUtils.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 18:34:08 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:48:34 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 14:00:33 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ Channel *Server::getptrChannelByName(std::string name) {
         if (it->getName() == name)
             return &(*it);
     }
-    return nullptr;
+    return NULL;
 }
 
 void	Server::closeChannel(std::string name)

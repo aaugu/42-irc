@@ -1,4 +1,5 @@
 #include <string>
+#include <cstdlib>
 
 #include "../includes/CommandExec.hpp"
 #include "../includes/messages.hpp"
@@ -56,7 +57,7 @@ void	CommandExec::mode(void){
             modes += "t";
         if (channel_ptr->getModeL())
             modes += "l";
-        if (channel_ptr->getModeK())  
+        if (channel_ptr->getModeK())
             modes += "k";
         if (modes == "+")
             modes = "\0";
@@ -72,7 +73,7 @@ void	CommandExec::mode(void){
         while (currentFlag != NULL){
             s_flag *nextFlag = currentFlag->next;
             delete currentFlag;
-            currentFlag = nextFlag; 
+            currentFlag = nextFlag;
         }
     }
     return;
@@ -151,7 +152,7 @@ void CommandExec::interpretMode(s_flag *parsed, std::vector<std::string> options
             try
             {
                 char *endptr;
-                int limit = (int)std::strtol(options[i].c_str(),  &endptr, 10);
+                int limit = (int)strtol(options[i].c_str(),  &endptr, 10);
                 if (limit < 0 || *endptr != '\0')
                     throw std::exception();
                 channel.setModeL(true);
@@ -176,7 +177,7 @@ void CommandExec::interpretMode(s_flag *parsed, std::vector<std::string> options
         }
         else if (parsed->flag == 'k' && parsed->sign == 1)
         {
-           
+
             channel.setModeK(true);
             channel.setPassword(options[i]);
             std::string flags = "+k " + options[i];
@@ -279,7 +280,7 @@ s_flag  *CommandExec::parserOption(std::string flags)
                 updateStruct(newFlag, 0, false);
             parsedSign = 0;
         }
-        i++; 
+        i++;
     }
     return (head);
 }

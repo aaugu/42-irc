@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 13:38:19 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 14:20:13 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define COMMANDEXEC_HPP
 
 # include <string>
+# include <vector>
 
 class Server;
 class Client;
@@ -72,6 +73,10 @@ class CommandExec
 		s_flag	*updateStruct(s_flag *newFlag, int sign, bool isValid);
 		bool	checkParsing(s_flag *parsed, std::vector<std::string> options);
 		void	interpretMode(s_flag *parsed, std::vector<std::string> options, Channel &channel);
+
+		// TOPIC
+		void	sendTopic(Channel* channel);
+		void	modifyTopic(Channel* channel);
 		// etc.
 
     public:

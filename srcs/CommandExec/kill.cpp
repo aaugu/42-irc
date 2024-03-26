@@ -32,7 +32,7 @@ void    CommandExec::kill() {
         return;
     }
 
-    if (getptrClientByName(_msg->_paramsSplit[0]) == nullptr) {
+    if (getptrClientByName(_msg->_paramsSplit[0]) == NULL) {
         _client->sendMessage(ERR_NOUSER);
         return;
     }

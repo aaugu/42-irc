@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:34:09 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 14:10:43 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void Client::exeCommand(Server* server)
 {
     CommandExec exec(server, this, &_message);
 
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART", "INVITE"};
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART", "INVITE", "TOPIC"};
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -183,9 +183,13 @@ void Client::exeCommand(Server* server)
             std::cout << "TO DO INVITE OF \"" << _message._params << "\"" << std::endl;
             exec.invite();
             break;
+        case 13:
+            exec.check_if_pass();
+            exec.topic();
+            break ;
         default: //dernier case pour l'invalide command
             sendMessage(ERR_INVALID_ERROR);
-        // case X: 
+        // case X:
         //      ...
     }
 }

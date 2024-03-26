@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:46:58 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 14:18:02 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,15 @@ class Channel
 		bool					getModeT(void);
 		bool					getModeK(void);
 		bool					getModeL(void);
+		std::string				getTopic(void);
+
 		void					setPassword(std::string Password);
 		void					setUserLimit(int limit);
 		void					setModeI(bool newmode);
 		void					setModeT(bool newmode);
 		void					setModeK(bool newmode);
 		void					setModeL(bool newmode);
+		void					setTopic(std::string& topic);
 
 		void					setOperator(Client* user, bool oper);
 
