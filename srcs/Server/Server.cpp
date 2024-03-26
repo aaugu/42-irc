@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/22 10:42:37 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 11:12:04 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,7 @@ void	Server::getClientInput(std::vector<pollfd>::iterator clientPollFd, std::str
 	std::vector<Client>::iterator itC = getClientByFd(clientPollFd->fd);
 	std::string	line;
 	size_t readBytes = getLine(clientPollFd->fd, line);
-	std::cerr << "clientInput: " << t(line) << std::endl;
+	std::cout << "\nclient " << itC->getFd() << " " << t(line) << std::endl;
 
 	if ( (int)readBytes < 0 && line.empty() == false){
 		std::cerr << "WAIT finish command" << std::endl; // debug
@@ -203,9 +203,6 @@ void	Server::executeClientInput(Server &server, std::vector<pollfd>::iterator it
 		return (printErrMessage(errMessage("Client", it->fd, ERR_CLIENT_NONEX)));
 
 	itC->exeCommand(&server);
-	// itC->setData(clientInput);
-
-	// std::cout << "Client " << sockfdClient << ": " << clientInput;
 }
 
 
@@ -241,7 +238,7 @@ std::vector<pollfd>::iterator Server::getPollFdByFd(int sockfd) {
 }
 
 /* ************************************************************************** */
-/*                                    ACCESSOR                                */
+/*                                 ACCESSORS                                  */
 /* ************************************************************************** */
 
 std::vector<std::string> Server::getNicknameList() {

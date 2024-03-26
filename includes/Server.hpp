@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/25 14:39:15 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 11:31:50 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,11 @@ class Server
 		void	executeClientInput(Server &server, std::vector<pollfd>::iterator pollfd);
 
 		// Client Utils
-		int		acceptNewClient(void);
-		void	refuseClient(int sockfdClient);
-		void	createClient(int sockfdClient);
-		void	addClientToListenPoll(int sockfdClient);
+		int								acceptNewClient(void);
+		void							refuseClient(int sockfdClient);
+		void							createClient(int sockfdClient);
+		void							addClientToListenPoll(int sockfdClient);
+		std::vector<Client>::iterator	getClientByFd(int sockfdClient);
 
 		// Input utils
 		int		getLine(int fd, std::string &line);
@@ -57,7 +58,6 @@ class Server
 		void    closePollFds(void);
 
 		// Accessors
-		std::vector<Client>::iterator	getClientByFd(int sockfdClient);
 		std::vector<pollfd>::iterator 	getPollFdByFd(int sockfd);
 
 	public :
@@ -68,25 +68,26 @@ class Server
 
 		// Accessors
 		std::vector<std::string>		getNicknameList(void);
+        std::string                     getOpPass(void);
 		std::string						get_password(void) const;
 		std::vector<Client>				getClients(void);
 		std::vector<Channel>			getChannels(void);
-        std::string                     getOpPass();
-        std::vector<Client>::iterator	getClientByNickname(std::string nickname);
-		bool 							checkClientPresence(std::string nickname);
 
 		// Channel utils
 		void							addChannel(Channel& channel);
 		void							removeChannel(std::vector<Channel>::iterator channel);
-		std::vector<Channel>::iterator	getChannelByName(std::string name);
 		bool							channelExists(std::string name);
-		Channel *						getptrChannelByName(std::string name);
+		std::vector<Channel>::iterator	getChannelByName(std::string name);
 		void							closeChannel(std::string name);
+		Channel *						getptrChannelByName(std::string name);
 
+		// Client utils
 		void							disconnectClient(Client *client);
 		bool 							clientExists(std::string nickname);
+        std::vector<Client>::iterator	getClientByNickname(std::string nickname);
+
 		// DEBUG
-		void printNickname();
+		void printNickname(void);
 		std::string t(const std::string& input);
 
 };

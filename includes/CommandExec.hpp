@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/22 16:01:35 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 11:24:02 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,12 @@ class CommandExec
 		Client*		_client;
 		s_message*	_msg;
 
+		// PRIVATE UTILS
+		bool		invalidNbParams(int nbParams, int minNbParams, int maxNbParams);
+        Client* 	getptrClientByName(std::string nickname);
 		// UTILS
 		bool		minNbParams(int nbParams, int minNbParams);
 		std::string	getFullMessage(void);
-		Client* 	getptrClientByName(std::string nickname);
 
 		// JOIN
 		void	checkChannelName(std::string& name);
@@ -75,11 +77,21 @@ class CommandExec
 		~CommandExec(void);
 
 		// Commands
-		void	join(void);
-		void	mode(void);
-		void	privmsg(void);
-		void	part(void);
+		void	    join(void);
+		void		mode(void);
+        void        oper(void);
+        void        kill(void);
+        std::string nick(void);
+        void        ping(void);
+        void        quit(void);
+        void        pass(void);
+        void        invite(void);
+		void	    privmsg(void);
+		void	    part(void);
 		// etc.
+
+        // PUBLIC UTILS
+        void    check_if_pass();
 
 };
 
