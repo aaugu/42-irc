@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/22 15:11:38 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/25 13:13:21 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,6 @@ void Client::exeCommand(Server* server)
 void Client::eraseFullstr(void) {
     splitMessage(_message._fullStr);
     _message._fullStr.erase();
-    std::cout << "_message._fullStr erased" << std::endl;
 }
 
 void Client::parseMessage(std::string buff) {
@@ -231,7 +230,6 @@ void Client::parseMessage(std::string buff) {
     std::cout << "Client " << _sockfd << ": " << _message._fullStr << std::endl;
     splitMessage(_message._fullStr);
     eraseFullstr();
-    std::cout << "_message._fullStr aftersplit\"" << _message._fullStr << "\"" << std::endl;
 }
 
 /* ************************************************************************** */

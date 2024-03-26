@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/22 14:31:35 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/25 14:10:36 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,15 @@ bool	Channel::isUserPresent(Client* client)
 	if ( _users.find(client) != _users.end() )
 		return (true);
 	return (false);
+}
+
+Client* Channel::getMapptrClientByName(std::string nickname) {
+    std::map<Client*, bool>::iterator user;
+    for( user = _users.begin(); user != _users.end(); user++ ) {
+        if (user->first->getNickname() == nickname)
+            return user->first;
+    }
+    return nullptr;
 }
 
 void	Channel::sendMessageToUsers(std::string message)

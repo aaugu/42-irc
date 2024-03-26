@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 18:34:08 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/22 15:21:21 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/25 13:33:11 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ std::vector<Channel>::iterator	Server::getChannelByName(std::string name)
 
 Channel *Server::getptrChannelByName(std::string name) {
 	std::vector<Channel>::iterator it;
-    for (it = _channels.begin(); it != _channels.end(); it++) {
+    for (it = _channels.begin(); it < _channels.end(); it++) {
         if (it->getName() == name)
             return &(*it);
     }

@@ -197,10 +197,11 @@ void CommandExec::interpretMode(s_flag *parsed, std::vector<std::string> options
         {
             std::string nickname = options[i];
             std::string flags = "+o " + options[i];
-            if (channel.isUserPresent(getptrClientByName(nickname)) == true)
+            Client *target = channel.getMapptrClientByName(nickname);
+            if (channel.isUserPresent(target) == true)
             {
-                channel.setOperator(getptrClientByName(nickname), true);
-                getptrClientByName(nickname)->sendMessage(RPL_YOUREOPER(channel.getName(),nickname));
+                channel.setOperator(target, true);
+                target->sendMessage(RPL_YOUREOPER(channel.getName(),nickname));
                 toSendFlagsPos += "o";
                 toSendOptions += options[i] + " ";
             }
@@ -210,13 +211,15 @@ void CommandExec::interpretMode(s_flag *parsed, std::vector<std::string> options
         }
         else if (parsed->flag == 'o' && parsed->sign == 2)
         {
+
             std::string nickname = options[i];
             std::string flags = "-o " + options[i];
-            if (channel.isUserPresent(getptrClientByName(nickname)) == true)
+            Client *target = channel.getMapptrClientByName(nickname);
+            if (channel.isUserPresent(target) == true)
             {
-                channel.setOperator(getptrClientByName(nickname), false);
-                getptrClientByName(nickname)->sendMessage(RPL_YOUREOPER(channel.getName(),nickname));
-                toSendFlagsPos += "o";
+                channel.setOperator(target, false);
+                target->sendMessage(RPL_YOUREOPER(channel.getName(),nickname));
+                toSendFlagsNeg += "o";
                 toSendOptions += options[i] + " ";
             }
             else

@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/22 14:31:32 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/25 14:10:26 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class Channel
 		// Send
 		void	sendMessageToUsers(std::string message);
 		void	sendMessageToUsersExceptSender(Client* sender, std::string message);
+		Client*	getMapptrClientByName(std::string nickname);
 
 		// Accessors
 		std::string				getName(void);
