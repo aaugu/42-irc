@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 18:21:33 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 10:06:33 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ class Channel
 
 		// Modifiers
 		void	addUser(Client* user, bool isOperator);
-		void	removeUser(Client* user, Server* server);
+		int		removeUser(Client* user);
 
 		// Checks
 		bool	isOperator(Client* user);

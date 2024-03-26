@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 17:39:27 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 10:57:34 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,14 @@
 void	CommandExec::join(void)
 {
 	if (minNbParams((int)_msg->_paramsSplit.size(), 1) == false)
-		return (_client->sendMessage("join nb arg \r\n"));
+		return ( _client->sendMessage(ERR_NEEDMOREPARAMS(_client->getAddress(), _client->getNickname(), "join")));
 
 	checkChannelName(_msg->_paramsSplit[0]);
 
-	std::vector<Channel>::iterator	channel = _server->getChannelByName(_msg->_paramsSplit[0]);
-	if ( channel == _server->getChannels().end())
-		return (createChannel(_msg->_paramsSplit[0]));
+	if ( _server->channelExists(_msg->_paramsSplit[0]) == false )
+		return ( createChannel(_msg->_paramsSplit[0]) );
 
+	std::vector<Channel>::iterator	channel = _server->getChannelByName(_msg->_paramsSplit[0]);
 	if (channel->getModeI() == true)
 		_client->sendMessage(ERR_INVITEONLYCHAN(_client->getAddress(), _client->getNickname(), channel->getName()));
 	else if (channel->getModeL() == true && (int)channel->getUsers().size() >= channel->getUserLimit())
@@ -55,6 +55,8 @@ void	CommandExec::join(void)
 		if (_msg->_paramsSplit.size() != 2 || channel->isPasswordValid(_msg->_paramsSplit[1]) == false)
 			_client->sendMessage(ERR_BADCHANNELKEY(_client->getAddress(), _client->getNickname(), channel->getName()));
 	}
+	else if ( channel->isUserPresent(_client) )
+		_client->sendMessage(":You already have joined channel " + channel->getName() + "\r\n");
 	else
 		joinChannel(*channel);
 }
@@ -81,6 +83,9 @@ void	CommandExec::createChannel(std::string name)
 	_client->sendMessage(RPL_JOIN(_client, channel.getName()));
 	_client->sendMessage(RPL_NAMREPLY(_client->getAddress(), _client->getNickname(), channel.getName(), "@" + _client->getNickname()));
 	_client->sendMessage(RPL_ENDOFNAMES(_client->getAddress(), _client->getNickname(), channel.getName()));
+
+	std::cout	<< "Channel " << channel.getName() << " created with "
+				<< _client->getNickname() << " as default operator\n";
 }
 
 void	CommandExec::joinChannel(Channel& channel)
@@ -93,4 +98,8 @@ void	CommandExec::joinChannel(Channel& channel)
 	std::string channelUserList = channel.getAllUsersList();
 	_client->sendMessage(RPL_NAMREPLY(_client->getAddress(), _client->getNickname(), channel.getName(), channelUserList));
 	_client->sendMessage(RPL_ENDOFNAMES(_client->getAddress(), _client->getNickname(), channel.getName()));
+
+	std::cout 	<< "Client " << _client->getFd()
+				<< " with nickname " << _client->getNickname()
+				<< " has joined channel " << channel.getName() << std::endl;
 }

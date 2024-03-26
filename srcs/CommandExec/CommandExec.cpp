@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:53:34 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 18:49:31 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 10:51:21 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include "../includes/messages.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
-
-#define ERR_NB_ARGS(command, min, max) ("Command: " + command + ": Not enough arguments, should be between" + min + " and " + max)
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
