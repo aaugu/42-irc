@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 15:37:44 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/28 16:39:28 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,10 @@
 #define RPL_NAMREPLY(address, client, channel, nickname) (":" + address + " 353 " + client + " = " + channel + " :" + nickname + "\r\n")
 
 // ERRORS
-#define ERR_INVITEONLYCHAN(address, client, channel) (":" + address + " 473 " + client + " " + channel + ":Cannot join channel (+k)\r\n")
-#define ERR_BADCHANNELKEY(address, client, channel)  (":" + address + " 475 " + client + " " + channel + ":Cannot join channel (+i)\r\n")
-#define ERR_CHANNELISFULL(address, client, channel)  (":" + address + " 471 " + client + " " + channel + ":Cannot join channel (+l)\r\n")
+#define RPL_PART(client, channel) (":" + USER(client) + " PART " + channel + " " + "\r\n")
+#define ERR_INVITEONLYCHAN(address, client, channel) (":" + address + " 473 " + client + " " + channel + " :Cannot join channel (+k)\r\n")
+#define ERR_BADCHANNELKEY(address, client, channel)  (":" + address + " 475 " + client + " " + channel + " :Cannot join channel (+i)\r\n")
+#define ERR_CHANNELISFULL(address, client, channel)  (":" + address + " 471 " + client + " " + channel + " :Cannot join channel (+l)\r\n")
 
 /* ************************************************************************** */
 /*                                   JOIN                                     */
@@ -46,8 +47,10 @@ void	CommandExec::join(void)
 		return ( createChannel(_msg->_paramsSplit[0]) );
 
 	std::vector<Channel>::iterator	channel = _server->getChannelByName(_msg->_paramsSplit[0]);
-	if (channel->getModeI() == true)
+	if (channel->getModeI() == true){
+		_client->sendMessage(RPL_PART(_client, _msg->_paramsSplit[0]));
 		_client->sendMessage(ERR_INVITEONLYCHAN(_client->getAddress(), _client->getNickname(), channel->getName()));
+	}
 	else if (channel->getModeL() == true && (int)channel->getUsers().size() >= channel->getUserLimit())
 		_client->sendMessage(ERR_CHANNELISFULL(_client->getAddress(), _client->getNickname(), channel->getName()));
 	else if (channel->getModeK() == true)
