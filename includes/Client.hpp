@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:12:19 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 15:52:40 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ class Client
         bool        isPasswordChecked();
         bool        isWelcomSended();
 
-
-		void		setCurrentChannel(Channel* currentChannel);
         void        setOperatorState(bool value);
         void        setWelcomSended(bool welcomSended);
         void        setPasswordReceved(bool passwordReceved);
