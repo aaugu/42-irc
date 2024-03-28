@@ -116,6 +116,20 @@ void	Channel::sendMessageToUsersExceptSender(Client* sender, std::string message
 	}
 }
 
+//void    Channel::addWithelistUser(Client *user) {
+//    _whitelist.push_back(user);
+//}
+//
+//void    Channel::removeWithelistUser(Client *user) {
+//    std::vector<Client *>::iterator itC;
+//
+//    for (itC = _whitelist.begin(); itC < _whitelist.end(); itC++) {
+//        if (user->getNickname() == (*itC)->getNickname()) {
+//            _whitelist.erase(itC);
+//        }
+//    }
+//}
+
 /* ************************************************************************** */
 /*                                 ACCESSORS                                  */
 /* ************************************************************************** */

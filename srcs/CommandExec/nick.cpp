@@ -25,6 +25,7 @@
 
 void CommandExec::nick() {
     bool dupe = false;
+    bool done = false;
     std::string old = _client->getNickname();
 
     if (_client->getNickname() == _msg->_paramsSplit[0]) {
@@ -63,7 +64,10 @@ void CommandExec::nick() {
 
     for (itChan = chan.begin(); itChan < chan.end(); itChan++) {
         std::map<Client*, bool> users = itChan->getUsers();
+        if (!done) {
             itChan->sendMessageToUsersExceptSender(_client, RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]));
+            done = true;
+        }
     }
 }
 

@@ -27,6 +27,8 @@ class Channel
 		std::string				_topic;
 		int						_userLimit;
 
+        std::vector<Client *>   _whitelist;
+
 		std::map<Client*, bool>	_users;
 
 		bool	_modeI;	// invite-only
@@ -52,6 +54,10 @@ class Channel
 		void	sendMessageToUsers(std::string message);
 		void	sendMessageToUsersExceptSender(Client* sender, std::string message);
 		Client*	getMapptrClientByName(std::string nickname);
+
+        // Whitelist gestion
+//        void    addWithelistUser(Client *user);
+//        void    removeWithelistUser(Client *user);
 
 		// Accessors
 		std::string				getName(void);
