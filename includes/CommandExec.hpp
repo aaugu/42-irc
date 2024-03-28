@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandExec.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:46:16 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 15:32:42 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,10 @@ class CommandExec
 		s_flag	*updateStruct(s_flag *newFlag, int sign, bool isValid);
 		bool	checkParsing(s_flag *parsed, std::vector<std::string> options);
 		void	interpretMode(s_flag *parsed, std::vector<std::string> options, Channel &channel);
+
+		// TOPIC
+		void	sendTopic(Channel* channel);
+		void	modifyTopic(Channel* channel);
 		// etc.
 
     public:
@@ -90,6 +94,7 @@ class CommandExec
         void        invite(void);
 		void	    privmsg(void);
 		void	    part(void);
+		void		topic(void);
 		// etc.
 
         // PUBLIC UTILS

@@ -26,6 +26,7 @@ SRC		=	main \
 			CommandExec/invite \
 			CommandExec/part \
 			CommandExec/privmsg \
+			CommandExec/topic \
 			Server/Server \
 			Server/serverChannelUtils \
 			Server/serverClientUtils \

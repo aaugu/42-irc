@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 14:19:52 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:48:05 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 15:44:21 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void	CommandExec::part(void)
 				std::cout << _client->getNickname() << " successfully removed from " << channel->getName() << std::endl;
 				_server->closeChannel(channel->getName());
 			}
-			std::cout << _server->getChannels().size() << std::endl;
 		}
 		else
 			_client->sendMessage(ERR_NOTONCHANNEL(_client->getAddress(), _client->getNickname(), channel->getName()));

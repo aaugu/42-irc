@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 14:01:34 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 15:37:25 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,11 @@ Channel::Channel(std::string name, Client* user) :
 					_topic(""),
 					_userLimit(-1),
 					_modeI(false),
-					_modeT(false),
+					_modeT(true),
 					_modeK(false),
 					_modeL(false)
 {
 	_users.insert(std::pair<Client*, bool>(user, true));
-
-	(void) _modeT;
-	(void) _modeK;
-	(void) _modeL;
 }
 
 Channel::~Channel(void) {}
@@ -132,8 +128,16 @@ std::string	Channel::getPassword(void) {
 	return ( _password );
 }
 
+std::string	Channel::getTopic(void) {
+	return ( _topic );
+}
+
 void	Channel::setPassword(std::string password) {
 	_password = password;
+}
+
+void	Channel::setTopic(std::string topic) {
+	_topic = topic;
 }
 
 int	Channel::getUserLimit(void) {
