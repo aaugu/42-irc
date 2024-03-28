@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 15:32:02 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/28 15:56:19 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,10 +219,6 @@ std::string	Client::getAddress(void) {
 
 bool    Client::getOperatorState() {
     return _isOp;
-}
-
-void    Client::setCurrentChannel(Channel* currentChannel) {
-    _currentChannel = currentChannel;
 }
 
 void    Client::setOperatorState(bool value) {
