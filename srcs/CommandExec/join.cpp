@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:47:42 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 13:41:11 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	CommandExec::join(void)
 		_client->sendMessage(ERR_INVITEONLYCHAN(_client->getAddress(), _client->getNickname(), channel->getName()));
 	else if (channel->getModeL() == true && (int)channel->getUsers().size() >= channel->getUserLimit())
 		_client->sendMessage(ERR_CHANNELISFULL(_client->getAddress(), _client->getNickname(), channel->getName()));
-	else if (channel->getPassword() != "")
+	else if (channel->getModeK() == true)
 	{
 		if (_msg->_paramsSplit.size() != 2 || channel->isPasswordValid(_msg->_paramsSplit[1]) == false)
 			_client->sendMessage(ERR_BADCHANNELKEY(_client->getAddress(), _client->getNickname(), channel->getName()));

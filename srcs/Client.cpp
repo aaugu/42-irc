@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:34:09 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 15:13:11 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ void Client::saveMessage(std::string buff) {
 }
 
 void Client::getUserCmdInfo() {
+    //TODO Gris?
     _username = _message._paramsSplit[0];
     _address = _message._paramsSplit[2];
 
@@ -107,7 +108,8 @@ void Client::exeCommand(Server* server)
 {
     CommandExec exec(server, this, &_message);
 
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART", "INVITE"};
+
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART", "INVITE", "WHO", "WHOIS"};
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -123,19 +125,17 @@ void Client::exeCommand(Server* server)
             exec.pass();
             break;
         case 1:
-            // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
             exec.check_if_pass();
-            _nickname = exec.nick();
+            exec.nick();
+
             break;
         case 2:
-            // command_user();
             exec.check_if_pass();
             std::cout << "TO DO USER OF \"" << _message._params << "\"" << std::endl;
             getUserCmdInfo();
             break;
         case 3:
-            // command_join();
             if(_message._params.compare(":") == 0 && _passwordReceved == false){
                 sendMessage(ERR_NOTREGISTERED(_nickname));
                 break;
@@ -172,16 +172,22 @@ void Client::exeCommand(Server* server)
             break;
         case 10:
             exec.check_if_pass();
+            std::cout << "TO DO PRIVMSG OF \"" << _message._params << "\"" << std::endl;
             exec.privmsg();
             break ;
         case 11:
             exec.check_if_pass();
+            std::cout << "TO DO PART OF \"" << _message._params << "\"" << std::endl;
             exec.part();
             break ;
         case 12:
             exec.check_if_pass();
             std::cout << "TO DO INVITE OF \"" << _message._params << "\"" << std::endl;
             exec.invite();
+            break;
+        case 13:
+            break;
+        case 14:
             break;
         default: //dernier case pour l'invalide command
             sendMessage(ERR_INVALID_ERROR);
@@ -240,6 +246,10 @@ void Client::setPasswordReceved(bool passwordReceved) {
 
 void Client::setPasswordChecked(bool passwordChecked) {
     _passwordChecked = passwordChecked;
+}
+
+void Client::setNickname(std::string nickname) {
+    _nickname = nickname;
 }
 
 /* ************************************************************************** */
