@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:46:58 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 15:34:55 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class Channel
 		// Accessors
 		std::string				getName(void);
 		std::string				getPassword(void);
+		std::string				getTopic(void);
 		int						getUserLimit(void);
 		std::map<Client*, bool>	getUsers(void);
 		bool					getModeI(void);
@@ -63,6 +64,7 @@ class Channel
 		bool					getModeK(void);
 		bool					getModeL(void);
 		void					setPassword(std::string Password);
+		void					setTopic(std::string topic);
 		void					setUserLimit(int limit);
 		void					setModeI(bool newmode);
 		void					setModeT(bool newmode);

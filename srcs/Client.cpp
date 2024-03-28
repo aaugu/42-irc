@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 15:13:11 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 15:32:02 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void Client::exeCommand(Server* server)
     CommandExec exec(server, this, &_message);
 
 
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART", "INVITE", "WHO", "WHOIS"};
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART", "INVITE", "WHO", "WHOIS", "TOPIC"};
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -188,6 +188,11 @@ void Client::exeCommand(Server* server)
         case 13:
             break;
         case 14:
+            break;
+        case 15:
+            exec.check_if_pass();
+            std::cout << "TO DO TOPIC OF \"" << _message._params << "\"" << std::endl;
+            exec.topic();
             break;
         default: //dernier case pour l'invalide command
             sendMessage(ERR_INVALID_ERROR);

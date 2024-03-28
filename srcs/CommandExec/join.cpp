@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 13:41:11 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 15:37:44 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,9 @@ void	CommandExec::join(void)
 		_client->sendMessage(ERR_CHANNELISFULL(_client->getAddress(), _client->getNickname(), channel->getName()));
 	else if (channel->getModeK() == true)
 	{
-		if (_msg->_paramsSplit.size() != 2 || channel->isPasswordValid(_msg->_paramsSplit[1]) == false)
+		if (_msg->_paramsSplit.size() == 2 || channel->isPasswordValid(_msg->_paramsSplit[1]) == true)
+			joinChannel(*channel);
+		else
 			_client->sendMessage(ERR_BADCHANNELKEY(_client->getAddress(), _client->getNickname(), channel->getName()));
 	}
 	else if ( channel->isUserPresent(_client) )
@@ -78,8 +80,7 @@ void	CommandExec::createChannel(std::string name)
 	Channel	channel(name, _client);
 
 	_server->addChannel(channel);
-	_client->setCurrentChannel(&channel);
-	
+
 	_client->sendMessage(RPL_JOIN(_client, channel.getName()));
 	_client->sendMessage(RPL_NAMREPLY(_client->getAddress(), _client->getNickname(), channel.getName(), "@" + _client->getNickname()));
 	_client->sendMessage(RPL_ENDOFNAMES(_client->getAddress(), _client->getNickname(), channel.getName()));
@@ -91,7 +92,6 @@ void	CommandExec::createChannel(std::string name)
 void	CommandExec::joinChannel(Channel& channel)
 {
 	channel.addUser(_client, false);
-	_client->setCurrentChannel(&channel);
 
 	channel.sendMessageToUsers(RPL_JOIN(_client, channel.getName()));
 
