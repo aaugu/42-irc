@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/20 17:33:42 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 11:31:50 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ class Server
 		bool							channelExists(std::string name);
 		std::vector<Channel>::iterator	getChannelByName(std::string name);
 		void							closeChannel(std::string name);
+		Channel *						getptrChannelByName(std::string name);
 
 		// Client utils
 		void							disconnectClient(Client *client);

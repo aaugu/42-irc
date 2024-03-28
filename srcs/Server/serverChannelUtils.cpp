@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverChannelUtils.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 18:34:08 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 10:45:49 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/26 12:48:34 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,15 @@ std::vector<Channel>::iterator	Server::getChannelByName(std::string name)
 			break ;
 	}
 	return (it);
+}
+
+Channel *Server::getptrChannelByName(std::string name) {
+	std::vector<Channel>::iterator it;
+    for (it = _channels.begin(); it < _channels.end(); it++) {
+        if (it->getName() == name)
+            return &(*it);
+    }
+    return nullptr;
 }
 
 void	Server::closeChannel(std::string name)

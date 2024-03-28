@@ -28,7 +28,7 @@
 
 void CommandExec::oper() {
     std::vector<std::string> nicknameList = _server->getNicknameList();
-    if (getptrClientByName() == nullptr) {
+    if (getptrClientByName(_msg->_paramsSplit[0]) == nullptr) {
         if (_client->getOperatorState())
             _client->sendMessage(ERR_NOUSER);
         else

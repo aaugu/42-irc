@@ -3,7 +3,6 @@
 #include "../includes/SendMessages.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
-#include "../includes/Channel.hpp"
 
 /* ************************************************************************** */
 /*                                   MACROS                                   */
@@ -13,7 +12,7 @@
 #define MSG_SETNICKNAME(nickname) ("Your nickname was set to " + _msg->_paramsSplit[0] + "\r\n")
 
 // REPLY
-#define RPL_CHANGENICKNAME(nickname) (": NICK " + nickname + "\r\n")
+#define RPL_CHANGENICKNAME(old, nickname) (":" + old + " NICK " + nickname + "\r\n")
 
 // ERRORS
 #define ERR_INVALIDCHAR                     "Nickname can't start with '#', we have remove it for you\r\n"
@@ -26,6 +25,7 @@
 
 void CommandExec::nick() {
     bool dupe = false;
+    std::string old = _client->getNickname();
 
     if (_client->getNickname() == _msg->_paramsSplit[0]) {
         _client->sendMessage(ERR_SAMENICKNAME(_client->getNickname()));
@@ -37,7 +37,7 @@ void CommandExec::nick() {
         _client->sendMessage(ERR_INVALIDCHAR);
     }
 
-    while (getptrClientByName() != nullptr) {
+    while (getptrClientByName(_msg->_paramsSplit[0]) != nullptr) {
         _msg->_paramsSplit[0] += '_';
         dupe = true;
     }
@@ -49,7 +49,8 @@ void CommandExec::nick() {
         _client->sendMessage(RPL_WELCOME(_msg->_paramsSplit[0], "_user", "_hostName"));
         _client->setWelcomSended(true);
     } else if (_client->isPasswordReceved() && _client->isPasswordChecked() && _client->isWelcomSended()) {
-        _client->sendMessage(RPL_CHANGENICKNAME(_msg->_paramsSplit[0]));
+        std::cout << "DEBUG " << RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]) << std::endl;
+        _client->sendMessage(RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]));
         _client->sendMessage(MSG_SETNICKNAME(_msg->_paramsSplit[0]));
     }
 
@@ -62,6 +63,7 @@ void CommandExec::nick() {
 
     for (itChan = chan.begin(); itChan < chan.end(); itChan++) {
         std::map<Client*, bool> users = itChan->getUsers();
+            itChan->sendMessageToUsersExceptSender(_client, RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]));
     }
 }
 
