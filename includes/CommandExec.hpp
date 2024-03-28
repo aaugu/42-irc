@@ -46,7 +46,7 @@ struct s_flag
 class CommandExec
 {
     private:
-		Server*		_server; 
+		Server*		_server;
 		Client*		_client;
 		s_message*	_msg;
 
@@ -83,7 +83,7 @@ class CommandExec
 		void		mode(void);
         void        oper(void);
         void        kill(void);
-        std::string nick(void);
+        void        nick(void);
         void        ping(void);
         void        quit(void);
         void        pass(void);

@@ -75,6 +75,7 @@ class Client
         void        setWelcomSended(bool welcomSended);
         void        setPasswordReceved(bool passwordReceved);
         void        setPasswordChecked(bool passwordChecked);
+        void        setNickname(std::string nickname);
 
 		// Send Message
 		template < typename T >

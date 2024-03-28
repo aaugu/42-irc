@@ -85,6 +85,7 @@ void Client::saveMessage(std::string buff) {
 }
 
 void Client::getUserCmdInfo() {
+    //TODO Gris?
     _username = _message._paramsSplit[0];
     _address = _message._paramsSplit[2];
 
@@ -107,7 +108,8 @@ void Client::exeCommand(Server* server)
 {
     CommandExec exec(server, this, &_message);
 
-    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART", "INVITE"};
+
+    std::string type[] = {"PASS", "NICK", "USER", "JOIN", "MODE", "PING", "QUIT", "CAP", "OPER", "KILL", "PRIVMSG", "PART", "INVITE", "WHO", "WHOIS"};
     int count = 0;
     size_t arraySize = sizeof(type) / sizeof(type[0]);
     for (int i = 0; i < (int)arraySize; i++){
@@ -125,7 +127,8 @@ void Client::exeCommand(Server* server)
         case 1:
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
             exec.check_if_pass();
-            _nickname = exec.nick();
+            exec.nick();
+
             break;
         case 2:
             exec.check_if_pass();
@@ -181,6 +184,10 @@ void Client::exeCommand(Server* server)
             exec.check_if_pass();
             std::cout << "TO DO INVITE OF \"" << _message._params << "\"" << std::endl;
             exec.invite();
+            break;
+        case 13:
+            break;
+        case 14:
             break;
         default: //dernier case pour l'invalide command
             sendMessage(ERR_INVALID_ERROR);
@@ -239,6 +246,10 @@ void Client::setPasswordReceved(bool passwordReceved) {
 
 void Client::setPasswordChecked(bool passwordChecked) {
     _passwordChecked = passwordChecked;
+}
+
+void Client::setNickname(std::string nickname) {
+    _nickname = nickname;
 }
 
 /* ************************************************************************** */
