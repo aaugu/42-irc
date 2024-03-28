@@ -158,7 +158,7 @@ void CommandExec::interpretMode(s_flag *parsed, std::vector<std::string> options
                 channel.setUserLimit(limit);
                 std::string flags = "+l " + options[i];
                 toSendFlagsPos += "l";
-                toSendOptions += options[i];
+                toSendOptions += options[i] + " ";
             }
             catch(const std::exception& e)
             {

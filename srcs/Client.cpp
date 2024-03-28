@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:34:09 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 15:13:11 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,19 +123,16 @@ void Client::exeCommand(Server* server)
             exec.pass();
             break;
         case 1:
-            // command_nick();
             std::cout << "TO DO NICK OF \"" << _message._params << "\"" << std::endl;
             exec.check_if_pass();
             _nickname = exec.nick();
             break;
         case 2:
-            // command_user();
             exec.check_if_pass();
             std::cout << "TO DO USER OF \"" << _message._params << "\"" << std::endl;
             getUserCmdInfo();
             break;
         case 3:
-            // command_join();
             if(_message._params.compare(":") == 0 && _passwordReceved == false){
                 sendMessage(ERR_NOTREGISTERED(_nickname));
                 break;
@@ -172,10 +169,12 @@ void Client::exeCommand(Server* server)
             break;
         case 10:
             exec.check_if_pass();
+            std::cout << "TO DO PRIVMSG OF \"" << _message._params << "\"" << std::endl;
             exec.privmsg();
             break ;
         case 11:
             exec.check_if_pass();
+            std::cout << "TO DO PART OF \"" << _message._params << "\"" << std::endl;
             exec.part();
             break ;
         case 12:

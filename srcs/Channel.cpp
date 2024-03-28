@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:47:27 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/26 14:01:34 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ Client* Channel::getMapptrClientByName(std::string nickname) {
         if (user->first->getNickname() == nickname)
             return user->first;
     }
-    return nullptr;
+    return NULL;
 }
 
 void	Channel::sendMessageToUsers(std::string message)
