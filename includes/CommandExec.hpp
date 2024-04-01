@@ -14,6 +14,7 @@
 #define COMMANDEXEC_HPP
 
 # include <string>
+# include <vector>
 
 class Server;
 class Client;
@@ -26,12 +27,12 @@ struct s_message;
 #define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " " + ":Nickname is invalid, or does not exist\r\n")
 #define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
 #define ERR_USERNOTINCHANNEL(client, channel) ("441 " + client + " " + channel + ": They aren’t on that channel\r\n")
-#define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + ":You're not on that channel\r\n")
+#define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + " :You're not on that channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(channel) ("482 " + channel + " :You're not channel operator\r\n")
 #define RPL_CHANNELMODEIS(address, client, channel, mode) (":" + address + " 324 " + client + " " + channel + " " + mode + "\r\n")
 #define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel +" operator\r\n")
 #define ERR_UNKNOWNMODE(servername, nick, mode) (":" + servername + " 472 " + nick + " " + mode + " :mode unknown \r\n")
-#define ERR_NEEDMOREPARAMS(address, client, command) (":" + address + " 461 " + client + " " + command + ":Not enough parameters given\r\n")
+#define ERR_NEEDMOREPARAMS(address, client, command) (":" + address + " 461 " + client + " " + command + " :Not enough parameters given\r\n")
 
 struct s_flag
 {

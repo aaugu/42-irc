@@ -17,7 +17,6 @@
 #include "../includes/Server.hpp"
 
 #define RPL_PART(client, channel, message) (":" + USER(client) + " PART " + channel + " " + message + "\r\n")
-#define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + " :You're not on that channel\r\n")
 
 void	CommandExec::part(void)
 {
