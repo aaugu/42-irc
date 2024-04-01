@@ -26,7 +26,7 @@ struct s_message;
 #define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + ":Channel name is invalid, or does not exist\r\n")
 #define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " " + ":Nickname is invalid, or does not exist\r\n")
 #define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
-#define ERR_USERNOTINCHANNEL(client, channel) ("441 " + client + " " + channel + ": They aren’t on that channel\r\n")
+#define ERR_USERNOTINCHANNEL(client, channel) ("441 " + client + " " + channel + " :They aren’t on that channel\r\n")
 #define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + " :You're not on that channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(channel) ("482 " + channel + " :You're not channel operator\r\n")
 #define RPL_CHANNELMODEIS(address, client, channel, mode) (":" + address + " 324 " + client + " " + channel + " " + mode + "\r\n")
