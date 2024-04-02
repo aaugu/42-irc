@@ -6,4 +6,4 @@
 # define ERR_PASSWDMISS "464 __ :Password missing\r\n"
 # define ERR_INVALID_ERROR "ERROR : invalid command\r\n"
 # define ERR_NOORIGIN(command) ("409 " + command + " :No origin specified\r\n")
-# define PONG(server) ("PONG :" + server + "\r\n")
+# define PONG(server) ("PONG " + server + "\r\n")
