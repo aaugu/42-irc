@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/02 11:11:58 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/02 13:47:09 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,9 @@ class CommandExec
 		// TOPIC
 		void	sendTopic(Channel* channel);
 		void	modifyTopic(Channel* channel);
-		// etc.
+
+		// INVITE
+		void	launchInvitation(Client* target, Channel* channel);
 
     public:
    		// Constructor and destructor

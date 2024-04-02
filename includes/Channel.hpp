@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 15:34:55 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/02 14:08:13 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <string>
 # include <map>
+# include <vector>
 
 class Client;
 class Server;
@@ -28,11 +29,12 @@ class Channel
 		int						_userLimit;
 
 		std::map<Client*, bool>	_users;
+		std::vector<Client*>	_waitlist;	
 
-		bool	_modeI;	// invite-only
-		bool	_modeT;	// topic command only for operator
-		bool	_modeK;	// password
-		bool	_modeL;	// userlimit
+		bool					_modeI;	// invite-only
+		bool					_modeT;	// topic command only for operator
+		bool					_modeK;	// password
+		bool					_modeL;	// userlimit
 
     public:
    		// Constructor and destructor
@@ -40,20 +42,22 @@ class Channel
 		~Channel(void);
 
 		// Modifiers
-		void	addUser(Client* user, bool isOperator);
+		void	addUser(Client* client, bool isOperator);
+		void	addUserToWaitlist(Client* client);
 		int		removeUser(Client* user);
+		void	removeUserFromWaitlist(Client* user);
 
 		// Checks
 		bool	isOperator(Client* user);
 		bool	isPasswordValid(std::string password);
 		bool	isUserPresent(Client* client);
+		bool	isUserOnWaitlist(Client* client);
 
-		// Send
+		// Send messages
 		void	sendMessageToUsers(std::string message);
 		void	sendMessageToUsersExceptSender(Client* sender, std::string message);
-		Client*	getMapptrClientByName(std::string nickname);
 
-		// Accessors
+		// Getters
 		std::string				getName(void);
 		std::string				getPassword(void);
 		std::string				getTopic(void);
@@ -63,6 +67,10 @@ class Channel
 		bool					getModeT(void);
 		bool					getModeK(void);
 		bool					getModeL(void);
+		Client*					getMapptrClientByName(std::string nickname);
+		std::string				getAllUsersList(void);
+		
+		// Setters
 		void					setPassword(std::string Password);
 		void					setTopic(std::string topic);
 		void					setUserLimit(int limit);
@@ -70,10 +78,8 @@ class Channel
 		void					setModeT(bool newmode);
 		void					setModeK(bool newmode);
 		void					setModeL(bool newmode);
-
 		void					setOperator(Client* user, bool oper);
 
-		std::string				getAllUsersList(void);
 
 
 };
