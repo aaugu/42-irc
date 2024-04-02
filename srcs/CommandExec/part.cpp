@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 14:19:52 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 15:44:21 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/02 09:45:34 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include "../includes/Server.hpp"
 
 #define RPL_PART(client, channel, message) (":" + USER(client) + " PART " + channel + " " + message + "\r\n")
-#define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + ":You're not on that channel\r\n")
 
 void	CommandExec::part(void)
 {

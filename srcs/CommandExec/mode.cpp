@@ -1,4 +1,6 @@
 #include <string>
+#include <algorithm>
+
 
 #include "../includes/CommandExec.hpp"
 #include "../includes/messages.hpp"
