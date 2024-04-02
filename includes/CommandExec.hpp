@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 16:42:48 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/02 11:11:58 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define COMMANDEXEC_HPP
 
 # include <string>
+# include <vector>
 
 class Server;
 class Client;
@@ -22,7 +23,6 @@ struct s_message;
 												// shoud be username
 #define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
 #define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
-#define RPL_PART(client, channel, message) (":" + USER(client) + " PART " + channel + " " + message + "\r\n")
 #define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel + " operator\r\n")
 #define RPL_CHANNELMODEIS(address, client, channel, mode) (":" + address + " 324 " + client + " " + channel + " " + mode + "\r\n")
 

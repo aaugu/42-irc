@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 16:41:47 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/02 11:07:28 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,9 @@ void	CommandExec::join(void)
 		return ( createChannel(_msg->_paramsSplit[0]) );
 
 	std::vector<Channel>::iterator	channel = _server->getChannelByName(_msg->_paramsSplit[0]);
-	if (channel->getModeI() == true)
+	if (channel->getModeI() == true){
 		_client->sendMessage(ERR_INVITEONLYCHAN(_client->getAddress(), _client->getNickname(), channel->getName()));
+	}
 	else if (channel->getModeL() == true && (int)channel->getUsers().size() >= channel->getUserLimit())
 		_client->sendMessage(ERR_CHANNELISFULL(_client->getAddress(), _client->getNickname(), channel->getName()));
 	else if (channel->getModeK() == true)
