@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/02 10:37:37 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/02 10:40:38 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 #define RPL_NAMREPLY(address, client, channel, nickname) (":" + address + " 353 " + client + " = " + channel + " :" + nickname + "\r\n")
 
 // ERRORS
-#define RPL_PART(client, channel) (":" + USER(client) + " PART " + channel + " " + "\r\n")
 #define ERR_INVITEONLYCHAN(address, client, channel) (":" + address + " 473 " + client + " " + channel + " :Cannot join channel (+k)\r\n")
 #define ERR_BADCHANNELKEY(address, client, channel)  (":" + address + " 475 " + client + " " + channel + " :Cannot join channel (+i)\r\n")
 #define ERR_CHANNELISFULL(address, client, channel)  (":" + address + " 471 " + client + " " + channel + " :Cannot join channel (+l)\r\n")
