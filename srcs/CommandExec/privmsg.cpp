@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 15:32:28 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 12:48:20 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 16:43:01 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,7 @@
 /*                                   MACROS                                   */
 /* ************************************************************************** */
 
-// RESPONSES														// should be username
-
-												// shoud be username
-// #define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
-// #define RPL_JOIN(client, channel) (":" + USER(client) + " JOIN " + channel + "\r\n")
-// #define RPL_ENDOFNAMES(address, client, channel) (":" + address + " 366 " + client + " " + channel + " :End of /NAMES list\r\n")
-// #define RPL_NAMREPLY(address, client, channel, nickname) (":" + address + " 353 " + client + " = " + channel + " :" + nickname + "\r\n")
-
-// ERRORS
-	// Channel
-#define ERR_CANNOTSENDTOCHAN(address, client, channel) (":" + address + " 404 " + client + " " + channel + ":You are not part of this channel\r\n")
-	// Private messages
-
-// #define ERR_CHANNELISFULL(address, client, channel)  (":" + address + " 471 " + client + " " + channel + ":Cannot join channel (+l)\r\n")
+#define ERR_CANNOTSENDTOCHAN(address, client, channel) (":" + address + " 404 " + client + " " + channel + " :You are not part of this channel\r\n")
 
 /* ************************************************************************** */
 /*                                 PRIVMSG                                    */

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandExec.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/02 09:46:57 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/02 11:11:58 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ struct s_message;
 												// shoud be username
 #define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
 #define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
+#define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel + " operator\r\n")
+#define RPL_CHANNELMODEIS(address, client, channel, mode) (":" + address + " 324 " + client + " " + channel + " " + mode + "\r\n")
+
 #define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + " :Channel name is invalid, or does not exist\r\n")
 #define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " :Nickname is invalid, or does not exist\r\n")
-#define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
-#define ERR_USERNOTINCHANNEL(client, channel) ("441 " + client + " " + channel + " :They aren’t on that channel\r\n")
+#define ERR_USERNOTINCHANNEL(client, channel) ("441 " + client + " " + channel + " : They aren’t on that channel\r\n")
 #define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + " :You're not on that channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(channel) ("482 " + channel + " :You're not channel operator\r\n")
-#define RPL_CHANNELMODEIS(address, client, channel, mode) (":" + address + " 324 " + client + " " + channel + " " + mode + "\r\n")
-#define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel +" operator\r\n")
 #define ERR_UNKNOWNMODE(servername, nick, mode) (":" + servername + " 472 " + nick + " " + mode + " :mode unknown \r\n")
 #define ERR_NEEDMOREPARAMS(address, client, command) (":" + address + " 461 " + client + " " + command + " :Not enough parameters given\r\n")
 
