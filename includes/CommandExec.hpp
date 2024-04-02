@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 15:32:42 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/28 16:42:48 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,17 @@ struct s_message;
 												// shoud be username
 #define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
 #define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
-#define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + ":Channel name is invalid, or does not exist\r\n")
-#define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " " + ":Nickname is invalid, or does not exist\r\n")
-#define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
-#define ERR_USERNOTINCHANNEL(client, channel) ("441 " + client + " " + channel + ": They aren’t on that channel\r\n")
-#define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + ":You're not on that channel\r\n")
-#define ERR_CHANOPRIVSNEEDED(channel) ("482 " + channel + " :You're not channel operator\r\n")
+#define RPL_PART(client, channel, message) (":" + USER(client) + " PART " + channel + " " + message + "\r\n")
+#define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel + " operator\r\n")
 #define RPL_CHANNELMODEIS(address, client, channel, mode) (":" + address + " 324 " + client + " " + channel + " " + mode + "\r\n")
-#define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel +" operator\r\n")
+
+#define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + " :Channel name is invalid, or does not exist\r\n")
+#define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " :Nickname is invalid, or does not exist\r\n")
+#define ERR_USERNOTINCHANNEL(client, channel) ("441 " + client + " " + channel + " : They aren’t on that channel\r\n")
+#define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + " :You're not on that channel\r\n")
+#define ERR_CHANOPRIVSNEEDED(channel) ("482 " + channel + " :You're not channel operator\r\n")
 #define ERR_UNKNOWNMODE(servername, nick, mode) (":" + servername + " 472 " + nick + " " + mode + " :mode unknown \r\n")
-#define ERR_NEEDMOREPARAMS(address, client, command) (":" + address + " 461 " + client + " " + command + ":Not enough parameters given\r\n")
+#define ERR_NEEDMOREPARAMS(address, client, command) (":" + address + " 461 " + client + " " + command + " :Not enough parameters given\r\n")
 
 struct s_flag
 {

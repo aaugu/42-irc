@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 15:37:44 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/28 16:41:47 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@
 #define RPL_NAMREPLY(address, client, channel, nickname) (":" + address + " 353 " + client + " = " + channel + " :" + nickname + "\r\n")
 
 // ERRORS
-#define ERR_INVITEONLYCHAN(address, client, channel) (":" + address + " 473 " + client + " " + channel + ":Cannot join channel (+k)\r\n")
-#define ERR_BADCHANNELKEY(address, client, channel)  (":" + address + " 475 " + client + " " + channel + ":Cannot join channel (+i)\r\n")
-#define ERR_CHANNELISFULL(address, client, channel)  (":" + address + " 471 " + client + " " + channel + ":Cannot join channel (+l)\r\n")
+#define ERR_INVITEONLYCHAN(address, client, channel) (":" + address + " 473 " + client + " " + channel + " :Cannot join channel (+k)\r\n")
+#define ERR_BADCHANNELKEY(address, client, channel)  (":" + address + " 475 " + client + " " + channel + " :Cannot join channel (+i)\r\n")
+#define ERR_CHANNELISFULL(address, client, channel)  (":" + address + " 471 " + client + " " + channel + " :Cannot join channel (+l)\r\n")
 
 /* ************************************************************************** */
 /*                                   JOIN                                     */

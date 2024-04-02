@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 14:19:52 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 15:44:21 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/03/28 16:41:24 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 #include "../includes/CommandExec.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
-
-#define RPL_PART(client, channel, message) (":" + USER(client) + " PART " + channel + " " + message + "\r\n")
-#define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + ":You're not on that channel\r\n")
 
 void	CommandExec::part(void)
 {

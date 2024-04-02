@@ -17,6 +17,7 @@
 #include "../includes/Server.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/messages.hpp"
+#include "../includes/CommandExec.hpp"
 
 /* ************************************************************************** */
 /*                                   MACROS                                   */
@@ -98,6 +99,8 @@ std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
 
 void	Server::disconnectClient(Client *client)
 {
+	removeClientFromChannels(client);
+
 	std::cout << "Client " << client->getFd() << ": disconnected" << std::endl;
 
 	std::vector<pollfd>::iterator itP = getPollFdByFd(client->getFd());
@@ -106,16 +109,17 @@ void	Server::disconnectClient(Client *client)
 
 	if (close(itP->fd) < 0)
 		throw std::runtime_error(errMessage(ERR_CLOSE, itP->fd, strerror(errno)));
+	_pollFds.erase(itP);
 
 	_nbConnections--;
 
-	_pollFds.erase(itP);
-	std::vector<Client>::iterator itC = getClientByFd(client->getFd());
-	if ( itC < _clients.end() ) {
+	if (clientExists(client->getNickname()))
+	{
+		std::vector<Client>::iterator itC = getClientByFd(client->getFd());
 		_clients.erase(itC);
-		return;
 	}
-	printErrMessage(errMessage("client", client->getFd(), ERR_CLIENT_NONEX));
+	else
+		printErrMessage(errMessage("client", client->getFd(), ERR_CLIENT_NONEX));
 }
 
 bool Server::clientExists(std::string nickname){
@@ -137,4 +141,22 @@ std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
             return(it);
     }
     return (it);
+}
+
+void	Server::removeClientFromChannels(Client *user)
+{
+	std::vector<Channel>::iterator	channel = _channels.begin();
+	for ( ; channel < _channels.end(); channel++ )
+	{
+		if ( channel->isUserPresent(user) )
+		{
+			s_message	message;
+			message._paramsSplit.clear();
+			message._paramsSplit.push_back(channel->getName());
+			message._paramsSplit.push_back(":disconnected");
+
+			CommandExec	exec(this, user, &message);
+			exec.part(); 
+		}
+	}
 }
