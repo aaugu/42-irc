@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 16:39:28 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/02 10:37:37 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	CommandExec::join(void)
 
 	std::vector<Channel>::iterator	channel = _server->getChannelByName(_msg->_paramsSplit[0]);
 	if (channel->getModeI() == true){
-		_client->sendMessage(RPL_PART(_client, _msg->_paramsSplit[0]));
 		_client->sendMessage(ERR_INVITEONLYCHAN(_client->getAddress(), _client->getNickname(), channel->getName()));
 	}
 	else if (channel->getModeL() == true && (int)channel->getUsers().size() >= channel->getUserLimit())
