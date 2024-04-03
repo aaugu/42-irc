@@ -50,7 +50,6 @@ void CommandExec::nick() {
         _client->sendMessage(RPL_WELCOME(_msg->_paramsSplit[0], "_user", "_hostName"));
         _client->setWelcomSended(true);
     } else if (_client->isPasswordReceved() && _client->isPasswordChecked() && _client->isWelcomSended()) {
-        std::cout << "DEBUG " << RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]) << std::endl;
         _client->sendMessage(RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]));
         _client->sendMessage(MSG_SETNICKNAME(_msg->_paramsSplit[0]));
     }
@@ -60,11 +59,10 @@ void CommandExec::nick() {
     std::vector<Channel> chan = _server->getChannels();
 
     std::vector<Channel>::iterator itChan;
-    std::map<Client*, bool>::iterator itUser;
 
     for (itChan = chan.begin(); itChan < chan.end(); itChan++) {
-        std::map<Client*, bool> users = itChan->getUsers();
         if (!done) {
+            std::cout << "DEBUG nickname : " << itChan->getName() << std::endl;
             itChan->sendMessageToUsersExceptSender(_client, RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]));
             done = true;
         }

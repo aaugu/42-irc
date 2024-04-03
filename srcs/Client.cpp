@@ -183,7 +183,6 @@ void Client::exeCommand(Server* server)
         case 12:
             exec.check_if_pass();
             std::cout << "TO DO INVITE OF \"" << _message._params << "\"" << std::endl;
-            exec.invite();
             break;
         case 13:
             break;

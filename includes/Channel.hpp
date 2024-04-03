@@ -27,8 +27,6 @@ class Channel
 		std::string				_topic;
 		int						_userLimit;
 
-        std::vector<Client *>   _whitelist;
-
 		std::map<Client*, bool>	_users;
 
 		bool	_modeI;	// invite-only
