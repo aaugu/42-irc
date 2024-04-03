@@ -239,7 +239,7 @@ void CommandExec::interpretMode(s_flag *parsed, std::vector<std::string> options
         toSendOptions = " " + toSendOptions;
     std::string finalString = toSendFlagsPos + toSendFlagsNeg + toSendOptions;
     if (finalString.size() > 0)
-        channel.sendMessageToUsers(RPL_CHANNELMODEIS(_client->getAddress(), _client->getNickname(), channel.getName(), finalString));
+        channel.sendMessageToUsers(RPL_CHANNELMODESET(_client, channel.getName(), finalString));
     return;
 }
 

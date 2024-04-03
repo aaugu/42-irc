@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandExec.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 14:05:30 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/03 15:23:03 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ struct s_message;
 #define RPL_TOPIC(client, channel, topic) (": 332 " + client + " " + channel + " " + topic + "\r\n")
 #define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel + " operator\r\n")
 #define RPL_CHANNELMODEIS(address, client, channel, mode) (":" + address + " 324 " + client + " " + channel + " " + mode + "\r\n")
-
+#define RPL_CHANNELMODESET(client, channel, mode) (":" + USER(client) + " MODE " + channel + " " + mode + "\r\n")
+#define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + " :Channel name is invalid, or does not exist\r\n")
 #define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " :Nickname is invalid, or does not exist\r\n")
-#define ERR_NOSUCHCHANNEL(address, client, channel) (": 403 " + client + " " + channel + " :Channel name is invalid, or does not exist\r\n")
 #define ERR_USERNOTINCHANNEL(client, channel) ("441 " + client + " " + channel + " : They aren’t on that channel\r\n")
 #define ERR_NOTONCHANNEL(address, client, channel) (":" + address + " 442 " + client + " " + channel + " :You're not on that channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(channel) ("482 " + channel + " :You're not channel operator\r\n")

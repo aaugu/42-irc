@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:02 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:12:04 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/03 11:01:46 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@
 #define ERR_SOCK_LISTEN		"Could not listen to the socket"
 #define ERR_POLL			"Problem while waiting for fd to perform"
 #define ERR_CLIENT_ACCEPT	"Could not create connection with client"
+
+#define IP_ADDRESS          "127.0.0.1"
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
@@ -67,7 +69,7 @@ Server::Server(int port, std::string password) : _nbConnections(0), _opPass(OPPA
 	// Bind the socket
 	_addr.sin_family = AF_INET;
 	_addr.sin_port = htons(port);
-	_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
 	if ( bind(_sockfd, (const struct sockaddr *)&_addr, sizeof(_addr)) < 0) {
 		close(_sockfd);
 		throw std::runtime_error(errMessage(ERR_SOCK_BIND, -1, strerror(errno)));
