@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 12:29:27 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 13:12:54 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/03 14:59:35 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,16 @@
 #include "../includes/Server.hpp"
 #include "../includes/Client.hpp"
 
+/* ************************************************************************** */
+/*                                   MACROS                                   */
+/* ************************************************************************** */
+
 #define RPL_SET_TOPIC(client, channel, topic) (":" + USER(client) + " TOPIC " + channel + " " + topic + "\r\n")
 #define RPL_NOTOPIC(address, client, channel) (":" + address + " 331 " + client + " " + channel + " :No topic is set\r\n")
+
+/* ************************************************************************** */
+/*                                   TOPIC                                    */
+/* ************************************************************************** */
 
 void	CommandExec::topic(void)
 {
@@ -41,6 +49,10 @@ void	CommandExec::topic(void)
 		_client->sendMessage(message);
 	}
 }
+
+/* ************************************************************************** */
+/*                               SUB FUNCTIONS                                */
+/* ************************************************************************** */
 
 void	CommandExec::sendTopic(Channel* channel)
 {
