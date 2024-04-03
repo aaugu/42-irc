@@ -87,6 +87,13 @@ void	Channel::removeUserFromWhitelist(Client* user)
 	printErrMessage(errMessage("User", -1, "could not remove unknown user from whitelist"));
 }
 
+void	Channel::clearWhitelist()
+{
+	std::vector<Client*>::iterator it = _whitelist.begin();
+	for ( ; it < _whitelist.end(); it++)
+			_whitelist.erase(it);
+}
+
 /* ************************************************************************** */
 /*                                  CHECKS                                    */
 /* ************************************************************************** */

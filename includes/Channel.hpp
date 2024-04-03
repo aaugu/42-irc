@@ -46,6 +46,7 @@ class Channel
 		void	addUserToWhitelist(Client* client);
 		int		removeUser(Client* user);
 		void	removeUserFromWhitelist(Client* user);
+		void	clearWhitelist();
 
 		// Checks
 		bool	isOperator(Client* user);
