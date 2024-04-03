@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandExec.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/02 11:11:58 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/03 13:00:56 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ struct s_message;
 #define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
 #define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel + " operator\r\n")
 #define RPL_CHANNELMODEIS(address, client, channel, mode) (":" + address + " 324 " + client + " " + channel + " " + mode + "\r\n")
-
+#define RPL_CHANNELMODESET(client, channel, mode) (":" + USER(client) + " MODE " + channel + " " + mode + "\r\n")
 #define ERR_NOSUCHCHANNEL(address, client, channel) (":" + address + " 403 " + client + " " + channel + " :Channel name is invalid, or does not exist\r\n")
 #define ERR_NOSUCHNICK(address, client)  (":" + address + " 401 " + client + " :Nickname is invalid, or does not exist\r\n")
 #define ERR_USERNOTINCHANNEL(client, channel) ("441 " + client + " " + channel + " : They aren’t on that channel\r\n")
