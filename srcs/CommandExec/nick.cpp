@@ -62,7 +62,6 @@ void CommandExec::nick() {
 
     for (itChan = chan.begin(); itChan < chan.end(); itChan++) {
         if (!done) {
-            std::cout << "DEBUG nickname : " << itChan->getName() << std::endl;
             itChan->sendMessageToUsersExceptSender(_client, RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]));
             done = true;
         }
