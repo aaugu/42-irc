@@ -15,16 +15,17 @@ SRC		=	main \
 			signal \
 			Channel \
 			CommandExec/CommandExec \
+			CommandExec/invite \
 			CommandExec/join \
-			CommandExec/mode \
-			CommandExec/oper \
 			CommandExec/kill \
+			CommandExec/mode \
 			CommandExec/nick \
-			CommandExec/ping \
-			CommandExec/quit \
-			CommandExec/pass \
+			CommandExec/oper \
 			CommandExec/part \
+			CommandExec/pass \
+			CommandExec/ping \
 			CommandExec/privmsg \
+			CommandExec/quit \
 			CommandExec/topic \
 			Server/Server \
 			Server/serverChannelUtils \

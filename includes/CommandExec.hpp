@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 13:00:56 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/03 15:23:03 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ struct s_message;
 												// shoud be username
 #define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
 #define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
+#define RPL_TOPIC(client, channel, topic) (": 332 " + client + " " + channel + " " + topic + "\r\n")
 #define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel + " operator\r\n")
 #define RPL_CHANNELMODEIS(address, client, channel, mode) (":" + address + " 324 " + client + " " + channel + " " + mode + "\r\n")
 #define RPL_CHANNELMODESET(client, channel, mode) (":" + USER(client) + " MODE " + channel + " " + mode + "\r\n")
@@ -59,9 +60,10 @@ class CommandExec
 		std::string	getFullMessage(void);
 
 		// JOIN
-		void	checkChannelName(std::string& name);
-		void	createChannel(std::string name);
-		void	joinChannel(Channel& channel);
+		std::vector<std::string>	getChannelNames(std::string names);
+		bool						isChannelNameValid(std::string& name);
+		void						createChannel(std::string name);
+		void						joinChannel(Channel& channel);
 
 		// PRIVMSG
 		void	sendMessageToChannel(std::string target, std::string message);
@@ -76,7 +78,9 @@ class CommandExec
 		// TOPIC
 		void	sendTopic(Channel* channel);
 		void	modifyTopic(Channel* channel);
-		// etc.
+
+		// INVITE
+		void	launchInvitation(Client* target, Channel* channel);
 
     public:
    		// Constructor and destructor

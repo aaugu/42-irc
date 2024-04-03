@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/02 10:46:09 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/03 15:25:07 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,7 @@ void Client::exeCommand(Server* server)
         case 12:
             exec.check_if_pass();
             std::cout << "TO DO INVITE OF \"" << _message._params << "\"" << std::endl;
+            exec.invite();
             break;
         case 13:
             break;
