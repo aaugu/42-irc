@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/26 11:31:50 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/03/28 16:39:15 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ class Server
 		void							disconnectClient(Client *client);
 		bool 							clientExists(std::string nickname);
         std::vector<Client>::iterator	getClientByNickname(std::string nickname);
+		void							removeClientFromChannels(Client *user);
 
 		// DEBUG
 		void printNickname(void);
