@@ -53,6 +53,10 @@ class Channel
 		void	sendMessageToUsersExceptSender(Client* sender, std::string message);
 		Client*	getMapptrClientByName(std::string nickname);
 
+        // Whitelist gestion
+//        void    addWithelistUser(Client *user);
+//        void    removeWithelistUser(Client *user);
+
 		// Accessors
 		std::string				getName(void);
 		std::string				getPassword(void);

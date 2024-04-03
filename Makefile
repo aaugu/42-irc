@@ -23,7 +23,6 @@ SRC		=	main \
 			CommandExec/ping \
 			CommandExec/quit \
 			CommandExec/pass \
-			CommandExec/invite \
 			CommandExec/part \
 			CommandExec/privmsg \
 			CommandExec/topic \
