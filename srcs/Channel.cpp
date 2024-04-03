@@ -6,11 +6,12 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:48:58 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 15:37:25 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/02 14:43:01 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <vector>
+#include <map>
 #include <unistd.h>
 #include <string>
 
@@ -39,29 +40,56 @@ Channel::Channel(std::string name, Client* user) :
 Channel::~Channel(void) {}
 
 /* ************************************************************************** */
-/*                          PUBLIC MEMBER FUNCTIONS                           */
+/*                                 MODIFIERS                                  */
 /* ************************************************************************** */
 
-void	Channel::addUser(Client* user, bool isOperator)
+void	Channel::addUser(Client* client, bool isOperator)
 {
-	if (user)
-		_users.insert(std::pair<Client*, bool>(user, isOperator));
+	if (client)
+		_users.insert(std::pair<Client*, bool>(client, isOperator));
 	else
-		printErrMessage(errMessage("User", user->getFd(), "could not add unknown user to channel"));
+		printErrMessage(errMessage("User", -1, "could not add unknown user to channel"));
+}
+
+void	Channel::addUserToWaitlist(Client* client)
+{
+	if (client)
+		_waitlist.push_back(client);
+	else
+		printErrMessage(errMessage("User", -1, "could not add unknown user to waitlist"));
 }
 
 int	Channel::removeUser(Client* user)
 {
+	
 	std::map<Client*, bool>::iterator userFound = _users.find(user);
 	if ( userFound != _users.end())
 	{
 		_users.erase(user);
-		user->sendMessage(":You have left " + this->_name + "\r\n");
+		user->sendMessage("You have left " + this->_name + "\r\n");
 	}
 	else
-		printErrMessage(errMessage("User", user->getFd(), "could not remove unknown user of channel"));
+		printErrMessage(errMessage("User", -1, "could not remove unknown user from channel"));
 	return ( _users.size() );
 }
+
+void	Channel::removeUserFromWaitlist(Client* user)
+{
+	std::vector<Client*>::iterator it = _waitlist.begin();
+	for ( ; it < _waitlist.end(); it++)
+	{
+		if (*it == user)
+		{
+			_waitlist.erase(it);
+			return ;
+		}
+	}
+	printErrMessage(errMessage("User", -1, "could not remove unknown user from waitlist"));
+}
+
+/* ************************************************************************** */
+/*                                  CHECKS                                    */
+/* ************************************************************************** */
 
 bool	Channel::isOperator(Client* user)
 {
@@ -90,14 +118,20 @@ bool	Channel::isUserPresent(Client* client)
 	return (false);
 }
 
-Client* Channel::getMapptrClientByName(std::string nickname) {
-    std::map<Client*, bool>::iterator user;
-    for( user = _users.begin(); user != _users.end(); user++ ) {
-        if (user->first->getNickname() == nickname)
-            return user->first;
+bool	Channel::isUserOnWaitlist(Client* client)
+{
+	std::vector<Client*>::iterator user = _waitlist.begin();
+    for( ; user < _waitlist.end(); user++ )
+	{
+        if ( *user == client )
+            return ( true );
     }
-    return NULL;
+	return ( false );
 }
+
+/* ************************************************************************** */
+/*                               SEND MESSAGES                                */
+/* ************************************************************************** */
 
 void	Channel::sendMessageToUsers(std::string message)
 {
@@ -117,8 +151,17 @@ void	Channel::sendMessageToUsersExceptSender(Client* sender, std::string message
 }
 
 /* ************************************************************************** */
-/*                                 ACCESSORS                                  */
+/*                                  GETTERS                                   */
 /* ************************************************************************** */
+
+Client* Channel::getMapptrClientByName(std::string nickname) {
+    std::map<Client*, bool>::iterator user;
+    for( user = _users.begin(); user != _users.end(); user++ ) {
+        if (user->first->getNickname() == nickname)
+            return user->first;
+    }
+    return NULL;
+}
 
 std::string	Channel::getName(void) {
 	return ( _name );
@@ -132,20 +175,8 @@ std::string	Channel::getTopic(void) {
 	return ( _topic );
 }
 
-void	Channel::setPassword(std::string password) {
-	_password = password;
-}
-
-void	Channel::setTopic(std::string topic) {
-	_topic = topic;
-}
-
 int	Channel::getUserLimit(void) {
 	return ( _userLimit );
-}
-
-void	Channel::setUserLimit(int limit) {
-	_userLimit = limit;
 }
 
 std::map<Client*, bool>	Channel::getUsers(void) {
@@ -168,6 +199,26 @@ bool	Channel::getModeL(void) {
 	return ( _modeL );
 }
 
+std::string	Channel::getAllUsersList(void)
+{
+	std::string userList = "";
+
+	std::map<Client*, bool>::iterator user;
+	for( user = _users.begin(); user != _users.end(); user++ )
+	{
+		if (isOperator(user->first) == true)
+			userList += "@" + user->first->getNickname() + " ";
+		else
+			userList += user->first->getNickname() + " ";
+	}
+
+	return ( userList );
+}
+
+/* ************************************************************************** */
+/*                                  SETTERS                                   */
+/* ************************************************************************** */
+
 void	Channel::setModeI(bool newmode) {
 	_modeI = newmode;
 }
@@ -184,18 +235,14 @@ void	Channel::setModeL(bool newmode) {
 	_modeL = newmode;
 }
 
-std::string	Channel::getAllUsersList(void)
-{
-	std::string userList = "";
+void	Channel::setPassword(std::string password) {
+	_password = password;
+}
 
-	std::map<Client*, bool>::iterator user;
-	for( user = _users.begin(); user != _users.end(); user++ )
-	{
-		if (isOperator(user->first) == true)
-			userList += "@" + user->first->getNickname() + " ";
-		else
-			userList += user->first->getNickname() + " ";
-	}
+void	Channel::setTopic(std::string topic) {
+	_topic = topic;
+}
 
-	return ( userList );
+void	Channel::setUserLimit(int limit) {
+	_userLimit = limit;
 }
