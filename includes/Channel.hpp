@@ -29,7 +29,7 @@ class Channel
 		int						_userLimit;
 
 		std::map<Client*, bool>	_users;
-		std::vector<Client*>	_waitlist;	
+		std::vector<Client*>	_whitelist;	
 
 		bool					_modeI;	// invite-only
 		bool					_modeT;	// topic command only for operator
@@ -43,15 +43,15 @@ class Channel
 
 		// Modifiers
 		void	addUser(Client* client, bool isOperator);
-		void	addUserToWaitlist(Client* client);
+		void	addUserToWhitelist(Client* client);
 		int		removeUser(Client* user);
-		void	removeUserFromWaitlist(Client* user);
+		void	removeUserFromWhitelist(Client* user);
 
 		// Checks
 		bool	isOperator(Client* user);
 		bool	isPasswordValid(std::string password);
 		bool	isUserPresent(Client* client);
-		bool	isUserOnWaitlist(Client* client);
+		bool	isUserOnWhitelist(Client* client);
 
 		// Send messages
 		void	sendMessageToUsers(std::string message);
