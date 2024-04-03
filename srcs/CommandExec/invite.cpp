@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 13:09:59 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/02 14:29:34 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/03 11:01:49 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 /* ************************************************************************** */
 
 // RESPONSE
-#define RPL_INVITE(target, channel) (":" + channel + " INVITE " + USER(target) + "\r\n")
+#define RPL_INVITING(client, target, channel) (":" + USER(client) + " INVITE " + target + " " + channel + "\r\n")
 
 // ERROR
 #define ERR_USERONCHANNEL(address, nickname, channel) (":" + address + " 443 " + nickname + " " + channel + " :is already on channel\r\n")
@@ -67,5 +67,5 @@ void	CommandExec::launchInvitation(Client* target, Channel* channel)
 	if ( channel->getModeI() == true && channel->isUserOnWaitlist(target) == false)
 		channel->addUserToWaitlist(target);
 	
-	target->sendMessage(RPL_INVITE(target, channel->getName()));
+	target->sendMessage(RPL_INVITING(_client, target->getNickname(), channel->getName()));
 }
