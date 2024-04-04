@@ -51,12 +51,12 @@ void	Channel::addUser(Client* client, bool isOperator)
 		printErrMessage(errMessage("User", -1, "could not add unknown user to channel"));
 }
 
-void	Channel::addUserToWaitlist(Client* client)
+void	Channel::addUserToWhitelist(Client* client)
 {
 	if (client)
-		_waitlist.push_back(client);
+		_whitelist.push_back(client);
 	else
-		printErrMessage(errMessage("User", -1, "could not add unknown user to waitlist"));
+		printErrMessage(errMessage("User", -1, "could not add unknown user to whitelist"));
 }
 
 int	Channel::removeUser(Client* user)
@@ -73,18 +73,25 @@ int	Channel::removeUser(Client* user)
 	return ( _users.size() );
 }
 
-void	Channel::removeUserFromWaitlist(Client* user)
+void	Channel::removeUserFromWhitelist(Client* user)
 {
-	std::vector<Client*>::iterator it = _waitlist.begin();
-	for ( ; it < _waitlist.end(); it++)
+	std::vector<Client*>::iterator it = _whitelist.begin();
+	for ( ; it < _whitelist.end(); it++)
 	{
 		if (*it == user)
 		{
-			_waitlist.erase(it);
+			_whitelist.erase(it);
 			return ;
 		}
 	}
-	printErrMessage(errMessage("User", -1, "could not remove unknown user from waitlist"));
+	printErrMessage(errMessage("User", -1, "could not remove unknown user from whitelist"));
+}
+
+void	Channel::clearWhitelist()
+{
+	std::vector<Client*>::iterator it = _whitelist.begin();
+	for ( ; it < _whitelist.end(); it++)
+			_whitelist.erase(it);
 }
 
 /* ************************************************************************** */
@@ -118,10 +125,10 @@ bool	Channel::isUserPresent(Client* client)
 	return (false);
 }
 
-bool	Channel::isUserOnWaitlist(Client* client)
+bool	Channel::isUserOnWhitelist(Client* client)
 {
-	std::vector<Client*>::iterator user = _waitlist.begin();
-    for( ; user < _waitlist.end(); user++ )
+	std::vector<Client*>::iterator user = _whitelist.begin();
+    for( ; user < _whitelist.end(); user++ )
 	{
         if ( *user == client )
             return ( true );
