@@ -61,13 +61,9 @@ void CommandExec::nick() {
     std::vector<Channel>::iterator itChan;
 
     for (itChan = chan.begin(); itChan < chan.end(); itChan++) {
-        if (!done) {
+        if (!done && itChan->isUserPresent(_client)) {
             itChan->sendMessageToUsersExceptSender(_client, RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]));
             done = true;
         }
     }
 }
-
-/* ************************************************************************** */
-/*                               SUB FUNCTIONS                                */
-/* ************************************************************************** */
