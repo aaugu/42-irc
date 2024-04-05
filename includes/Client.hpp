@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:37:30 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/02 10:46:12 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/05 12:16:14 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ class Client
 		// Accessors
 		int			getFd(void);
 		std::string getNickname(void);
+		std::string	getUsername(void);
 		std::string	getAddress(void);
         bool        getOperatorState();
         bool        isPasswordReceved();

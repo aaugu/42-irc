@@ -48,8 +48,8 @@ void    CommandExec::kill() {
         }
     }
     sendMessageTo(MSG_KICKMSG(_client->getNickname(), reason), itC->getFd());
-    _server->disconnectClient(&(*itC));
     _client->sendMessage(MSG_OTHERKILLMSG(itC->getNickname()));
+    _server->disconnectClient(&(*itC));
 }
 
 /* ************************************************************************** */

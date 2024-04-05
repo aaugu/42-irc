@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 14:19:52 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 13:12:51 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/05 14:29:34 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,10 @@ void	CommandExec::part(void)
 			if ( _msg->_paramsSplit.size() > 1 )
 				message += getFullMessage();
 			channel->sendMessageToUsers(RPL_PART(_client, channel->getName(), message));
-			if (channel->removeUser(_client) == 0)
-			{
-				std::cout << _client->getNickname() << " successfully removed from " << channel->getName() << std::endl;
+			int	channelSize = channel->removeUser(_client);
+			std::cout << _client->getNickname() << " successfully removed from " << channel->getName() << std::endl;
+			if (channelSize == 0)
 				_server->closeChannel(channel->getName());
-			}
 		}
 		else
 			_client->sendMessage(ERR_NOTONCHANNEL(_client->getAddress(), _client->getNickname(), channel->getName()));

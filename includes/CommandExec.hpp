@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandExec.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 15:23:03 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/05 12:17:24 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ class Server;
 class Client;
 class Channel;
 struct s_message;
-												// shoud be username
-#define USER(user) (user->getNickname() + "!" + user->getNickname() + "@" + user->getAddress())
+
+#define USER(user) (user->getNickname() + "!" + user->getUsername() + "@" + user->getAddress())
 #define RPL_PRIVMSG(client, target, message) (":" + USER(client) + " PRIVMSG " + target + " " + message + "\r\n")
 #define RPL_TOPIC(client, channel, topic) (": 332 " + client + " " + channel + " " + topic + "\r\n")
 #define RPL_YOUREOPER(channel, client) ("381 " + client + " :You are now an channel " + channel + " operator\r\n")
