@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 14:58:15 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/05 11:57:54 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	CommandExec::join(void)
 				_client->sendMessage(ERR_BADCHANNELKEY(_client->getAddress(), _client->getNickname(), channel->getName()));
 		}
 		else if ( channel->isUserPresent(_client) )
-			_client->sendMessage(":You already have joined channel " + channel->getName() + "\r\n");
+			_client->sendMessage("You already have joined channel " + channel->getName() + "\r\n");
 		else
 			joinChannel(*channel);
 	}
