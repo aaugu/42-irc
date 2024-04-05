@@ -144,6 +144,7 @@ void CommandExec::interpretMode(s_flag *parsed, std::vector<std::string> options
             if (channel.getModeI())
             {
                 channel.setModeI(false);
+                channel.clearWhitelist();
                 toSendFlagsNeg += "i";
             }
         }

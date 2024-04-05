@@ -64,8 +64,8 @@ void	CommandExec::invite(void)
 
 void	CommandExec::launchInvitation(Client* target, Channel* channel)
 {
-	if ( channel->getModeI() == true && channel->isUserOnWaitlist(target) == false)
-		channel->addUserToWaitlist(target);
+	if ( channel->getModeI() == true && channel->isUserOnWhitelist(target) == false)
+		channel->addUserToWhitelist(target);
 	
 	target->sendMessage(RPL_INVITING(_client, target->getNickname(), channel->getName()));
 }

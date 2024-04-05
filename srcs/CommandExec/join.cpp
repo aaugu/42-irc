@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/05 09:52:00 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/05 09:53:04 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	CommandExec::join(void)
 		}
 
 		std::vector<Channel>::iterator	channel = _server->getChannelByName(*channelName);
-		if ( channel->getModeI() == true && channel->isUserOnWaitlist(_client) == false ) {
+		if ( channel->getModeI() == true && channel->isUserOnWhitelist(_client) == false ) {
 			_client->sendMessage(ERR_INVITEONLYCHAN(_client->getAddress(), _client->getNickname(), channel->getName()));
 		}
 		else if ( channel->getModeL() == true && (int)channel->getUsers().size() >= channel->getUserLimit() )
@@ -132,9 +132,9 @@ void	CommandExec::joinChannel(Channel& channel)
 	_client->sendMessage(RPL_NAMREPLY(_client->getAddress(), _client->getNickname(), channel.getName(), channelUserList));
 	_client->sendMessage(RPL_ENDOFNAMES(_client->getAddress(), _client->getNickname(), channel.getName()));
 
-	if ( channel.isUserOnWaitlist(_client) )
-		channel.removeUserFromWaitlist(_client);
-		
+	if ( channel.isUserOnWhitelist(_client) )
+		channel.removeUserFromWhitelist(_client);
+
 	std::cout 	<< "Client " << _client->getFd()
 				<< " with nickname " << _client->getNickname()
 				<< " has joined channel " << channel.getName() << std::endl;
