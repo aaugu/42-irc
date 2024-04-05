@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 15:25:07 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/05 10:41:04 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include "../includes/SendMessages.hpp"
 #include "../includes/CommandExec.hpp"
 
-#define DEFAULTNICKNAME "G'raha Tia"
+#define DEFAULTNICKNAME "G'raha_Tia"
 #define DEFAULTUSERNAME "Meteor"
 
 /* ************************************************************************** */
