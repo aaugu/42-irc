@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/05 11:57:54 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/05 16:09:52 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,9 @@ bool	CommandExec::isChannelNameValid(std::string& name)
 
 void	CommandExec::createChannel(std::string name)
 {
+	if (name[0] != '#')
+		return ( _client->sendMessage("Channel name should begin with '#'\r\n") );
+	
 	Channel	channel(name, _client);
 
 	_server->addChannel(channel);

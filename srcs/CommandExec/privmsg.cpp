@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 15:32:28 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 13:12:53 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/05 16:10:52 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void CommandExec::sendMessageToChannel(std::string target, std::string message)
 		}
 		else
 			_client->sendMessage(ERR_CANNOTSENDTOCHAN(_client->getAddress(), _client->getNickname(), channel->getName()));
-
 	}
 	else
 		_client->sendMessage(ERR_NOSUCHCHANNEL(_client->getAddress(), _client->getNickname(), target));
