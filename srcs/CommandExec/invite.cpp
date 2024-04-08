@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 13:09:59 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 13:12:46 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/08 10:01:58 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	CommandExec::invite(void)
 			throw ( ERR_NOSUCHCHANNEL(_client->getAddress(), _client->getNickname(), channelName));
 
 		Channel*	channel = _server->getptrChannelByName(channelName);
-		Client*		target = &(*_server->getClientByNickname(nickname));
+		Client*		target = *(_server->getClientByNickname(nickname));
 		if ( channel->isUserPresent(target))
 			throw ( ERR_USERONCHANNEL(target->getAddress(), target->getNickname(), channel->getName()) );
 

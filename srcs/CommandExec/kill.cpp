@@ -37,7 +37,7 @@ void    CommandExec::kill() {
         return;
     }
 
-    std::vector<Client>::iterator itC = _server->getClientByNickname(_msg->_paramsSplit[0]);
+    std::vector<Client*>::iterator itC = _server->getClientByNickname(_msg->_paramsSplit[0]);
     if (_msg->_paramsSplit[1] == ":") {
         _msg->_paramsSplit[1] += "unknown reason";
     } else {
@@ -47,9 +47,9 @@ void    CommandExec::kill() {
             reason += " ";
         }
     }
-    sendMessageTo(MSG_KICKMSG(_client->getNickname(), reason), itC->getFd());
-    _client->sendMessage(MSG_OTHERKILLMSG(itC->getNickname()));
-    _server->disconnectClient(&(*itC));
+    sendMessageTo(MSG_KICKMSG(_client->getNickname(), reason), (*itC)->getFd());
+    _client->sendMessage(MSG_OTHERKILLMSG((*itC)->getNickname()));
+    _server->disconnectClient((*itC));
 }
 
 /* ************************************************************************** */
