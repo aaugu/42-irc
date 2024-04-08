@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/08 09:38:03 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/08 10:43:51 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,17 @@
 #include "../includes/Server.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/messages.hpp"
-#include "../includes/SendMessages.hpp"
 #include "../includes/CommandExec.hpp"
+
+/* ************************************************************************** */
+/*                                    MACRO                                   */
+/* ************************************************************************** */
 
 #define DEFAULTNICKNAME "G'raha_Tia"
 #define DEFAULTUSERNAME "Meteor"
+
+#define ERR_INVALID_ERROR "ERROR : invalid command\r\n"
+#define ERR_NOTREGISTERED(nick) ("451 " + nick + " :\r\n")
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */

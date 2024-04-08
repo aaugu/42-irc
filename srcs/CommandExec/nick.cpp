@@ -1,6 +1,5 @@
 #include "../includes/CommandExec.hpp"
 #include "../includes/messages.hpp"
-#include "../includes/SendMessages.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
 
@@ -12,6 +11,7 @@
 #define MSG_SETNICKNAME(nickname) ("Your nickname was set to " + _msg->_paramsSplit[0] + "\r\n")
 
 // REPLY
+#define RPL_WELCOME(nick, user, host) ("001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host + "\r\n")
 #define RPL_CHANGENICKNAME(old, nickname) (":" + old + " NICK " + nickname + "\r\n")
 
 // ERRORS

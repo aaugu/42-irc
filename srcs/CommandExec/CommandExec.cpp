@@ -13,9 +13,15 @@
 
 #include "../includes/CommandExec.hpp"
 #include "../includes/messages.hpp"
-#include "../includes/SendMessages.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
+
+/* ************************************************************************** */
+/*                                    MACRO                                   */
+/* ************************************************************************** */
+
+#define ERR_PASSWDMISS "464 __ :Password missing\r\n"
+#define ERR_PASSWDMISMATCH "464 __ :Password incorrect\r\n"
 
 /* ************************************************************************** */
 /*                          CONSTRUCTORS & DESTRUCTOR                         */
