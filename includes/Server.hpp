@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/03/28 16:39:15 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/08 09:42:27 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Server
 		std::vector<pollfd>		_pollFds;
 		std::vector<Client> 	_clients;
         std::string             _opPass;
-		std::vector<Channel>	_channels;
+		std::vector<Channel *>	_channels;
 
 		// Start() sub functions
 		void	startServer(void);

@@ -156,7 +156,7 @@ void	Server::removeClientFromChannels(Client *user)
 			message._paramsSplit.push_back(":disconnected");
 
 			CommandExec	exec(this, user, &message);
-			exec.part(); 
+			exec.part();
 		}
 	}
 }
