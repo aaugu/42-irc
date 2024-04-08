@@ -31,6 +31,7 @@ void	CommandExec::mode(void){
     std::string test = _client->getNickname() + " +i";
     if (_msg->_params == test)
         return;
+    
     if (channel_ptr == NULL) {
         _client->sendMessage(ERR_NOSUCHCHANNEL(_client->getAddress(), _client->getNickname(), _msg->_paramsSplit[0]));
         return;
@@ -41,6 +42,8 @@ void	CommandExec::mode(void){
             _client->sendMessage(ERR_NOTONCHANNEL(_client->getAddress(), _client->getNickname(), channel_ptr->getName()));
             return;
         }
+        else if (flags[0] == 'b')
+            return;
         else {
             if (!channel_ptr->isOperator(_client) && flags != "\0") {
                 _client->sendMessage(ERR_CHANOPRIVSNEEDED(channel_ptr->getName()));
@@ -65,6 +68,7 @@ void	CommandExec::mode(void){
         return;
     }
     s_flag *parsed;
+
     if (flags[0] == '+' || flags[0] == '-') {
         parsed = parserOption(flags);
         if (checkParsing(parsed, optionsArray))
