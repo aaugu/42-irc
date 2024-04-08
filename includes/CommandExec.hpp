@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 11:57:56 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/05 12:17:24 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/08 09:58:46 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class CommandExec
 		std::vector<std::string>	getChannelNames(std::string names);
 		bool						isChannelNameValid(std::string& name);
 		void						createChannel(std::string name);
-		void						joinChannel(Channel& channel);
+		void						joinChannel(Channel* channel);
 
 		// PRIVMSG
 		void	sendMessageToChannel(std::string target, std::string message);

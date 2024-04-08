@@ -36,13 +36,13 @@ void CommandExec::oper() {
         return;
     }
 
-    std::vector<Client>::iterator itC = _server->getClientByNickname(_msg->_paramsSplit[0]);
+    std::vector<Client*>::iterator itC = _server->getClientByNickname(_msg->_paramsSplit[0]);
 
     if (_msg->_paramsSplit[1] == _server->getOpPass()) {
         if (!_client->getOperatorState()) {
             if (_client->getNickname() == _msg->_paramsSplit[0]) {
                 _client->sendMessage(MSG_NOWOPER);
-                itC->setOperatorState(true);;
+                (*itC)->setOperatorState(true);;
                 return;
             }
             else {
@@ -51,20 +51,20 @@ void CommandExec::oper() {
             }
         }
         else {
-            if (!itC->getOperatorState()) {
-                _client->sendMessage(MSG_PROMOTOTHER(itC->getNickname()));
-                sendMessageTo(MSG_PROMOTBY(_client->getNickname()), itC->getFd());
-                itC->setOperatorState(true);
+            if (!(*itC)->getOperatorState()) {
+                _client->sendMessage(MSG_PROMOTOTHER((*itC)->getNickname()));
+                sendMessageTo(MSG_PROMOTBY(_client->getNickname()), (*itC)->getFd());
+                (*itC)->setOperatorState(true);
                 return;
             }
             else {
                 if (_client->getNickname() == _msg->_paramsSplit[0]){
                     _client->sendMessage(MSG_REMOVEOPER);
                 }else {
-                    _client->sendMessage(MSG_REMOVEOTHEROPER(itC->getNickname()));
-                    sendMessageTo(MSG_REMOVEOPERBY(_client->getNickname()), itC->getFd());
+                    _client->sendMessage(MSG_REMOVEOTHEROPER((*itC)->getNickname()));
+                    sendMessageTo(MSG_REMOVEOPERBY(_client->getNickname()), (*itC)->getFd());
                 }
-                itC->setOperatorState(false);
+                (*itC)->setOperatorState(false);
                 return;
             }
         }

@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 11:39:10 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/08 09:42:27 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/08 10:16:17 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ class Server
 		int						_sockfd;
 		struct sockaddr_in		_addr;
 		std::vector<pollfd>		_pollFds;
-		std::vector<Client> 	_clients;
+		std::vector<Client*> 	_clients;
         std::string             _opPass;
-		std::vector<Channel *>	_channels;
+		std::vector<Channel*>	_channels;
 
 		// Start() sub functions
 		void	startServer(void);
@@ -49,13 +49,13 @@ class Server
 		void							refuseClient(int sockfdClient);
 		void							createClient(int sockfdClient);
 		void							addClientToListenPoll(int sockfdClient);
-		std::vector<Client>::iterator	getClientByFd(int sockfdClient);
+		std::vector<Client*>::iterator	getClientByFd(int sockfdClient);
 
 		// Input utils
 		int		getLine(int fd, std::string &line);
 
 		// Destructor utils
-		void    closePollFds(void);
+		void	disconnectAllClients(void);
 
 		// Accessors
 		std::vector<pollfd>::iterator 	getPollFdByFd(int sockfd);
@@ -70,21 +70,21 @@ class Server
 		std::vector<std::string>		getNicknameList(void);
         std::string                     getOpPass(void);
 		std::string						get_password(void) const;
-		std::vector<Client>				getClients(void);
-		std::vector<Channel>			getChannels(void);
+		std::vector<Client*>			getClients(void);
+		std::vector<Channel*>			getChannels(void);
 
 		// Channel utils
-		void							addChannel(Channel& channel);
-		void							removeChannel(std::vector<Channel>::iterator channel);
+		void							addChannel(Channel* channel);
+		void							removeChannel(std::vector<Channel*>::iterator channel);
 		bool							channelExists(std::string name);
-		std::vector<Channel>::iterator	getChannelByName(std::string name);
+		std::vector<Channel*>::iterator	getChannelByName(std::string name);
 		void							closeChannel(std::string name);
 		Channel *						getptrChannelByName(std::string name);
 
 		// Client utils
 		void							disconnectClient(Client *client);
 		bool 							clientExists(std::string nickname);
-        std::vector<Client>::iterator	getClientByNickname(std::string nickname);
+        std::vector<Client*>::iterator	getClientByNickname(std::string nickname);
 		void							removeClientFromChannels(Client *user);
 
 		// DEBUG
