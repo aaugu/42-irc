@@ -69,7 +69,7 @@ void	Server::createClient(int sockfdClient)
 	else
 		address = inet_ntoa(clientAddress.sin_addr);
 
-	_clients.push_back(Client(sockfdClient, address));
+	_clients.push_back(new Client(sockfdClient, address));
 }
 
 void	Server::addClientToListenPoll(int sockfdClient)
@@ -82,12 +82,12 @@ void	Server::addClientToListenPoll(int sockfdClient)
 	_pollFds.push_back(client);
 }
 
-std::vector<Client>::iterator	Server::getClientByFd(int sockfdClient)
+std::vector<Client*>::iterator	Server::getClientByFd(int sockfdClient)
 {
-	std::vector<Client>::iterator it;
+	std::vector<Client*>::iterator it;
 	for ( it = _clients.begin(); it < _clients.end(); it++ )
 	{
-		if ( it->getFd() == sockfdClient)
+		if ( (*it)->getFd() == sockfdClient)
 			return (it);
 	}
 	return (it);
@@ -115,7 +115,8 @@ void	Server::disconnectClient(Client *client)
 
 	if (clientExists(client->getNickname()))
 	{
-		std::vector<Client>::iterator itC = getClientByFd(client->getFd());
+		std::vector<Client*>::iterator itC = getClientByFd(client->getFd());
+		delete *itC;
 		_clients.erase(itC);
 	}
 	else
@@ -123,21 +124,21 @@ void	Server::disconnectClient(Client *client)
 }
 
 bool Server::clientExists(std::string nickname){
-	std::vector<Client>::iterator it;
+	std::vector<Client*>::iterator it;
     for ( it = _clients.begin(); it < _clients.end(); it++ )
     {
-        if ( it->getNickname() == nickname)
+        if ( (*it)->getNickname() == nickname)
             return(true);
     }
     return (false);
 }
 
-std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
+std::vector<Client*>::iterator	Server::getClientByNickname(std::string nickname)
 {
-    std::vector<Client>::iterator it;
+    std::vector<Client*>::iterator it;
     for ( it = _clients.begin(); it < _clients.end(); it++ )
     {
-        if ( it->getNickname() == nickname)
+        if ( (*it)->getNickname() == nickname)
             return(it);
     }
     return (it);
@@ -145,14 +146,14 @@ std::vector<Client>::iterator	Server::getClientByNickname(std::string nickname)
 
 void	Server::removeClientFromChannels(Client *user)
 {
-	std::vector<Channel>::iterator	channel = _channels.begin();
+	std::vector<Channel*>::iterator	channel = _channels.begin();
 	for ( ; channel < _channels.end(); channel++ )
 	{
-		if ( channel->isUserPresent(user) )
+		if ( (*channel)->isUserPresent(user) )
 		{
 			s_message	message;
 			message._paramsSplit.clear();
-			message._paramsSplit.push_back(channel->getName());
+			message._paramsSplit.push_back((*channel)->getName());
 			message._paramsSplit.push_back(":disconnected");
 
 			CommandExec	exec(this, user, &message);

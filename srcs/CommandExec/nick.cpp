@@ -56,13 +56,13 @@ void CommandExec::nick() {
 
     _client->setNickname(_msg->_paramsSplit[0]);
 
-    std::vector<Channel> chan = _server->getChannels();
+    std::vector<Channel*> chan = _server->getChannels();
 
-    std::vector<Channel>::iterator itChan;
+    std::vector<Channel*>::iterator itChan;
 
     for (itChan = chan.begin(); itChan < chan.end(); itChan++) {
-        if (!done && itChan->isUserPresent(_client)) {
-            itChan->sendMessageToUsersExceptSender(_client, RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]));
+        if (!done && (*itChan)->isUserPresent(_client)) {
+            (*itChan)->sendMessageToUsersExceptSender(_client, RPL_CHANGENICKNAME(old, _msg->_paramsSplit[0]));
             done = true;
         }
     }

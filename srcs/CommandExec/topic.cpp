@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 12:29:27 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/03 14:59:35 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/08 10:04:17 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,14 @@ void	CommandExec::topic(void)
 		if (_server->channelExists(channelName) == false)
 			throw ( ERR_NOSUCHCHANNEL(_client->getAddress(), _client->getNickname(), channelName));
 
-		std::vector<Channel>::iterator	channel = _server->getChannelByName(channelName);
-		if ( channel->isUserPresent(_client) == false)
-			throw ( ERR_NOTONCHANNEL(_client->getAddress(), _client->getNickname(), channel->getName()) );
+		std::vector<Channel*>::iterator	channel = _server->getChannelByName(channelName);
+		if ( (*channel)->isUserPresent(_client) == false)
+			throw ( ERR_NOTONCHANNEL(_client->getAddress(), _client->getNickname(), (*channel)->getName()) );
 
 		if ( _msg->_paramsSplit.size() == 1)
-			sendTopic(&(*channel));
+			sendTopic(*channel);
 		else
-			modifyTopic(&(*channel));
+			modifyTopic(*channel);
 	}
 	catch(const std::string& message) {
 		_client->sendMessage(message);

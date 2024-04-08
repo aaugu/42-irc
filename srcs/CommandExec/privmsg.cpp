@@ -6,7 +6,7 @@
 /*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 15:32:28 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/05 16:10:52 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/08 10:03:48 by aaugu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,14 @@ void CommandExec::sendMessageToChannel(std::string target, std::string message)
 {
 	if (_server->channelExists(target))
 	{
-		std::vector<Channel>::iterator	channel = _server->getChannelByName(target);
-		if ( channel->isUserPresent(_client) )
+		std::vector<Channel*>::iterator	channel = _server->getChannelByName(target);
+		if ( (*channel)->isUserPresent(_client) )
 		{
-			std::string	response = RPL_PRIVMSG(_client, channel->getName(), message);
-			channel->sendMessageToUsersExceptSender(_client, response);
+			std::string	response = RPL_PRIVMSG(_client, (*channel)->getName(), message);
+			(*channel)->sendMessageToUsersExceptSender(_client, response);
 		}
 		else
-			_client->sendMessage(ERR_CANNOTSENDTOCHAN(_client->getAddress(), _client->getNickname(), channel->getName()));
+			_client->sendMessage(ERR_CANNOTSENDTOCHAN(_client->getAddress(), _client->getNickname(), (*channel)->getName()));
 	}
 	else
 		_client->sendMessage(ERR_NOSUCHCHANNEL(_client->getAddress(), _client->getNickname(), target));
@@ -61,9 +61,9 @@ void CommandExec::sendPrivateMessage(std::string target, std::string message)
 {
 	if (_server->clientExists(target))
 	{
-		std::vector<Client>::iterator	user = _server->getClientByNickname(target);
-		std::string	response = RPL_PRIVMSG(_client, user->getNickname(), message);
-		user->sendMessage(response);
+		std::vector<Client*>::iterator	user = _server->getClientByNickname(target);
+		std::string	response = RPL_PRIVMSG(_client, (*user)->getNickname(), message);
+		(*user)->sendMessage(response);
 	}
 	else
 		_client->sendMessage(ERR_NOSUCHNICK(_client->getAddress(), target));
