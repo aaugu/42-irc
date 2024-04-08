@@ -1,12 +1,14 @@
 #include "../includes/CommandExec.hpp"
 #include "../includes/messages.hpp"
-#include "SendMessages.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Server.hpp"
 
 /* ************************************************************************** */
 /*                                   MACROS                                   */
 /* ************************************************************************** */
+
+#define ERR_NOORIGIN(command) ("409 " + command + " :No origin specified\r\n")
+#define PONG(server) ("PONG " + server + "\r\n")
 
 /* ************************************************************************** */
 /*                                   PING                                     */
