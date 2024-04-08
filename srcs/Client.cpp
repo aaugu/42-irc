@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 11:43:23 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/05 12:04:13 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/05 15:08:13 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,6 +211,10 @@ int Client::getFd() {
 
 std::string Client::getNickname(void) {
     return _nickname;
+}
+
+std::string Client::getUsername(void) {
+    return _username;
 }
 
 std::string	Client::getAddress(void) {

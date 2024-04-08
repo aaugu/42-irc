@@ -6,7 +6,7 @@
 /*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 16:21:16 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/05 12:03:55 by lvogt            ###   ########.fr       */
+/*   Updated: 2024/04/08 09:23:17 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ bool	CommandExec::isChannelNameValid(std::string& name)
 
 void	CommandExec::createChannel(std::string name)
 {
-	Channel	channel(name, _client);
+	Channel	new channel(name, _client);
 
 	_server->addChannel(channel);
 
