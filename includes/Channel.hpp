@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aaugu <aaugu@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: lvogt <lvogt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 20:41:39 by aaugu             #+#    #+#             */
-/*   Updated: 2024/04/05 16:08:31 by aaugu            ###   ########.fr       */
+/*   Updated: 2024/04/08 09:39:19 by lvogt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Channel
 
     public:
    		// Constructor and destructor
+		
 		Channel(std::string name, Client* user);
 		~Channel(void);
 
